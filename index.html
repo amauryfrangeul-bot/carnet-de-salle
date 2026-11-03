@@ -30,7 +30,7 @@ h1{margin:0;font:700 52px/0.95 "Barlow Condensed",Barlow,sans-serif}
 .sub{margin:4px 0 12px;color:var(--mut);font-size:18px}
 .bar{height:6px;background:var(--line);border-radius:6px;overflow:hidden}
 .bar i{display:block;height:100%;width:0;background:var(--yellow);transition:width .25s}
-.pc{margin:6px 0 0;color:var(--mut);font-size:14px}.clk{display:flex;gap:10px;align-items:center;margin-top:12px;color:var(--mut);font-size:14px}.clk input{width:20px;height:20px;flex:none}
+.pc{margin:6px 0 0;color:var(--mut);font-size:14px}.pc.ok{color:var(--goal);font-weight:600}.seg+.seg{margin-top:8px}.fc{color:var(--ink);font-size:16px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:12px}.fc summary{cursor:pointer;list-style:none}.fc summary::-webkit-details-marker{display:none}.fc summary b{display:block;font:700 26px/1.1 "Barlow Condensed",Barlow,sans-serif}.fc summary span{display:block;color:var(--mut);font-size:15px;margin-top:4px}.fc h3{font:700 20px/1.1 "Barlow Condensed",Barlow,sans-serif;margin:16px 0 2px}.fc p{margin:2px 0}.fc .rt{margin-top:14px;background:var(--goalbg);color:var(--goal);border-radius:10px;padding:10px 12px;font-weight:500}:root{--warn:#A35F00}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--warn:#F5B700}}:root[data-theme="dark"]{--warn:#F5B700}.adv{margin:10px 0 0;font-size:14px;font-weight:500;color:var(--mut)}.adv.up{color:var(--goal)}.adv.dn{color:var(--warn)}.mu{margin-top:10px;font-size:14px;color:var(--mut)}.mu summary{cursor:pointer;color:var(--ink);font-weight:600}.mu p{margin:6px 0 0}.clk{display:flex;gap:10px;align-items:center;margin-top:12px;color:var(--mut);font-size:14px}.clk input{width:20px;height:20px;flex:none}
 .c{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:12px}
 .ct{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
 h2{margin:0;font:700 25px/1.1 "Barlow Condensed",Barlow,sans-serif}
@@ -85,8 +85,12 @@ const S=[
 ];
 const SEED={0:[[[36,50,57],8],[[43,57,63],8],[[24,26,28],8],[[18,20.5,23]],[[6.8,7.3,9.3]],0],1:[[[40,60,80]],[[15,20,45]],[[0,2.5,5]],[[36,45,50]],[[4.5,6.8,6.8]],[[6.8,7.8]]],2:[[[32,32,32]],[[32,32,32]],0,[[15,20,25]],[[18,23,27]],[[8,10,12]],[[9,14,14]]],3:[[[14,16,18]],[[4,4,4]],[[27,32,36]],[[5.7,3.4,1.1]],[[10,12,14.7]],[[3.4,5.7,5.7]],0],5:[[[23,29,29]],0,[[12,14.7,19]],[[12,14.7,17]],[[7.9,8.9,8.9]],[[13.6,15.9,18]]]};
 const KEY="prog_perte_gras_v1",app=document.getElementById("app");
-let H={},cur=0,CLK=false;
+let H={},cur=0,CLK=false,MODE="s";
 try{H=JSON.parse(localStorage.getItem(KEY)||"{}");cur=+localStorage.getItem(KEY+"_cur")||0;CLK=localStorage.getItem(KEY+"_clk")=="1"}catch(e){}
+let D={};try{D=JSON.parse(localStorage.getItem(KEY+"_draft")||"{}")}catch(e){}
+const today=()=>{const t=new Date();return t.getFullYear()+"-"+(t.getMonth()+1)+"-"+t.getDate()};
+let tv=null,skip=false;
+function saveDraft(){const v=[...app.querySelectorAll(".row")].map(r=>[r.querySelector(".wu").checked?1:0,r.querySelector(".kg").value,r.querySelector(".rp").value]);D[cur]={d:today(),v};try{localStorage.setItem(KEY+"_draft",JSON.stringify(D))}catch(e){}}
 const store=()=>{try{localStorage.setItem(KEY,JSON.stringify(H));localStorage.setItem(KEY+"_cur",cur)}catch(e){}};
 const fmt=n=>String(+n.toFixed(1)).replace(".",",");
 const num=x=>{const n=parseFloat(String(x).replace(",","."));return isNaN(n)?null:n};
@@ -98,43 +102,130 @@ function sug(r,reps){
  if(!r.reps||!h)return[last,"Note tes reps pour débloquer l’objectif"];
  if(r.reps>=h)return[last,`Objectif : ${fmt(r.kg+(r.kg<15?1:2.5))} kg`];
  return[last,`Objectif : ${fmt(r.kg)} kg × ${r.reps+1} reps`]}
+const INFO=[
+[/pullover|bras tendu/,"Grand dorsal","Triceps (longue portion), grand rond, pectoraux","Coudes à peine fléchis et fixes. Tire avec le dos, pas avec les bras, et garde le buste immobile."],
+[/spider/,"Biceps (courte portion)","Brachial, avant-bras","Poitrine calée sur le banc, coudes verticaux et fixes. Descends sans relâcher en bas."],
+[/curl marteau/,"Brachial et brachio-radial","Biceps, avant-bras","Prise neutre (paumes face à face), coudes collés au corps, sans balancer le buste."],
+[/curl incliné/,"Biceps (longue portion)","Brachial","Bras en arrière sur le banc incliné pour étirer le biceps. Descends complètement, sans élan."],
+[/curl pupitre|curl ez/,"Biceps","Brachial, avant-bras","Coudes fixes (calés sur le pupitre). Descente de 2 secondes, sans cambrer le dos."],
+[/tirage vertical/,"Grand dorsal","Biceps, grand rond, rhomboïdes, trapèzes inférieurs","Tire les coudes vers les hanches, poitrine sortie. Ne te penche pas en arrière pour tirer plus lourd."],
+[/rowing|bûcheron|tirage horizontal/,"Dos (grand dorsal, rhomboïdes, trapèzes moyens)","Biceps, arrière des épaules","Dos plat, tire les coudes vers l’arrière et serre les omoplates. Pas d’élan avec le buste."],
+[/face pull/,"Arrière des épaules (deltoïde postérieur)","Trapèzes, rhomboïdes, coiffe des rotateurs","Tire la corde vers le visage, coudes hauts, mains écartées en fin de mouvement. Charge légère."],
+[/reverse pec|oiseau|rear delt/,"Arrière des épaules (deltoïde postérieur)","Rhomboïdes, trapèzes","Bras presque tendus, mouvement lent, serre les omoplates sans hausser les épaules."],
+[/élévations/,"Épaule latérale (deltoïde moyen)","Trapèzes supérieurs, deltoïde antérieur","Monte jusqu’à l’horizontale, coude légèrement fléchi, sans balancer. Pense à lever les coudes plus que les mains."],
+[/militaire|développé haltères/,"Épaules (deltoïde antérieur)","Triceps, haut des pectoraux, deltoïde moyen","Dos calé, abdos serrés, sans cambrer. Descends à hauteur des oreilles et pousse sans claquer les coudes."],
+[/incliné/,"Haut des pectoraux","Épaules (avant), triceps","Épaules basses et en arrière, poitrine sortie. Descends lentement, sans décoller les épaules du dossier."],
+[/presse à pecs/,"Pectoraux","Épaules (avant), triceps","Omoplates serrées contre le dossier, pousse sans verrouiller les coudes, contrôle le retour."],
+[/pompes/,"Pectoraux","Triceps, épaules (avant), gainage","Corps gainé en ligne droite, coudes à environ 45°. Descends lentement, poitrine près du sol."],
+[/pec deck|écart/,"Pectoraux (surtout le centre)","Épaules (avant)","Coudes légèrement fléchis, serre les pecs au centre. Étire sans descendre trop bas dans l’épaule."],
+[/triceps/,"Triceps","Avant-bras, gainage","Coudes fixes près du corps, tends complètement le bras, remonte lentement."],
+[/presse à jambes/,"Quadriceps et fessiers","Ischio-jambiers, mollets","Dos plaqué, genoux dans l’axe des pieds, sans verrouiller les genoux en haut."],
+[/extension lombaire/,"Bas du dos (érecteurs du rachis)","Fessiers, ischio-jambiers","Descends lentement et remonte jusqu’à l’alignement du corps, sans t’arquer en haut."],
+[/leg curl/,"Ischio-jambiers (arrière des cuisses)","Mollets, fessiers","Hanches collées au banc, contracte en haut, descends en 2 secondes sans relâcher."],
+[/leg extension/,"Quadriceps (avant des cuisses)","Aucun muscle secondaire notable","Dos calé, extension complète sans claquer le genou, descente lente."],
+[/mollets/,"Mollets (gastrocnémiens, soléaire)","Tendon d’Achille","Amplitude complète : bien étiré en bas, pointe haute, pause d’une seconde en haut."],
+[/crunch/,"Abdominaux (grand droit)","Obliques","Enroule le buste en soufflant, sans tirer avec les bras ni avec les hanches."],
+[/gainage/,"Abdos profonds (transverse) et grand droit","Obliques, lombaires, épaules","Corps en ligne, fessiers ni trop hauts ni creusés, respire normalement."]];
+function info(nm){const l=nm.toLowerCase(),e=INFO.find(x=>x[0].test(l));return e?`<details class="mu"><summary>Muscles travaillés</summary><p><b>Principal :</b> ${e[1]}</p><p><b>Secondaires :</b> ${e[2]}</p><p><b>Conseil :</b> ${e[3]}</p></details>`:""}
+function ref(i,j){const r=rec(i,j);return r&&r.d==today()?(r.p||null):r}
+function advise(c,top){
+ const rg=c.dataset.r,rf=ref(cur,+c.dataset.j),m=String(rg).match(/^(\d+)(?:-(\d+))?$/);
+ const lo=m?+m[1]:null,hi=m?+(m[2]||m[1]):null;let t="flat";
+ if(rf){if(top.kg>rf.kg)t="up";else if(top.kg<rf.kg)t="dn";else if(rf.reps){if(top.reps>rf.reps)t="up";else if(top.reps<rf.reps)t="dn"}}
+ const lead={up:"En progression ✓ ",dn:"En dessous de la dernière fois. ",flat:rf?"Même niveau que la dernière fois. ":""}[t];
+ let tip="";
+ if(hi!==null){if(top.reps>=hi)tip="Tu es au haut de la fourchette : monte la charge la prochaine fois.";else if(top.reps<lo)tip=`Sous la fourchette (${rg} reps) : garde cette charge jusqu’à atteindre ${lo} reps.`;else tip="Dans la fourchette : vise une rep de plus."}
+ return[t,lead+tip]}
 function card(p,j,tag,nm){
- const w=Math.min(+p[1],3),rc=rec(cur,j),sg=sug(rc,p[2]);
+ const w=Math.min(+p[1],3),rc=ref(cur,j),sg=sug(rc,p[2]);
  let rows="";
  for(let q=1;q<=w+1;q++){
-  const ph=rc&&rc.sets&&rc.sets[q-2]!==undefined?rc.sets[q-2]:"kg";
-  rows+=`<div class="row" data-j="${j}"><label class="chip"><input type="checkbox" class="wu"${q==1?" checked":""}><span class="a">Échauf.</span><span class="b">Série ${q-1}</span></label><input class="kg" inputmode="decimal" placeholder="${ph}"><input class="rp" inputmode="numeric" placeholder="reps"></div>`}
+  const pv=rc&&rc.sets&&rc.sets[q-2]!==undefined?rc.sets[q-2]:null,ph=pv!==null?fmt(pv):"kg";
+  rows+=`<div class="row" data-j="${j}"><label class="chip"><input type="checkbox" class="wu"${q==1?" checked":""}><span class="a">Échauf.</span><span class="b">Série ${q-1}</span></label><input class="kg" inputmode="decimal" placeholder="${ph}" data-ph="${pv===null?"":pv}"><input class="rp" inputmode="numeric" placeholder="reps"></div>`}
  const rest=p[3]=="0 s"?`<span class="r z">Sans repos</span>`:`<button class="r" data-s="${p[3]}">Repos ${p[3]}</button>`;
- return `<section class="c"><div class="ct"><h2>${tag?`<em>${tag}</em>`:""}${nm}</h2>${rest}</div><p class="m">${w}×${p[2]} + 1 échauffement</p><p class="last">Dernière séance : ${sg[0]}</p><p class="goal"><b>${sg[1]}</b></p><div class="hdr"><span></span><span>kg</span><span>reps</span></div>${rows}</section>`}
+ return `<section class="c" data-j="${j}" data-r="${p[2]}"><div class="ct"><h2>${tag?`<em>${tag}</em>`:""}${nm}</h2>${rest}</div><p class="m">${w}×${p[2]} + 1 échauffement</p><p class="last">Dernière séance : ${sg[0]}</p><p class="goal"><b>${sg[1]}</b></p><div class="hdr"><span></span><span>kg</span><span>reps</span></div>${rows}<p class="adv"></p>${info(nm)}</section>`}
+const COURS=[
+{t:"Les muscles, simplement",k:"Un muscle ne sait que tirer. Pour bouger dans les deux sens, il en faut deux opposés.",b:[
+["Push, Pull, Legs","Push : les muscles qui poussent (pectoraux, épaules, triceps). Pull : ceux qui tirent (dos, biceps, arrière des épaules). Legs : les jambes. Ton programme alterne ces groupes pour que chacun ait le temps de récupérer."],
+["Le dos","Le grand dorsal est le grand muscle en V qui ramène tes bras vers le bas et l’arrière (tirage vertical, pullover). Les rhomboïdes et les trapèzes serrent tes omoplates (rowing, face pull)."],
+["Les pectoraux","Ils rapprochent tes bras devant toi et poussent (presse à pecs, pec deck, pompes). Le haut des pecs travaille surtout sur les exercices inclinés."],
+["Les épaules","Trois têtes : l’avant pousse vers l’avant, le milieu monte le bras sur le côté (élévations latérales), l’arrière tire en arrière (rear delt, face pull)."],
+["Les bras","Le biceps plie le coude, le triceps le tend : ils sont opposés. Le brachial, sous le biceps, travaille surtout sur les curls marteau."],
+["Les jambes","Les quadriceps (devant de la cuisse) tendent le genou. Les ischio-jambiers (derrière) le plient. Les fessiers tendent la hanche, les mollets soulèvent le talon."],
+["Les abdos","Ils gardent ton tronc stable pendant tous les exercices, même ceux qui ne les visent pas."]],
+r:"Si tu sens le bon muscle, tu fais le bon exercice. Sur un tirage de dos, si tu sens surtout tes biceps, tu tires trop avec les bras."},
+{t:"Comment un muscle grandit",k:"Tu envoies le signal en t’entraînant, et ton corps construit pendant le repos.",b:[
+["Le signal","Quand tu soulèves une charge près de ta limite, tes fibres musculaires reçoivent le message qu’il faut devenir plus costaudes. Ce qui compte, c’est la tension bien contrôlée sur le muscle, pas la vitesse ni l’élan."],
+["La construction","Le muscle grossit pendant la récupération, surtout la nuit, pas pendant la séance. Sans sommeil, sans protéines et sans repos, le signal est envoyé mais rien n’est construit."],
+["Les fourchettes de reps","Les séries lourdes de 6 à 8 reps développent la force. Les séries de 10 à 15 reps apportent du volume et une bonne congestion. Les deux construisent du muscle si tes dernières reps sont dures, avec environ 2 reps en réserve."],
+["La double progression","Tu gardes la même charge jusqu’à atteindre le haut de la fourchette sur ta série lourde, puis tu montes d’un cran et tu recommences en bas de la fourchette. C’est ce que ton appli te propose dans « Objectif »."],
+["Les repos","Sur les mouvements lourds, 2 à 2 min 30 de repos permettent de garder ta charge. Sur l’isolation, 45 à 60 secondes suffisent, car le muscle est plus petit."],
+["L’échauffement","La série d’échauffement prépare muscles et articulations avec une charge légère, sans fatigue. Elle ne compte pas dans tes séries de travail."]],
+r:"Séries dures, charges qui progressent, sommeil et protéines : ces quatre choses font grandir le muscle."},
+{t:"Perdre du gras sans perdre de muscle",k:"Le gras part avec un déficit calorique. Le muscle se protège en continuant à t’entraîner lourd.",b:[
+["Comment le gras diminue","Ton corps puise dans ses réserves quand tu dépenses un peu plus d’énergie que tu n’en manges. On ne choisit pas où le gras part : faire des abdos ne fait pas fondre le ventre en particulier."],
+["Tes leviers de dépense","Tes pas quotidiens et tes finishers augmentent la dépense. La musculation, elle, dit surtout à ton corps de garder le muscle."],
+["Protéger le muscle","Garde tes charges lourdes sur les gros mouvements, mange des protéines à chaque repas (environ 1,8 à 2,2 g par kilo de poids de corps) et dors 7 heures ou plus."],
+["Le bon rythme","Vise une perte de 0,3 à 0,5 kg par semaine. Plus vite, tu risques de perdre du muscle et de la force."],
+["Le poids ment un peu","Ton poids varie de 1 à 2 kg selon l’eau, le sel et la digestion. Pèse-toi le matin à jeun, regarde la moyenne de la semaine et mesure ton tour de taille."]],
+r:"Si tes charges tiennent ou montent pendant que ton poids moyen baisse, tu perds du gras et pas du muscle."},
+{t:"Les articulations et comment les protéger",k:"Les muscles bougent les os autour des articulations. Les protéger, c’est bien exécuter et progresser doucement.",b:[
+["Les épaules","L’épaule est très mobile mais fragile. Quatre petits muscles, la coiffe des rotateurs, la stabilisent : le face pull et le rear delt les renforcent. Garde les épaules basses, loin des oreilles, sur les exercices de poussée."],
+["Les genoux","Ils plient et se tendent comme une charnière. Garde-les dans l’axe des pieds, ne les verrouille pas en haut de la presse et contrôle la descente."],
+["Le bas du dos","Garde le dos plat, jamais arrondi sous charge. Le gainage et les abdos le soutiennent. Sur l’extension lombaire, remonte jusqu’à l’alignement du corps sans t’arquer."],
+["Coudes et poignets","Garde les poignets droits, dans le prolongement de l’avant-bras. Si un curl ou une extension te gêne au coude, essaie une prise neutre (paumes face à face)."],
+["Courbature ou douleur ?","Une courbature est une douleur diffuse dans le muscle, qui passe en 2 à 3 jours. Une douleur vive, localisée dans l’articulation ou qui revient à chaque série est un signal d’arrêt : baisse la charge, change d’exercice, et consulte un médecin ou un kiné si ça dure."]],
+r:"Une bonne technique avec une charge un peu plus légère vaut mieux qu’une charge lourde avec une mauvaise technique."}];
+function coursHtml(){return `<div class="hero"><h1>Cours</h1><p class="sub">Des fiches simples pour comprendre ton entraînement</p></div>`+COURS.map(c=>`<details class="fc"><summary><b>${c.t}</b><span>${c.k}</span></summary>${c.b.map(x=>`<h3>${x[0]}</h3><p>${x[1]}</p>`).join("")}<p class="rt"><b>À retenir :</b> ${c.r}</p></details>`).join("")}
 function render(msg){
+ const tabs=`<div class="seg">${[["s","Séances"],["c","Cours"]].map(x=>`<button data-m="${x[0]}" class="${MODE==x[0]?"on":""}">${x[1]}</button>`).join("")}</div>`;
+ if(MODE=="c"){app.innerHTML=tabs+coursHtml();window.scrollTo(0,0);return}
  const s=S[cur],wk=cur<5?0:1;
- let h=`<div class="seg">${["Semaine 1","Semaine 2"].map((t,i)=>`<button data-w="${i}" class="${i==wk?"on":""}">${t}</button>`).join("")}</div>`;
- h+=`<div class="chips">${S.slice(wk*5,wk*5+5).map((x,k)=>`<button data-c="${wk*5+k}" class="${wk*5+k==cur?"on":""}">${x[1]}</button>`).join("")}</div>`;
- h+=`<div class="hero"><h1>${s[0]}</h1><p class="sub">${s[1]}</p><div class="bar"><i id="pb"></i></div><p class="pc" id="pt"></p><label class="clk"><input type="checkbox" id="ck"${CLK?" checked":""}>Lancer aussi le minuteur dans l’app Horloge (raccourci « Repos »)</label></div>`;
+ let h=tabs+`<div class="seg">${["Semaine 1","Semaine 2"].map((t,i)=>`<button data-w="${i}" class="${i==wk?"on":""}">${t}</button>`).join("")}</div>`;
+ h+=`<div class="chips">${S.slice(wk*5,wk*5+5).map((x,k)=>`<button data-c="${wk*5+k}" class="${wk*5+k==cur?"on":""}">${x[1]}${H["v."+(wk*5+k)]==today()?" ✓":""}</button>`).join("")}</div>`;
+ h+=`<div class="hero"><h1>${s[0]}</h1><p class="sub">${s[1]}</p><div class="bar"><i id="pb"></i></div><p class="pc" id="pt"></p><p class="pc" id="sm"></p><label class="clk"><input type="checkbox" id="ck"${CLK?" checked":""}>Lancer aussi le minuteur dans l’app Horloge (raccourci « Repos »)</label></div>`;
  s[3].forEach((e,j)=>{
   const p=e.split("|"),m=p[0].match(/^(A[12]) (.*)/),tag=m?m[1]:"",nm=m?m[2]:p[0];
   if(tag=="A1")h+=`<div class="ss"><div class="sst">Superset : enchaîne A1 puis A2, repose-toi après A2</div>`;
   h+=card(p,j,tag,nm);
   if(tag=="A2")h+=`</div>`});
- h+=`<div class="fin"><b>Finisher</b><p>${s[2]}</p></div><button id="sv">Enregistrer la séance</button><p class="note">${msg||""}</p><details><summary>Sauvegarde et import de mes données</summary><textarea id="ex" rows="4">${JSON.stringify(H)}</textarea><button id="im" class="r" style="margin-top:8px">Importer ces données</button></details>`;
- app.innerHTML=h;upd()}
-function upd(){
- const cs=app.querySelectorAll("section.c");let d=0;
- cs.forEach(c=>{if([...c.querySelectorAll(".row")].some(r=>!r.querySelector(".wu").checked&&r.querySelector(".kg").value!==""))d++});
+ h+=`<div class="fin"><b>Finisher</b><p>${s[2]}</p></div><button id="sv">${H["v."+cur]==today()?"Séance validée ✓ (mettre à jour)":"Valider la séance"}</button><p class="note">${msg||""}</p><details><summary>Sauvegarde et import de mes données</summary><textarea id="ex" rows="4">${JSON.stringify(H)}</textarea><button id="im" class="r" style="margin-top:8px">Importer ces données</button></details>`;
+ app.innerHTML=h;const dr=D[cur];if(dr&&dr.d==today())app.querySelectorAll(".row").forEach((r,i)=>{const a=dr.v[i];if(a){r.querySelector(".wu").checked=!!a[0];r.querySelector(".kg").value=a[1];r.querySelector(".rp").value=a[2]}});upd()}
+function upd(){if(!document.getElementById("pb"))return;
+ const cs=app.querySelectorAll("section.c"),tally={up:0,flat:0,dn:0};let d=0,all=cs.length>0;
+ cs.forEach(c=>{let n=0,ok=false,top=null;
+  c.querySelectorAll(".row").forEach(r=>{if(!r.querySelector(".wu").checked){n++;r.querySelector(".b").textContent="Série "+n;
+   const k=r.querySelector(".kg"),p=r.querySelector(".rp");
+   if(k.value!==""||p.value!=="")ok=true;
+   if(p.value===""||(k.value===""&&!k.dataset.ph))all=false;
+   const kg=k.value!==""?num(k.value):(k.dataset.ph!==""?+k.dataset.ph:null),rp=num(p.value);
+   if(kg!==null&&rp!==null&&(!top||kg>top.kg||(kg==top.kg&&rp>top.reps)))top={kg:kg,reps:rp}}});
+  if(ok)d++;else all=false;
+  const adv=c.querySelector(".adv");
+  if(top){const a=advise(c,top);adv.textContent=a[1];adv.className="adv "+a[0];tally[a[0]]++}else{adv.textContent="";adv.className="adv"}});
+ const val=H["v."+cur]==today(),pt=document.getElementById("pt"),sm=document.getElementById("sm");
  document.getElementById("pb").style.width=(cs.length?d/cs.length*100:0)+"%";
- document.getElementById("pt").textContent=`${d} sur ${cs.length} exercices notés`}
-function save(){
+ pt.textContent=`${d} sur ${cs.length} exercices notés`+(val?" · séance validée ✓":"");
+ pt.className="pc"+(val?" ok":"");
+ if(cs.length&&d==cs.length){const tip=tally.dn>=2&&tally.dn>tally.up?"Plusieurs exercices en baisse : soigne ton sommeil et ton repas d’avant séance, et allège le finisher si ça dure.":tally.up>tally.dn?"Bonne séance, tu progresses : continue comme ça.":"Séance stable : cherche une rep de plus sur tes séries lourdes.";sm.textContent=`${tally.up} en progression, ${tally.flat} stables, ${tally.dn} en baisse. `+tip}else sm.textContent="";
+ saveDraft();
+ clearTimeout(tv);if(all&&!skip)tv=setTimeout(()=>save(true),1500)}
+function save(auto){
  const rows={};
- app.querySelectorAll(".row").forEach(r=>{const j=r.dataset.j;(rows[j]=rows[j]||[]).push({kg:num(r.querySelector(".kg").value),reps:num(r.querySelector(".rp").value),w:r.querySelector(".wu").checked})});
+ app.querySelectorAll(".row").forEach(r=>{const j=r.dataset.j;const k=r.querySelector(".kg"),rp=num(r.querySelector(".rp").value);let kg=num(k.value);if(kg===null&&rp!==null&&k.dataset.ph)kg=+k.dataset.ph;(rows[j]=rows[j]||[]).push({kg:kg,reps:rp,w:r.querySelector(".wu").checked})});
  let n=0;
  Object.keys(rows).forEach(j=>{let best=null;
   rows[j].forEach(r=>{if(!r.w&&r.kg!==null&&(!best||r.kg>best.kg||(r.kg==best.kg&&(r.reps||0)>(best.reps||0))))best=r});
-  if(best){H[cur+"."+j]={kg:best.kg,reps:best.reps,sets:rows[j].filter(r=>!r.w&&r.kg!==null).map(r=>r.kg)};n++}});
- store();render(n?`Séance enregistrée : ${n} exercices.`:"Rien à enregistrer. Remplis au moins une série de travail.");
- window.scrollTo(0,0)}
+  if(best){const old=rec(cur,+j);H[cur+"."+j]={kg:best.kg,reps:best.reps,sets:rows[j].filter(r=>!r.w&&r.kg!==null).map(r=>r.kg),d:today(),p:old?(old.d==today()?(old.p||null):{kg:old.kg,reps:old.reps}):null};n++}});
+ if(n)H["v."+cur]=today();store();
+ const nt=app.querySelector(".note");if(nt)nt.textContent=n?`Séance validée ✓ : ${n} exercices enregistrés.`:"Rien à enregistrer. Remplis au moins une série de travail.";
+ const sv=document.getElementById("sv");if(n&&sv)sv.textContent="Séance validée ✓ (mettre à jour)";
+ const ch=app.querySelector(".chips .on");if(n&&ch&&!/✓/.test(ch.textContent))ch.textContent+=" ✓";
+ skip=true;upd();skip=false;if(!auto)window.scrollTo(0,0)}
 app.addEventListener("click",e=>{
  const t=e.target.closest("button");if(!t)return;
- if(t.dataset.w!==undefined){cur=+t.dataset.w*5+cur%5;store();render()}
+ if(t.dataset.m!==undefined){MODE=t.dataset.m;render()}
+ else if(t.dataset.w!==undefined){cur=+t.dataset.w*5+cur%5;store();render()}
  else if(t.dataset.c!==undefined){cur=+t.dataset.c;store();render()}
  else if(t.classList.contains("r")&&t.dataset.s){const n=secs(t.dataset.s);down(n);if(CLK)window.location.href="shortcuts://run-shortcut?name=Repos&input=text&text="+n}
  else if(t.id=="sv")save();
@@ -149,6 +240,16 @@ function down(n){up=false;v=n;run()}
 document.getElementById("tu").onclick=()=>{up=true;v=0;run()};
 document.getElementById("tp").onclick=()=>{if(!up){v+=15;iv?show():run()}};
 document.getElementById("ts").onclick=stop;
+try{if(!localStorage.getItem(KEY+"_pre1")){
+ const R=(w,k,p)=>[w,k,p],P=[
+  R(1,"23","10"),R(0,"36","10"),R(0,"50","10"),R(0,"57","10"),
+  R(1,"23","10"),R(0,"43","10"),R(0,"50","10"),R(0,"57","7"),
+  R(1,"18","12"),R(0,"24","12"),R(0,"26","12"),R(0,"28","12"),
+  R(1,"14","12"),R(0,"18","12"),R(0,"20.5","12"),R(0,"23","10"),
+  R(1,"4","12"),R(0,"6.8","12"),R(0,"7.3","12"),R(0,"9.3","8"),
+  R(1,"11","15"),R(0,"14.7","15"),R(0,"19.3","15"),R(0,"21.6","8")];
+ D[0]={d:today(),v:P};cur=0;
+ localStorage.setItem(KEY+"_draft",JSON.stringify(D));localStorage.setItem(KEY+"_pre1","1");store()}}catch(e){}
 render();
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script></body></html>

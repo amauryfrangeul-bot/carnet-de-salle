@@ -30,7 +30,7 @@ h1{margin:0;font:700 52px/0.95 "Barlow Condensed",Barlow,sans-serif}
 .sub{margin:4px 0 12px;color:var(--mut);font-size:18px}
 .bar{height:6px;background:var(--line);border-radius:6px;overflow:hidden}
 .bar i{display:block;height:100%;width:0;background:var(--yellow);transition:width .25s}
-.pc{margin:6px 0 0;color:var(--mut);font-size:14px}.pc.ok{color:var(--goal);font-weight:600}.seg+.seg{margin-top:8px}.fc{color:var(--ink);font-size:16px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:12px}.fc summary{cursor:pointer;list-style:none}.fc summary::-webkit-details-marker{display:none}.fc summary b{display:block;font:700 26px/1.1 "Barlow Condensed",Barlow,sans-serif}.fc summary span{display:block;color:var(--mut);font-size:15px;margin-top:4px}.fc h3{font:700 20px/1.1 "Barlow Condensed",Barlow,sans-serif;margin:16px 0 2px}.fc p{margin:2px 0}.fc .rt{margin-top:14px;background:var(--goalbg);color:var(--goal);border-radius:10px;padding:10px 12px;font-weight:500}:root{--warn:#A35F00}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--warn:#F5B700}}:root[data-theme="dark"]{--warn:#F5B700}.adv{margin:10px 0 0;font-size:14px;font-weight:500;color:var(--mut)}.adv.up{color:var(--goal)}.adv.dn{color:var(--warn)}.mu{margin-top:10px;font-size:14px;color:var(--mut)}.mu summary{cursor:pointer;color:var(--ink);font-weight:600}.mu p{margin:6px 0 0}.clk{display:flex;gap:10px;align-items:center;margin-top:12px;color:var(--mut);font-size:14px}.clk input{width:20px;height:20px;flex:none}
+.pc{margin:6px 0 0;color:var(--mut);font-size:14px}.pc.ok{color:var(--goal);font-weight:600}.seg+.seg{margin-top:8px}.fc{color:var(--ink);font-size:16px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:12px}.fc summary{cursor:pointer;list-style:none}.fc summary::-webkit-details-marker{display:none}.fc summary b{display:block;font:700 26px/1.1 "Barlow Condensed",Barlow,sans-serif}.fc summary span{display:block;color:var(--mut);font-size:15px;margin-top:4px}.fc h3{font:700 20px/1.1 "Barlow Condensed",Barlow,sans-serif;margin:16px 0 2px}.fc p{margin:2px 0}.fc .rt{margin-top:14px;background:var(--goalbg);color:var(--goal);border-radius:10px;padding:10px 12px;font-weight:500}:root{--warn:#A35F00}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--warn:#F5B700}}:root[data-theme="dark"]{--warn:#F5B700}.adv{margin:10px 0 0;font-size:14px;font-weight:500;color:var(--mut)}.adv.up{color:var(--goal)}.adv.dn{color:var(--warn)}.mu{margin-top:10px;font-size:14px;color:var(--mut)}.mu summary{cursor:pointer;color:var(--ink);font-weight:600}.mu p{margin:6px 0 0}.nx{margin:2px 0 4px 96px;font-size:13px;color:var(--mut)}.nx:empty{display:none}.nx.on{color:var(--goal);font-weight:600}.clk{display:flex;gap:10px;align-items:center;margin-top:12px;color:var(--mut);font-size:14px}.clk input{width:20px;height:20px;flex:none}
 .c{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:12px}
 .ct{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
 h2{margin:0;font:700 25px/1.1 "Barlow Condensed",Barlow,sans-serif}
@@ -127,6 +127,17 @@ const INFO=[
 [/crunch/,"Abdominaux (grand droit)","Obliques","Enroule le buste en soufflant, sans tirer avec les bras ni avec les hanches."],
 [/gainage/,"Abdos profonds (transverse) et grand droit","Obliques, lombaires, épaules","Corps en ligne, fessiers ni trop hauts ni creusés, respire normalement."]];
 function info(nm){const l=nm.toLowerCase(),e=INFO.find(x=>x[0].test(l));return e?`<details class="mu"><summary>Muscles travaillés</summary><p><b>Principal :</b> ${e[1]}</p><p><b>Secondaires :</b> ${e[2]}</p><p><b>Conseil :</b> ${e[3]}</p></details>`:""}
+function nxt(kg,reps,rg){
+ const m=String(rg).match(/^(\d+)(?:-(\d+))?$/);
+ if(!m)return/s$/.test(String(rg).trim())?"même charge, vise +5 secondes":`même charge (${fmt(kg)} kg), vise ${reps+1} reps`;
+ const lo=+m[1],hi=+(m[2]||m[1]);
+ if(reps>=hi)return`monte à ${fmt(kg+(kg<15?1:2.5))} kg, vise ${lo} reps`;
+ if(reps<lo)return`même charge (${fmt(kg)} kg), vise ${lo} reps`;
+ return`même charge (${fmt(kg)} kg), vise ${reps+1} reps`}
+function repsOf(rc,i){
+ if(rc.r&&rc.r[i]!=null)return rc.r[i];
+ if(rc.reps&&rc.sets&&i==rc.sets.indexOf(Math.max(...rc.sets)))return rc.reps;
+ return null}
 function ref(i,j){const r=rec(i,j);return r&&r.d==today()?(r.p||null):r}
 function advise(c,top){
  const rg=c.dataset.r,rf=ref(cur,+c.dataset.j),m=String(rg).match(/^(\d+)(?:-(\d+))?$/);
@@ -141,7 +152,7 @@ function card(p,j,tag,nm){
  let rows="";
  for(let q=1;q<=w+1;q++){
   const pv=rc&&rc.sets&&rc.sets[q-2]!==undefined?rc.sets[q-2]:null,ph=pv!==null?fmt(pv):"kg";
-  rows+=`<div class="row" data-j="${j}"><label class="chip"><input type="checkbox" class="wu"${q==1?" checked":""}><span class="a">Échauf.</span><span class="b">Série ${q-1}</span></label><input class="kg" inputmode="decimal" placeholder="${ph}" data-ph="${pv===null?"":pv}"><input class="rp" inputmode="numeric" placeholder="reps"></div>`}
+  rows+=`<div class="row" data-j="${j}"><label class="chip"><input type="checkbox" class="wu"${q==1?" checked":""}><span class="a">Échauf.</span><span class="b">Série ${q-1}</span></label><input class="kg" inputmode="decimal" placeholder="${ph}" data-ph="${pv===null?"":pv}"><input class="rp" inputmode="numeric" placeholder="reps"></div><div class="nx"></div>`}
  const rest=p[3]=="0 s"?`<span class="r z">Sans repos</span>`:`<button class="r" data-s="${p[3]}">Repos ${p[3]}</button>`;
  return `<section class="c" data-j="${j}" data-r="${p[2]}"><div class="ct"><h2>${tag?`<em>${tag}</em>`:""}${nm}</h2>${rest}</div><p class="m">${w}×${p[2]} + 1 échauffement</p><p class="last">Dernière séance : ${sg[0]}</p><p class="goal"><b>${sg[1]}</b></p><div class="hdr"><span></span><span>kg</span><span>reps</span></div>${rows}<p class="adv"></p>${info(nm)}</section>`}
 const COURS=[
@@ -193,13 +204,17 @@ function render(msg){
  app.innerHTML=h;const dr=D[cur];if(dr&&dr.d==today())app.querySelectorAll(".row").forEach((r,i)=>{const a=dr.v[i];if(a){r.querySelector(".wu").checked=!!a[0];r.querySelector(".kg").value=a[1];r.querySelector(".rp").value=a[2]}});upd()}
 function upd(){if(!document.getElementById("pb"))return;
  const cs=app.querySelectorAll("section.c"),tally={up:0,flat:0,dn:0};let d=0,all=cs.length>0;
- cs.forEach(c=>{let n=0,ok=false,top=null;
+ cs.forEach(c=>{let n=0,ok=false,top=null;const rc=ref(cur,+c.dataset.j),rg=c.dataset.r;
   c.querySelectorAll(".row").forEach(r=>{if(!r.querySelector(".wu").checked){n++;r.querySelector(".b").textContent="Série "+n;
    const k=r.querySelector(".kg"),p=r.querySelector(".rp");
    if(k.value!==""||p.value!=="")ok=true;
    if(p.value===""||(k.value===""&&!k.dataset.ph))all=false;
    const kg=k.value!==""?num(k.value):(k.dataset.ph!==""?+k.dataset.ph:null),rp=num(p.value);
-   if(kg!==null&&rp!==null&&(!top||kg>top.kg||(kg==top.kg&&rp>top.reps)))top={kg:kg,reps:rp}}});
+   if(kg!==null&&rp!==null&&(!top||kg>top.kg||(kg==top.kg&&rp>top.reps)))top={kg:kg,reps:rp};
+   const nx=r.nextElementSibling;let tx="",cl="nx";
+   if(kg!==null&&rp!==null){tx="Prochaine fois : "+nxt(kg,rp,rg);cl="nx on"}
+   else if(rc&&rc.sets&&rc.sets[n-1]!==undefined){const lr=repsOf(rc,n-1);if(lr)tx="Objectif : "+nxt(rc.sets[n-1],lr,rg)}
+   nx.textContent=tx;nx.className=cl}else r.nextElementSibling.textContent=""});
   if(ok)d++;else all=false;
   const adv=c.querySelector(".adv");
   if(top){const a=advise(c,top);adv.textContent=a[1];adv.className="adv "+a[0];tally[a[0]]++}else{adv.textContent="";adv.className="adv"}});
@@ -216,7 +231,7 @@ function save(auto){
  let n=0;
  Object.keys(rows).forEach(j=>{let best=null;
   rows[j].forEach(r=>{if(!r.w&&r.kg!==null&&(!best||r.kg>best.kg||(r.kg==best.kg&&(r.reps||0)>(best.reps||0))))best=r});
-  if(best){const old=rec(cur,+j);H[cur+"."+j]={kg:best.kg,reps:best.reps,sets:rows[j].filter(r=>!r.w&&r.kg!==null).map(r=>r.kg),d:today(),p:old?(old.d==today()?(old.p||null):{kg:old.kg,reps:old.reps}):null};n++}});
+  if(best){const old=rec(cur,+j);H[cur+"."+j]={kg:best.kg,reps:best.reps,sets:rows[j].filter(r=>!r.w&&r.kg!==null).map(r=>r.kg),r:rows[j].filter(r=>!r.w&&r.kg!==null).map(r=>r.reps),d:today(),p:old?(old.d==today()?(old.p||null):{kg:old.kg,reps:old.reps,sets:old.sets,r:old.r}):null};n++}});
  if(n)H["v."+cur]=today();store();
  const nt=app.querySelector(".note");if(nt)nt.textContent=n?`Séance validée ✓ : ${n} exercices enregistrés.`:"Rien à enregistrer. Remplis au moins une série de travail.";
  const sv=document.getElementById("sv");if(n&&sv)sv.textContent="Séance validée ✓ (mettre à jour)";

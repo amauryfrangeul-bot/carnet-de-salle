@@ -2,134 +2,106 @@
 <html lang="fr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Stock Plomberie</title>
+<meta name="claude:viewport-fit-sides" content="cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Stock">
 <meta name="theme-color" content="#0F2036">
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
 <style>
+/* Une colonne, lignes compactes, une grosse action par ligne ; le reste dans une feuille du bas */
 *{box-sizing:border-box}
-:root{--bg:#E8EBEF;--card:#fff;--ink:#101826;--mut:#5B6675;--line:#D3D9E0;--warm:#F3F5F8;--sel:#0F2036;--selfg:#fff;--acc:#1F6FD1;--accbg:#E3EEFB;--ok:#0B6B4D;--okbg:#DDF3E9;--warn:#A15C00;--warnbg:#FDF0D8;--bad:#B3261E;--badbg:#FBE3E1;color-scheme:light}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0B121C;--card:#142030;--ink:#EEF2F7;--mut:#94A1B3;--line:#25364B;--warm:#0F1926;--sel:#F5B700;--selfg:#101826;--acc:#6FA8F0;--accbg:#13294A;--ok:#59D3A4;--okbg:#12372D;--warn:#F5B700;--warnbg:#3A2D0A;--bad:#FF8A80;--badbg:#3D1614;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0B121C;--card:#142030;--ink:#EEF2F7;--mut:#94A1B3;--line:#25364B;--warm:#0F1926;--sel:#F5B700;--selfg:#101826;--acc:#6FA8F0;--accbg:#13294A;--ok:#59D3A4;--okbg:#12372D;--warn:#F5B700;--warnbg:#3A2D0A;--bad:#FF8A80;--badbg:#3D1614;color-scheme:dark}
-html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 Barlow,system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
-main{max-width:600px;margin:0 auto;padding:calc(10px + env(safe-area-inset-top,0px)) 16px calc(110px + env(safe-area-inset-bottom,0px))}
-button,input,select{font-family:inherit;font-size:16px}
+[hidden]{display:none!important}
+:root{--bg:#EEF1F4;--card:#fff;--ink:#101826;--mut:#5E6978;--line:#DCE1E7;--soft:#F3F5F8;--sel:#0F2036;--selfg:#fff;--acc:#1F6FD1;--bad:#C0261D;--badbg:#FCE6E4;--ok:#0B6B4D;--disp:"Barlow Condensed",Barlow,system-ui,sans-serif;--body:Barlow,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0B121C;--card:#142030;--ink:#EEF2F7;--mut:#94A1B3;--line:#25364B;--soft:#1A2838;--sel:#F5B700;--selfg:#101826;--acc:#6FA8F0;--bad:#FF8A80;--badbg:#3D1614;--ok:#59D3A4;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0B121C;--card:#142030;--ink:#EEF2F7;--mut:#94A1B3;--line:#25364B;--soft:#1A2838;--sel:#F5B700;--selfg:#101826;--acc:#6FA8F0;--bad:#FF8A80;--badbg:#3D1614;--ok:#59D3A4;color-scheme:dark}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.4 var(--body)}
+button,input{font:inherit;color:inherit}
 button{cursor:pointer}
-h1{margin:6px 0 2px;font:700 40px/1 "Barlow Condensed",Barlow,sans-serif}
-.sub{margin:0 0 12px;color:var(--mut)}
-.alert{display:flex;gap:10px;align-items:center;background:var(--badbg);color:var(--bad);border-radius:12px;padding:10px 12px;font-weight:600;margin-bottom:12px;border:0;width:100%;text-align:left}
-.alert[hidden]{display:none}
-.tools{display:flex;gap:8px;margin-bottom:10px}
-.tools input{flex:1;min-width:0;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink)}
-.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);font-weight:600;padding:10px 14px;border-radius:12px;white-space:nowrap}
-.btn.pri{background:var(--sel);color:var(--selfg);border-color:var(--sel)}
-.btn.acc{background:var(--acc);color:#fff;border-color:var(--acc)}
-.btn.sm{padding:7px 11px;font-size:15px;border-radius:10px}
-.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}
-.chips::-webkit-scrollbar{display:none}
-.chips button{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);font-weight:500;font-size:15px;padding:7px 13px;border-radius:999px}
-.chips .on{background:var(--sel);color:var(--selfg);border-color:var(--sel)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:10px}
-.card.low{border-color:var(--bad);box-shadow:inset 4px 0 0 var(--bad)}
-.top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-.name{font-weight:700;font-size:17px;line-height:1.25}
-.ref{color:var(--mut);font-size:14px}
-.badge{flex:none;font-size:13px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--okbg);color:var(--ok)}
-.badge.low{background:var(--badbg);color:var(--bad)}
-.badge.mid{background:var(--warnbg);color:var(--warn)}
-.qty{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
-.q{background:var(--warm);border-radius:10px;padding:8px 10px}
-.q small{display:block;color:var(--mut);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
-.q b{font:700 30px/1 "Barlow Condensed",Barlow,sans-serif}
-.q b.low{color:var(--bad)}
-.acts{display:flex;flex-wrap:wrap;gap:6px}
-.acts .sp{flex:1}
-a.btn{text-decoration:none;display:inline-flex;align-items:center}
-.empty{text-align:center;color:var(--mut);padding:30px 10px}
-nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:repeat(4,1fr);gap:4px;z-index:5}
-nav button{border:0;background:none;color:var(--mut);font-weight:600;font-size:14px;padding:6px 2px;border-radius:10px;position:relative;display:flex;flex-direction:column;align-items:center;gap:2px}
-nav button svg{width:24px;height:24px}
-nav .on{color:var(--ink);background:var(--warm)}
-nav .dot{position:absolute;top:2px;right:calc(50% - 22px);background:var(--bad);color:#fff;font-size:11px;min-width:18px;height:18px;line-height:18px;border-radius:9px;padding:0 4px}
-nav .dot[hidden]{display:none}
-dialog{border:0;border-radius:16px;padding:0;width:min(520px,calc(100vw - 24px));background:var(--card);color:var(--ink)}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+main{max-width:600px;margin:0 auto;padding-block:8px calc(96px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{display:flex;align-items:center;gap:8px;margin:4px 0 10px}
+h1{margin:0;flex:1;font:700 36px/1 var(--disp);text-wrap:balance}
+.ic{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-size:22px;font-weight:700;display:grid;place-items:center;padding:0}
+.alert{display:block;width:100%;text-align:left;border:0;border-radius:12px;background:var(--badbg);color:var(--bad);font-weight:700;padding:11px 14px;margin-bottom:10px}
+.search{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);margin-bottom:10px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:10px}
+.seg button{border:0;background:none;color:var(--mut);font-weight:700;padding:10px 4px;border-radius:9px}
+.seg .on{background:var(--sel);color:var(--selfg)}
+.list{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.grp{font:700 15px/1 var(--disp);text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin:16px 4px 6px}
+.row{display:flex;align-items:center;gap:10px;padding:8px 10px 8px 0;border-top:1px solid var(--line);min-height:62px}
+.list .row:first-child{border-top:0}
+.row .main{flex:1;min-width:0;border:0;background:none;text-align:left;padding:4px 0 4px 14px}
+.row.low .main{box-shadow:inset 4px 0 0 var(--bad)}
+.nm{display:block;font-weight:600;line-height:1.25}
+.meta{display:block;color:var(--mut);font-size:14px;font-variant-numeric:tabular-nums}
+.meta .lo{color:var(--bad);font-weight:700}
+.big{flex:none;min-width:64px;height:48px;border-radius:12px;border:0;background:var(--sel);color:var(--selfg);font:700 22px/1 var(--disp);padding:0 12px;display:grid;place-items:center;text-decoration:none}
+.big.alt{background:var(--soft);color:var(--ink);border:1px solid var(--line)}
+.big.acc{background:var(--acc);color:#fff;font-size:18px}
+.num{flex:none;min-width:52px;text-align:right;font:700 30px/1 var(--disp);font-variant-numeric:tabular-nums;padding-right:4px}
+.num.lo{color:var(--bad)}
+.empty{text-align:center;color:var(--mut);padding:28px 12px}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--card);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+nav button{border:0;background:none;color:var(--mut);font-weight:700;font-size:14px;padding:6px 2px;border-radius:10px;display:flex;flex-direction:column;align-items:center;gap:2px;position:relative}
+nav svg{width:26px;height:26px}
+nav .on{color:var(--ink);background:var(--soft)}
+.dot{position:absolute;top:2px;left:calc(50% + 6px);background:var(--bad);color:#fff;font-size:11px;min-width:18px;height:18px;line-height:18px;border-radius:9px;padding:0 4px;font-style:normal}
+dialog{border:0;padding:0;margin:auto auto 0;width:100%;max-width:600px;max-height:88vh;border-radius:18px 18px 0 0;background:var(--card);color:var(--ink)}
 dialog::backdrop{background:rgba(0,0,0,.45)}
-dialog form{padding:16px}
-dialog h2{margin:0 0 12px;font:700 26px/1.1 "Barlow Condensed",Barlow,sans-serif}
-label{display:block;font-size:14px;font-weight:600;color:var(--mut);margin:10px 0 4px}
-dialog input,dialog select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.foot{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
-.foot .del{margin-right:auto;color:var(--bad)}
-.hint{font-size:13px;color:var(--mut);margin-top:4px}
-.log{font-size:15px;border-bottom:1px solid var(--line);padding:8px 0;display:flex;justify-content:space-between;gap:10px}
+.sh{padding:18px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:10px}
+.sh h2{margin:0;font:700 28px/1.05 var(--disp);text-wrap:balance}
+.sub{margin:0;color:var(--mut);font-size:15px}
+.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.nums div{background:var(--soft);border-radius:10px;padding:8px 10px}
+.nums small{display:block;color:var(--mut);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.nums b{font:700 28px/1 var(--disp)}
+.nums b.lo{color:var(--bad)}
+.acts{display:flex;flex-direction:column;gap:8px}
+.act{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:13px 14px;font-weight:600;text-decoration:none;color:var(--ink)}
+.act.pri{background:var(--sel);color:var(--selfg);border-color:var(--sel);text-align:center}
+.act.acc{background:var(--acc);color:#fff;border-color:var(--acc);text-align:center}
+.act.danger{color:var(--bad)}
+.act.ghost{border:0;background:none;text-align:center;color:var(--mut)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.step{display:grid;grid-template-columns:64px 1fr 64px;gap:8px}
+.step button{height:60px;border-radius:12px;border:1px solid var(--line);background:var(--soft);font:700 30px/1 var(--disp)}
+.step input{height:60px;text-align:center;font:700 34px/1 var(--disp);border:1px solid var(--line);border-radius:12px;background:var(--bg);min-width:0}
+label{font-size:14px;font-weight:600;color:var(--mut);display:block;margin-bottom:4px}
+.fld input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+textarea{width:100%;height:200px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:13px/1.4 ui-monospace,Menlo,monospace}
+.log{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:15px}
 .log span{color:var(--mut);font-size:13px;flex:none}
-.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--sel);color:var(--selfg);padding:10px 16px;border-radius:12px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:10;max-width:calc(100vw - 32px)}
-.toast.show{opacity:1}
-.sec{font:700 20px/1.2 "Barlow Condensed",Barlow,sans-serif;margin:18px 0 8px;text-transform:uppercase;letter-spacing:.03em;color:var(--mut)}
-</style></head>
+.loglist{max-height:55vh;overflow:auto}
+.toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:10;display:flex;align-items:center;gap:12px;background:var(--sel);color:var(--selfg);padding:10px 12px 10px 16px;border-radius:12px;font-weight:600;max-width:calc(100vw - 32px);opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1;pointer-events:auto}
+.toast button{border:0;background:none;color:inherit;font-weight:700;text-decoration:underline;padding:4px}
+.toast button[hidden]{display:none}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+</style>
+
+</head>
 <body>
 <main>
-  <h1 id="title">Boutique</h1>
-  <p class="sub" id="subtitle"></p>
+  <header><h1 id="title">Camion</h1><button class="ic" id="addBtn" aria-label="Ajouter une pièce" hidden>+</button><button class="ic" id="menuBtn" aria-label="Menu">⋯</button></header>
   <button class="alert" id="alert" hidden></button>
   <div id="view"></div>
 </main>
 
 <nav id="nav">
-  <button data-v="boutique" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l1-5h16l1 5M3 9h18v11H3zM9 20v-6h6v6"/></svg>Boutique</button>
   <button data-v="camion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 6h13v10H1zM14 10h4l4 4v2h-8z"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>Camion</button>
+  <button data-v="boutique"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l1-5h16l1 5M3 9h18v11H3zM9 20v-6h6v6"/></svg>Boutique</button>
   <button data-v="commande"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4h2l2 11h12l2-8H6"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg>À commander<i class="dot" id="dot" hidden></i></button>
-  <button data-v="historique"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Historique</button>
 </nav>
 
-<dialog id="dlg"><form method="dialog" id="frm">
-  <h2 id="dlgT">Nouvelle pièce</h2>
-  <label for="fName">Nom de la pièce</label>
-  <input id="fName" required placeholder="ex : Raccord laiton 15/21">
-  <div class="row2">
-    <div><label for="fRef">Référence</label><input id="fRef" placeholder="ex : RL1521"></div>
-    <div><label for="fCat">Catégorie</label><input id="fCat" list="cats" placeholder="ex : Raccords"></div>
-  </div>
-  <datalist id="cats"></datalist>
-  <div class="row2">
-    <div><label for="fBou">Stock boutique</label><input id="fBou" type="number" min="0" inputmode="numeric" value="10"></div>
-    <div><label for="fCam">Dont dans le camion</label><input id="fCam" type="number" min="0" inputmode="numeric" value="0"></div>
-  </div>
-  <div class="row2">
-    <div><label for="fSeuil">Seuil d'alerte</label><input id="fSeuil" type="number" min="0" inputmode="numeric" value="3"></div>
-    <div><label for="fCmd">Qté à commander</label><input id="fCmd" type="number" min="1" inputmode="numeric" value="7"></div>
-  </div>
-  <label for="fUrl">Lien vers le produit (fournisseur)</label>
-  <input id="fUrl" type="url" placeholder="https://… (colle le lien de la page produit)">
-  <div class="hint">Sans lien, le bouton « Commander » lance une recherche du produit.</div>
-  <div class="foot">
-    <button type="button" class="btn del" id="fDel">Supprimer</button>
-    <button type="button" class="btn" id="fCancel">Annuler</button>
-    <button type="submit" class="btn pri" id="fOk">Enregistrer</button>
-  </div>
-</form></dialog>
-
-<dialog id="qdlg"><form method="dialog" id="qfrm">
-  <h2 id="qT"></h2>
-  <p class="sub" id="qS"></p>
-  <label for="qN">Quantité</label>
-  <input id="qN" type="number" min="1" inputmode="numeric" value="1">
-  <div class="foot">
-    <button type="button" class="btn" id="qCancel">Annuler</button>
-    <button type="submit" class="btn pri">Valider</button>
-  </div>
-</form></dialog>
-
-<div class="toast" id="toast"></div>
+<dialog id="dlg"><div class="sh" id="sh"></div></dialog>
+<div class="toast" id="toast" role="status"><span id="toastT"></span><button id="undo" hidden>Annuler</button></div>
 
 <script>
-const KEY="stock_plombier_v1";
-const SEUIL=3, DEPART=10;
+const KEY="stock_plombier_v1", SEUIL=3, DEPART=10;
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-
 const DEFAULTS=[
  ["Raccord laiton mâle/femelle 15/21","Raccords"],["Raccord laiton mâle/femelle 20/27","Raccords"],
  ["Coude cuivre 90° Ø14","Raccords"],["Coude cuivre 90° Ø16","Raccords"],["Té cuivre égal Ø14","Raccords"],
@@ -144,210 +116,191 @@ const DEFAULTS=[
  ["Brasure étain (bobine)","Consommables"],["Colle PVC (pot)","Consommables"],["Collier de fixation Ø16","Fixation"]
 ];
 
+/* ---------- Données ---------- */
 let S;
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
-function load(){
-  try{S=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){S=null}
-  if(!S||!Array.isArray(S.items)){
-    S={items:DEFAULTS.map(([name,cat],i)=>({id:"p"+i,name,cat,ref:"",bou:DEPART,cam:2,seuil:SEUIL,cmd:DEPART-SEUIL,url:""})),log:[]};
-    save();
-  }
-}
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+function fresh(){return{items:DEFAULTS.map(([name,cat],i)=>({id:"p"+i,name,cat,ref:"",bou:DEPART,cam:2,seuil:SEUIL,cmd:DEPART-SEUIL,url:""})),log:[]}}
+function load(){try{S=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){S=null}if(!S||!Array.isArray(S.items)){S=fresh();save()}S.log=S.log||[]}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
-function log(txt){S.log.unshift({t:Date.now(),txt});S.log=S.log.slice(0,200)}
+function log(t){S.log.unshift({t:Date.now(),txt:t});S.log=S.log.slice(0,200)}
+const byId=id=>S.items.find(p=>p.id===id);
 const isLow=p=>p.bou<=p.seuil;
+const dispo=p=>p.bou-p.cam;
 const orderUrl=p=>p.url||("https://www.google.com/search?tbm=shop&q="+encodeURIComponent(p.name+(p.ref?" "+p.ref:"")+" plomberie"));
-function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove("show"),2400)}
 
-let view="boutique", q="", cat="";
+/* ---------- Toast + annuler ---------- */
+let undoSnap=null;
+function toast(msg,undo){
+  $("#toastT").textContent=msg; $("#undo").hidden=!undo; undoSnap=undo||null;
+  const t=$("#toast"); t.classList.add("show"); clearTimeout(toast.h); toast.h=setTimeout(()=>{t.classList.remove("show");undoSnap=null},undo?5000:2400);
+}
+$("#undo").onclick=()=>{if(!undoSnap)return;const {id,bou,cam}=undoSnap;const p=byId(id);if(p){p.bou=bou;p.cam=cam;log(`Annulé : ${p.name}`);save();render()}undoSnap=null;$("#toast").classList.remove("show")};
+const snap=p=>({id:p.id,bou:p.bou,cam:p.cam});
 
-function badge(p){
-  if(p.bou===0) return '<span class="badge low">Rupture</span>';
-  if(isLow(p)) return '<span class="badge low">À commander</span>';
-  if(p.bou<=p.seuil+2) return '<span class="badge mid">Bientôt bas</span>';
-  return '<span class="badge">OK</span>';
-}
-function head(p){
-  return `<div class="top"><div><div class="name">${esc(p.name)}</div><div class="ref">${esc([p.ref,p.cat].filter(Boolean).join(" · "))}</div></div>${badge(p)}</div>`;
-}
-function qtys(p){
-  return `<div class="qty"><div class="q"><small>Boutique</small><b class="${isLow(p)?"low":""}">${p.bou}</b></div><div class="q"><small>Camion</small><b>${p.cam}</b></div></div>`;
-}
-const cmdBtn=p=>`<a class="btn sm acc" href="${esc(orderUrl(p))}" target="_blank" rel="noopener">Commander ↗</a>`;
+/* ---------- Mouvements ---------- */
+function done(p,msg,u){save();render();toast(isLow(p)?`⚠️ ${p.name} : plus que ${p.bou}, à commander`:msg,u)}
+function take(p,n){n=Math.min(n,p.cam);if(n<=0)return toast("Plus de pièce dans le camion");const u=snap(p);p.cam-=n;p.bou-=n;log(`Camion −${n} ${p.name} (boutique ${p.bou})`);done(p,`−${n} ${p.name} · reste ${p.cam} au camion`,u)}
+function use(p,n){n=Math.min(n,dispo(p));if(n<=0)return toast("Plus rien au dépôt");const u=snap(p);p.bou-=n;log(`Dépôt −${n} ${p.name} (boutique ${p.bou})`);done(p,`−${n} ${p.name}`,u)}
+function loadT(p,n){n=Math.min(n,dispo(p));if(n<=0)return toast("Plus rien au dépôt à charger");const u=snap(p);p.cam+=n;log(`Chargé ${n} ${p.name} dans le camion`);save();render();toast(`+${n} ${p.name} au camion`,u)}
+function unload(p,n){n=Math.min(n,p.cam);if(n<=0)return;const u=snap(p);p.cam-=n;log(`Remis ${n} ${p.name} au dépôt`);save();render();toast(`${n} remis au dépôt`,u)}
+function recv(p,n){if(n<=0)return;const u=snap(p);p.bou+=n;log(`Réception +${n} ${p.name} (boutique ${p.bou})`);save();render();toast(`+${n} ${p.name} reçu`,u)}
 
-function filtered(list){
-  const s=q.trim().toLowerCase();
-  return list.filter(p=>(!cat||p.cat===cat)&&(!s||(p.name+" "+p.ref+" "+p.cat).toLowerCase().includes(s)));
+/* ---------- Écrans ---------- */
+let view="camion", camMode="in", q="";
+const match=p=>{const s=q.trim().toLowerCase();return !s||(p.name+" "+p.ref+" "+p.cat).toLowerCase().includes(s)};
+const row=(p,meta,right)=>`<div class="row ${isLow(p)?"low":""}" data-id="${p.id}"><button class="main" data-x="open"><span class="nm">${esc(p.name)}</span><span class="meta">${meta}</span></button>${right}</div>`;
+const lo=(p,txt)=>isLow(p)?`<span class="lo">${txt}</span>`:txt;
+function grouped(list,fn){
+  const g={};list.forEach(p=>(g[p.cat||"Autres"]=g[p.cat||"Autres"]||[]).push(p));
+  return Object.keys(g).sort((a,b)=>a.localeCompare(b,"fr")).map(c=>`<div class="grp">${esc(c)}</div><div class="list">${g[c].map(fn).join("")}</div>`).join("");
 }
-function toolsHtml(withAdd){
-  const cats=[...new Set(S.items.map(p=>p.cat).filter(Boolean))].sort();
-  return `<div class="tools"><input id="q" type="search" placeholder="Rechercher une pièce…" value="${esc(q)}">${withAdd?'<button class="btn pri" id="add">+ Pièce</button>':""}</div>
-  <div class="chips"><button data-c="" class="${cat?"":"on"}">Tout</button>${cats.map(c=>`<button data-c="${esc(c)}" class="${c===cat?"on":""}">${esc(c)}</button>`).join("")}</div>`;
-}
+const searchBox=()=>`<input class="search" id="q" type="search" placeholder="Rechercher une pièce…" value="${esc(q)}" autocomplete="off">`;
 
 function render(){
   const low=S.items.filter(isLow);
   $("#dot").hidden=!low.length; $("#dot").textContent=low.length;
-  const al=$("#alert");
-  al.hidden=!low.length||view==="commande";
-  al.innerHTML=`⚠️ ${low.length} pièce${low.length>1?"s":""} à ${SEUIL} ou moins — à commander →`;
   document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===view));
+  $("#addBtn").hidden=view!=="boutique";
+  const al=$("#alert"); al.hidden=!low.length||view==="commande";
+  al.textContent=`⚠️ ${low.length} pièce${low.length>1?"s":""} à commander →`;
   const V=$("#view");
-  const totB=S.items.reduce((a,p)=>a+p.bou,0), totC=S.items.reduce((a,p)=>a+p.cam,0);
 
-  if(view==="boutique"){
-    $("#title").textContent="Boutique";
-    $("#subtitle").textContent=`${S.items.length} références · ${totB} pièces en stock (dont ${totC} dans le camion)`;
-    const L=filtered(S.items);
-    V.innerHTML=toolsHtml(true)+(L.length?L.map(p=>`<div class="card ${isLow(p)?"low":""}" data-id="${p.id}">${head(p)}${qtys(p)}
-      <div class="acts">
-        <button class="btn sm" data-a="use">− Utiliser</button>
-        <button class="btn sm" data-a="load">→ Camion</button>
-        <button class="btn sm" data-a="recv">+ Réception</button>
-        <span class="sp"></span>
-        ${isLow(p)?cmdBtn(p):""}
-        <button class="btn sm" data-a="edit">Modifier</button>
-      </div></div>`).join(""):'<div class="empty">Aucune pièce trouvée.</div>');
-  }
-  else if(view==="camion"){
+  if(view==="camion"){
     $("#title").textContent="Camion";
-    $("#subtitle").textContent=`${totC} pièces chargées · chaque pièce prise ici baisse aussi le stock boutique`;
-    const L=filtered(S.items.filter(p=>p.cam>0));
-    const rest=S.items.filter(p=>p.cam===0&&p.bou>0).length;
-    V.innerHTML=toolsHtml(false)+(L.length?L.map(p=>`<div class="card ${isLow(p)?"low":""}" data-id="${p.id}">${head(p)}${qtys(p)}
-      <div class="acts">
-        <button class="btn sm pri" data-a="take">− Prendre 1</button>
-        <button class="btn sm" data-a="takeN">Prendre…</button>
-        <button class="btn sm" data-a="unload">← Décharger</button>
-        <span class="sp"></span>
-        ${isLow(p)?cmdBtn(p):""}
-      </div></div>`).join(""):`<div class="empty">Le camion est vide${q||cat?" pour ce filtre":""}.<br>Va dans <b>Boutique</b> et appuie sur « → Camion » pour charger des pièces.</div>`)
-      +(rest?`<div class="sec">Charger depuis la boutique</div><button class="btn" id="loadAll">Charger 2 de chaque pièce manquante (${rest})</button>`:"");
+    const inT=S.items.filter(p=>p.cam>0);
+    const seg=`<div class="seg"><button data-m="in" class="${camMode==="in"?"on":""}">Dans le camion</button><button data-m="load" class="${camMode==="load"?"on":""}">+ Charger</button></div>`;
+    if(camMode==="in"){
+      const L=inT.filter(match);
+      V.innerHTML=seg+searchBox()+(L.length?grouped(L,p=>row(p,`Camion ${p.cam} · ${lo(p,"Boutique "+p.bou)}`,`<button class="big" data-x="take" aria-label="Prendre 1 ${esc(p.name)}">−1</button>`))
+        :`<div class="empty">${q?"Aucune pièce trouvée.":"Le camion est vide.<br>Appuie sur « + Charger »."}</div>`);
+    }else{
+      const L=S.items.filter(p=>dispo(p)>0).filter(match);
+      V.innerHTML=seg+searchBox()+(L.length?grouped(L,p=>row(p,`Au dépôt ${dispo(p)} · Camion ${p.cam}`,`<button class="big alt" data-x="load1" aria-label="Charger 1 ${esc(p.name)}">+1</button>`))
+        :`<div class="empty">${q?"Aucune pièce trouvée.":"Plus rien au dépôt à charger."}</div>`);
+    }
   }
-  else if(view==="commande"){
-    $("#title").textContent="À commander";
-    $("#subtitle").textContent=low.length?`${low.length} pièce${low.length>1?"s":""} au seuil d'alerte ou en dessous`:"Rien à commander, tout est au-dessus du seuil 👍";
-    V.innerHTML=(low.length?`<div class="tools"><button class="btn" id="share">📋 Copier / partager la liste</button></div>`:"")+
-      low.sort((a,b)=>a.bou-b.bou).map(p=>`<div class="card low" data-id="${p.id}">${head(p)}
-      <div class="qty"><div class="q"><small>En stock</small><b class="low">${p.bou}</b></div><div class="q"><small>À commander</small><b>${p.cmd}</b></div></div>
-      <div class="acts">
-        ${cmdBtn(p).replace("btn sm acc","btn acc")}
-        <button class="btn" data-a="recv">✓ Reçu</button>
-        <span class="sp"></span>
-        <button class="btn sm" data-a="edit">${p.url?"Modifier":"Ajouter le lien"}</button>
-      </div></div>`).join("");
+  else if(view==="boutique"){
+    $("#title").textContent="Boutique";
+    const L=S.items.filter(match);
+    V.innerHTML=searchBox()+(L.length?grouped(L,p=>row(p,`${p.ref?esc(p.ref)+" · ":""}dont ${p.cam} au camion`,`<div class="num ${isLow(p)?"lo":""}">${p.bou}</div>`))
+      :'<div class="empty">Aucune pièce trouvée.</div>');
   }
   else{
-    $("#title").textContent="Historique";
-    $("#subtitle").textContent="Derniers mouvements de stock";
-    V.innerHTML=(S.log.length?S.log.map(l=>`<div class="log"><div>${esc(l.txt)}</div><span>${new Date(l.t).toLocaleString("fr-FR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}</span></div>`).join(""):'<div class="empty">Aucun mouvement pour l\'instant.</div>')
-      +`<div class="sec">Sauvegarde</div><div class="acts"><button class="btn" id="exp">Exporter</button><button class="btn" id="imp">Importer</button><button class="btn" id="reset" style="color:var(--bad)">Réinitialiser</button></div>
-      <div class="hint">Les données sont enregistrées sur ce téléphone. Exporte-les de temps en temps pour ne rien perdre.</div>`;
+    $("#title").textContent="À commander";
+    V.innerHTML=low.length
+      ?`<div class="list">${low.sort((a,b)=>a.bou-b.bou).map(p=>row(p,`Reste <span class="lo">${p.bou}</span> · commander ${p.cmd}`,`<a class="big acc" href="${esc(orderUrl(p))}" target="_blank" rel="noopener">Commander</a>`)).join("")}</div>
+        <div class="acts" style="margin-top:12px"><button class="act" data-x="share">Copier la liste pour le fournisseur</button></div>
+        <p class="sub" style="margin-top:10px">Appuie sur une pièce quand la commande arrive pour la marquer reçue.</p>`
+      :'<div class="empty">Rien à commander. Tout est au-dessus du seuil.</div>';
   }
 }
 
-/* --- Mouvements de stock --- */
-const byId=id=>S.items.find(p=>p.id===id);
-function afterMove(p,msg){
-  save();render();
-  if(isLow(p)) toast(`⚠️ ${p.name} : plus que ${p.bou} — pense à commander`); else if(msg) toast(msg);
+/* ---------- Feuille du bas ---------- */
+let cur=null, qtyFn=null;
+const dlg=$("#dlg");
+function sheet(html){$("#sh").innerHTML=html;if(!dlg.open)dlg.showModal();$("#sh").scrollTop=0}
+const close=()=>dlg.close();
+dlg.addEventListener("click",e=>{if(e.target===dlg)close()});
+
+function openItem(p){
+  cur=p;
+  const a=[];
+  if(p.cam>0) a.push(`<button class="act" data-x="takeN">Prendre dans le camion…</button>`);
+  if(dispo(p)>0) a.push(`<button class="act" data-x="loadN">Charger dans le camion…</button>`);
+  if(dispo(p)>0) a.push(`<button class="act" data-x="useN">Utiliser au dépôt…</button>`);
+  if(p.cam>0) a.push(`<button class="act" data-x="unloadN">Remettre au dépôt…</button>`);
+  a.push(`<button class="act" data-x="recvN">Commande reçue…</button>`);
+  sheet(`<h2>${esc(p.name)}</h2>${p.ref||p.cat?`<p class="sub">${esc([p.ref,p.cat].filter(Boolean).join(" · "))}</p>`:""}
+    <div class="nums"><div><small>Boutique</small><b class="${isLow(p)?"lo":""}">${p.bou}</b></div><div><small>Camion</small><b>${p.cam}</b></div><div><small>Seuil</small><b>${p.seuil}</b></div></div>
+    <a class="act acc" href="${esc(orderUrl(p))}" target="_blank" rel="noopener">Commander ↗</a>
+    <div class="acts">${a.join("")}<button class="act" data-x="edit">Modifier la fiche</button></div>
+    <button class="act ghost" data-x="close">Fermer</button>`);
 }
-function takeFromTruck(p,n){            // prendre dans le camion => baisse camion ET boutique
-  n=Math.min(n,p.cam); if(n<=0) return toast("Plus de pièce dans le camion");
-  p.cam-=n; p.bou-=n; log(`Camion : −${n} ${p.name} (boutique ${p.bou})`); afterMove(p,`−${n} ${p.name}`);
+function askQty(title,sub,def,fn){
+  qtyFn=fn;
+  sheet(`<h2>${esc(title)}</h2><p class="sub">${esc(sub)}</p>
+    <div class="step"><button data-x="minus" aria-label="Moins">−</button><input id="qN" type="number" min="1" inputmode="numeric" value="${def}"><button data-x="plus" aria-label="Plus">+</button></div>
+    <div class="two"><button class="act ghost" data-x="close">Annuler</button><button class="act pri" data-x="qok">Valider</button></div>`);
 }
-function useFromShop(p,n){              // utiliser directement au dépôt
-  const dispo=p.bou-p.cam; n=Math.min(n,dispo); if(n<=0) return toast("Plus de pièce au dépôt (le reste est dans le camion)");
-  p.bou-=n; log(`Boutique : −${n} ${p.name} (reste ${p.bou})`); afterMove(p,`−${n} ${p.name}`);
+function confirmBox(msg,fn){qtyFn=fn;sheet(`<h2>${esc(msg)}</h2><div class="two"><button class="act" data-x="close">Annuler</button><button class="act pri" data-x="cok" style="background:var(--bad);border-color:var(--bad);color:#fff">Confirmer</button></div>`)}
+function textBox(title,sub,txt){sheet(`<h2>${esc(title)}</h2><p class="sub">${esc(sub)}</p><textarea id="tX" readonly>${esc(txt)}</textarea><div class="two"><button class="act" data-x="copy">Copier</button><button class="act pri" data-x="close">Fermer</button></div>`)}
+function editItem(p){
+  cur=p||null;
+  const f=(id,lab,val,type="text",extra="")=>`<div class="fld"><label for="${id}">${lab}</label><input id="${id}" type="${type}" value="${esc(val)}" ${extra}></div>`;
+  sheet(`<h2>${p?"Modifier la pièce":"Nouvelle pièce"}</h2>
+    ${f("fName","Nom de la pièce",p?p.name:"","text",'placeholder="ex : Raccord laiton 15/21"')}
+    <div class="two">${f("fRef","Référence",p?p.ref:"")}${f("fCat","Catégorie",p?p.cat:"","text",'list="cats"')}</div>
+    <datalist id="cats">${[...new Set(S.items.map(x=>x.cat).filter(Boolean))].map(c=>`<option value="${esc(c)}">`).join("")}</datalist>
+    <div class="two">${f("fBou","Stock boutique",p?p.bou:DEPART,"number",'min="0" inputmode="numeric"')}${f("fCam","Dont au camion",p?p.cam:0,"number",'min="0" inputmode="numeric"')}</div>
+    <div class="two">${f("fSeuil","Seuil d'alerte",p?p.seuil:SEUIL,"number",'min="0" inputmode="numeric"')}${f("fCmd","Qté à commander",p?p.cmd:DEPART-SEUIL,"number",'min="1" inputmode="numeric"')}</div>
+    ${f("fUrl","Lien du produit chez le fournisseur",p?p.url:"","url",'placeholder="https://…"')}
+    <div class="two"><button class="act ghost" data-x="close">Annuler</button><button class="act pri" data-x="saveItem">Enregistrer</button></div>
+    ${p?'<button class="act danger" data-x="del">Supprimer la pièce</button>':""}`);
 }
-function loadTruck(p,n){                // déplacer du dépôt vers le camion (le total boutique ne change pas)
-  const dispo=p.bou-p.cam; n=Math.min(n,dispo); if(n<=0) return toast("Rien à charger : tout est déjà dans le camion");
-  p.cam+=n; log(`Chargé ${n} ${p.name} dans le camion`); save();render(); toast(`${n} chargé${n>1?"s":""} dans le camion`);
+function menu(){
+  sheet(`<h2>Menu</h2><div class="acts">
+    <button class="act" data-x="hist">Historique des mouvements</button>
+    <button class="act" data-x="new">Ajouter une pièce</button>
+    <button class="act" data-x="exp">Sauvegarder mes données</button>
+    <button class="act" data-x="imp">Restaurer une sauvegarde</button>
+    <button class="act danger" data-x="reset">Tout remettre à zéro</button></div>
+    <button class="act ghost" data-x="close">Fermer</button>`);
 }
-function unloadTruck(p,n){
-  n=Math.min(n,p.cam); if(n<=0) return; p.cam-=n; log(`Déchargé ${n} ${p.name} au dépôt`); save();render(); toast(`${n} remis au dépôt`);
+function hist(){
+  sheet(`<h2>Historique</h2><div class="loglist">${S.log.length?S.log.map(l=>`<div class="log"><div>${esc(l.txt)}</div><span>${new Date(l.t).toLocaleString("fr-FR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}</span></div>`).join(""):'<p class="sub">Aucun mouvement pour l\'instant.</p>'}</div><button class="act pri" data-x="close">Fermer</button>`);
 }
-function receive(p,n){
-  if(n<=0) return; p.bou+=n; log(`Réception : +${n} ${p.name} (boutique ${p.bou})`); save();render(); toast(`+${n} ${p.name}`);
+function saveItem(){
+  const v=id=>$(id).value.trim(), n=(id,d)=>{const x=parseInt($(id).value,10);return isNaN(x)||x<0?d:x};
+  const name=v("#fName"); if(!name){toast("Donne un nom à la pièce");$("#fName").focus();return}
+  const d={name,ref:v("#fRef"),cat:v("#fCat"),bou:n("#fBou",DEPART),seuil:n("#fSeuil",SEUIL),cmd:Math.max(1,n("#fCmd",DEPART-SEUIL)),url:v("#fUrl")};
+  d.cam=Math.min(n("#fCam",0),d.bou);
+  if(d.url&&!/^https?:\/\//i.test(d.url))d.url="https://"+d.url;
+  if(cur){Object.assign(cur,d);log(`Fiche modifiée : ${name}`)}else{S.items.push({id:uid(),...d});log(`Nouvelle pièce : ${name} (${d.bou})`)}
+  save();close();render();toast("Pièce enregistrée");
+}
+function copyText(txt){
+  const sel=()=>{const t=$("#tX");if(t){t.focus();t.select()}toast("Texte sélectionné, fais Copier")};
+  try{navigator.clipboard.writeText(txt).then(()=>toast("Copié"),sel)}catch(e){sel()}
 }
 
-/* --- Boîte quantité --- */
-let qAct=null;
-function askQty(title,subtitle,def,fn){
-  $("#qT").textContent=title; $("#qS").textContent=subtitle; $("#qN").value=def; qAct=fn;
-  $("#qdlg").showModal(); setTimeout(()=>$("#qN").select(),50);
-}
-$("#qfrm").addEventListener("submit",()=>{const n=parseInt($("#qN").value,10)||0; if(qAct&&n>0) qAct(n); qAct=null});
-$("#qCancel").onclick=()=>$("#qdlg").close();
-
-/* --- Fiche pièce --- */
-let editId=null;
-function openEdit(p){
-  editId=p?p.id:null;
-  $("#dlgT").textContent=p?"Modifier la pièce":"Nouvelle pièce";
-  $("#fName").value=p?p.name:""; $("#fRef").value=p?p.ref:""; $("#fCat").value=p?p.cat:(cat||"");
-  $("#fBou").value=p?p.bou:DEPART; $("#fCam").value=p?p.cam:0;
-  $("#fSeuil").value=p?p.seuil:SEUIL; $("#fCmd").value=p?p.cmd:DEPART-SEUIL; $("#fUrl").value=p?p.url:"";
-  $("#fDel").hidden=!p;
-  $("#cats").innerHTML=[...new Set(S.items.map(x=>x.cat).filter(Boolean))].map(c=>`<option value="${esc(c)}">`).join("");
-  $("#dlg").showModal();
-}
-$("#frm").addEventListener("submit",e=>{
-  const name=$("#fName").value.trim(); if(!name){e.preventDefault();return}
-  const num=(id,d)=>{const v=parseInt($(id).value,10);return isNaN(v)||v<0?d:v};
-  const d={name,ref:$("#fRef").value.trim(),cat:$("#fCat").value.trim(),bou:num("#fBou",DEPART),seuil:num("#fSeuil",SEUIL),cmd:Math.max(1,num("#fCmd",DEPART-SEUIL)),url:$("#fUrl").value.trim()};
-  d.cam=Math.min(num("#fCam",0),d.bou);
-  if(d.url&&!/^https?:\/\//i.test(d.url)) d.url="https://"+d.url;
-  if(editId){Object.assign(byId(editId),d); log(`Fiche modifiée : ${name}`)}
-  else{S.items.push({id:uid(),...d}); log(`Nouvelle pièce : ${name} (${d.bou})`)}
-  save();render();
+/* ---------- Clics ---------- */
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-x],[data-m],nav button"); if(!b) return;
+  if(b.dataset.v){view=b.dataset.v;q="";camMode="in";render();scrollTo(0,0);return}
+  if(b.dataset.m){camMode=b.dataset.m;render();return}
+  const host=b.closest("[data-id]"), p=host?byId(host.dataset.id):cur;
+  const nv=()=>parseInt($("#qN").value,10)||0;
+  switch(b.dataset.x){
+    case "open": return camMode==="load"&&view==="camion"?askQty("Charger dans le camion",`${p.name} · ${dispo(p)} au dépôt`,Math.min(2,dispo(p)),n=>loadT(p,n)):openItem(p);
+    case "take": return take(p,1);
+    case "load1": return loadT(p,1);
+    case "takeN": return askQty("Prendre dans le camion",`${p.name} · ${p.cam} au camion`,1,n=>take(p,n));
+    case "loadN": return askQty("Charger dans le camion",`${p.name} · ${dispo(p)} au dépôt`,Math.min(2,dispo(p)),n=>loadT(p,n));
+    case "useN": return askQty("Utiliser au dépôt",`${p.name} · ${dispo(p)} au dépôt`,1,n=>use(p,n));
+    case "unloadN": return askQty("Remettre au dépôt",`${p.name} · ${p.cam} au camion`,p.cam,n=>unload(p,n));
+    case "recvN": return askQty("Commande reçue",`${p.name} · stock actuel ${p.bou}`,p.cmd,n=>recv(p,n));
+    case "minus": $("#qN").value=Math.max(1,nv()-1); return;
+    case "plus": $("#qN").value=nv()+1; return;
+    case "qok": {const n=nv(),f=qtyFn;qtyFn=null;close();if(n>0&&f)f(n);else toast("Mets une quantité d'au moins 1");return}
+    case "cok": {const f=qtyFn;qtyFn=null;close();if(f)f();return}
+    case "edit": return editItem(p);
+    case "new": return editItem(null);
+    case "saveItem": return saveItem();
+    case "del": {const it=cur;return confirmBox(`Supprimer « ${it.name} » ?`,()=>{S.items=S.items.filter(x=>x!==it);log(`Pièce supprimée : ${it.name}`);save();render();toast("Pièce supprimée")})}
+    case "share": {const low=S.items.filter(isLow);return textBox("Liste de commande","Copie-la puis colle-la dans un SMS ou un mail.","Commande plomberie :\n"+low.map(x=>`- ${x.cmd} × ${x.name}${x.ref?" ("+x.ref+")":""}${x.url?" : "+x.url:""}`).join("\n"))}
+    case "copy": return copyText($("#tX").value);
+    case "hist": return hist();
+    case "exp": return textBox("Sauvegarde","Copie ce texte et garde-le dans tes notes ou un mail. Pour restaurer, mets-le dans un fichier .json.",JSON.stringify(S));
+    case "imp": {close();const i=document.createElement("input");i.type="file";i.accept="application/json,.json,.txt";i.onchange=()=>{const f=i.files[0];if(!f)return;f.text().then(t=>{const d=JSON.parse(t);if(!Array.isArray(d.items))throw 0;S={items:d.items,log:d.log||[]};save();render();toast("Sauvegarde restaurée")}).catch(()=>toast("Fichier invalide : ce n'est pas une sauvegarde du stock"))};i.click();return}
+    case "reset": return confirmBox("Tout remettre à zéro ?",()=>{S=fresh();save();render();toast("Stock remis à zéro")});
+    case "close": return close();
+  }
 });
-$("#fCancel").onclick=()=>$("#dlg").close();
-$("#fDel").onclick=()=>{
-  const p=byId(editId); if(p&&confirm(`Supprimer « ${p.name} » ?`)){S.items=S.items.filter(x=>x!==p);log(`Pièce supprimée : ${p.name}`);save();$("#dlg").close();render()}
-};
-
-/* --- Clics --- */
-$("#nav").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;view=b.dataset.v;q="";cat="";render();scrollTo(0,0)});
+$("#menuBtn").onclick=menu;
+$("#addBtn").onclick=()=>editItem(null);
 $("#alert").onclick=()=>{view="commande";render();scrollTo(0,0)};
-$("#view").addEventListener("input",e=>{if(e.target.id==="q"){q=e.target.value;const pos=e.target.selectionStart;render();const i=$("#q");i.focus();i.setSelectionRange(pos,pos)}});
-$("#view").addEventListener("click",e=>{
-  const c=e.target.closest(".chips button"); if(c){cat=c.dataset.c;render();return}
-  const b=e.target.closest("button"); if(!b) return;
-  if(b.id==="add") return openEdit(null);
-  if(b.id==="share") return shareList();
-  if(b.id==="exp") return exportData();
-  if(b.id==="imp") return importData();
-  if(b.id==="reset"){ if(confirm("Tout remettre à zéro (10 pièces par référence) ?")){localStorage.removeItem(KEY);load();render();toast("Stock réinitialisé")} return }
-  if(b.id==="loadAll"){ let n=0; S.items.forEach(p=>{if(p.cam===0){const k=Math.min(2,p.bou);if(k>0){p.cam=k;n+=k}}}); log(`Chargement camion : ${n} pièces`); save();render(); toast(`${n} pièces chargées`); return }
-  const card=b.closest(".card"); if(!card) return; const p=byId(card.dataset.id); if(!p) return;
-  switch(b.dataset.a){
-    case "take": return takeFromTruck(p,1);
-    case "takeN": return askQty("Prendre dans le camion",p.name+` — ${p.cam} dans le camion`,1,n=>takeFromTruck(p,n));
-    case "unload": return askQty("Remettre au dépôt",p.name,p.cam,n=>unloadTruck(p,n));
-    case "use": return useFromShop(p,1);
-    case "load": return askQty("Charger dans le camion",p.name+` — ${p.bou-p.cam} dispo au dépôt`,Math.min(2,Math.max(1,p.bou-p.cam)),n=>loadTruck(p,n));
-    case "recv": return askQty("Réception de commande",p.name+` — stock actuel ${p.bou}`,p.cmd,n=>receive(p,n));
-    case "edit": return openEdit(p);
-  }
-});
-
-function shareList(){
-  const low=S.items.filter(isLow);
-  const txt="Commande plomberie :\n"+low.map(p=>`- ${p.cmd} × ${p.name}${p.ref?" ("+p.ref+")":""}${p.url?" : "+p.url:""}`).join("\n");
-  if(navigator.share) navigator.share({title:"Commande plomberie",text:txt}).catch(()=>{});
-  else navigator.clipboard?.writeText(txt).then(()=>toast("Liste copiée"),()=>alert(txt));
-}
-function exportData(){
-  const blob=new Blob([JSON.stringify(S,null,1)],{type:"application/json"});
-  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="stock-plomberie-"+new Date().toISOString().slice(0,10)+".json"; a.click();
-  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
-}
-function importData(){
-  const i=document.createElement("input"); i.type="file"; i.accept="application/json,.json";
-  i.onchange=()=>{const f=i.files[0]; if(!f) return; f.text().then(t=>{const d=JSON.parse(t); if(!Array.isArray(d.items)) throw 0; S={items:d.items,log:d.log||[]}; save(); render(); toast("Stock importé")}).catch(()=>alert("Fichier invalide"))};
-  i.click();
-}
+$("#view").addEventListener("input",e=>{if(e.target.id!=="q")return;q=e.target.value;const pos=e.target.selectionStart;render();const i=$("#q");i.focus();i.setSelectionRange(pos,pos)});
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&dlg.open){const ok=$("#sh [data-x=qok],#sh [data-x=saveItem]");if(ok&&e.target.tagName==="INPUT"){e.preventDefault();ok.click()}}});
 
 load(); render();
 if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});

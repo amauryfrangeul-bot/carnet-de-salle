@@ -1,4 +1,4 @@
-const C="stock-v2",A=["./","index.html"];
+const C="stock-v3",A=["./","index.html"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(A)).then(()=>self.skipWaiting()))});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
 // Réseau d'abord (pour recevoir les mises à jour), cache si pas de connexion

@@ -43,8 +43,8 @@ h1{margin:0;flex:1;font:700 36px/1 var(--disp);text-wrap:balance}
 .num{flex:none;min-width:52px;text-align:right;font:700 30px/1 var(--disp);font-variant-numeric:tabular-nums;padding-right:4px}
 .num.lo{color:var(--bad)}
 .empty{text-align:center;color:var(--mut);padding:28px 12px}
-nav{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--card);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);gap:2px;padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
-nav button{border:0;background:none;color:var(--mut);font-weight:700;font-size:13px;padding:6px 2px;border-radius:10px;display:flex;flex-direction:column;align-items:center;gap:2px;position:relative}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--card);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);gap:2px;padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+nav button{border:0;background:none;color:var(--mut);font-weight:700;font-size:12px;padding:6px 2px;border-radius:10px;display:flex;flex-direction:column;align-items:center;gap:2px;position:relative}
 nav svg{width:26px;height:26px}
 nav .on{color:var(--ink);background:var(--soft)}
 .dot{position:absolute;top:2px;left:calc(50% + 6px);background:var(--bad);color:#fff;font-size:11px;min-width:18px;height:18px;line-height:18px;border-radius:9px;padding:0 4px;font-style:normal}
@@ -106,6 +106,7 @@ textarea.ta{height:auto;min-height:64px;font:inherit;font-size:16px;padding:10px
 .back{border:0;background:none;color:var(--acc);font-weight:700;padding:4px 0;margin-bottom:6px}
 .chip{flex:none;font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px;background:var(--soft);color:var(--mut);text-transform:uppercase;letter-spacing:.04em}
 .chip.ok{color:var(--ok)}
+.cats{display:flex;flex-wrap:wrap;gap:6px}.cats button{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:8px 12px;font-weight:600}.cats .on{background:var(--sel);color:var(--selfg);border-color:var(--sel)}
 /* Document du devis : volontairement papier blanc dans les deux thèmes */
 :root{--paper:#FFFFFF;--pink:#14181F;--pmut:#5B6470;--pline:#D6DBE1;--phead:#0F2036}
 #doc{position:fixed;inset:0;z-index:20;background:var(--bg);overflow:auto;-webkit-overflow-scrolling:touch}
@@ -154,9 +155,10 @@ textarea.ta{height:auto;min-height:64px;font:inherit;font-size:16px;padding:10px
 
 <nav id="nav">
   <button data-v="camion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 6h13v10H1zM14 10h4l4 4v2h-8z"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>Camion</button>
-  <button data-v="boutique"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l1-5h16l1 5M3 9h18v11H3zM9 20v-6h6v6"/></svg>Boutique</button>
-  <button data-v="commande"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4h2l2 11h12l2-8H6"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg>À commander<i class="dot" id="dot" hidden></i></button>
+  <button data-v="boutique"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l1-5h16l1 5M3 9h18v11H3zM9 20v-6h6v6"/></svg>Boutique<i class="dot" id="dot" hidden></i></button>
   <button data-v="devis"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h8M9 17h6"/></svg>Devis</button>
+  <button data-v="factures"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 2h14v20l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M15 8.5a3 3 0 1 0 0 5M8 10h5M8 12.5h5"/></svg>Factures</button>
+  <button data-v="clients"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>Clients</button>
 </nav>
 
 <dialog id="dlg"><div class="sh" id="sh"></div></dialog>
@@ -181,7 +183,7 @@ const DEFAULTS=[
  ["Rouleau téflon","Consommables",2],["Pâte à joint (tube)","Consommables",8],["Filasse (écheveau)","Consommables",5],
  ["Brasure étain (bobine)","Consommables",25],["Colle PVC (pot)","Consommables",12],["Collier de fixation Ø16","Fixation",1.5]
 ];
-const CONF0={nom:"Mon entreprise de plomberie",adr:"12 rue des Artisans\n75000 Paris",tel:"06 00 00 00 00",mail:"contact@exemple.fr",siret:"123 456 789 00012",taux:70,depl:50,tva:10,valid:30,
+const CONF0={nom:"Mon entreprise de plomberie",adr:"12 rue des Artisans\n75000 Paris",tel:"06 00 00 00 00",mail:"contact@exemple.fr",siret:"123 456 789 00012",taux:70,depl:50,tva:10,valid:30,delai:0,
   ment:"Assurance décennale : à compléter (assureur, n° de contrat, zone couverte).\nPaiement : 30 % d'acompte à la signature, solde à la fin des travaux.\nPénalités de retard : 3 fois le taux d'intérêt légal. Indemnité forfaitaire pour frais de recouvrement : 40 €."};
 // Pièces : [nom de la pièce en stock, quantité] ou {nom, pu, q} pour une fourniture hors stock
 const PRESTA0=[
@@ -214,7 +216,10 @@ function load(){
   S.items.forEach(p=>{if(typeof p.prix!=="number")p.prix=dp[p.name]||0});
   S.conf={...CONF0,...(S.conf||{})};
   if(!Array.isArray(S.presta)) S.presta=freshPresta();
-  if(!Array.isArray(S.devis)) S.devis=[];
+  ["devis","factures","depenses","clients"].forEach(k=>{if(!Array.isArray(S[k]))S[k]=[]});
+  if(S.conf.numY&&!S.conf.nD){S.conf.nD={y:S.conf.numY,n:S.conf.num||0}}
+  S.items.forEach(p=>{if(typeof p.achat!=="number")p.achat=0});
+  S.devis.forEach(d=>{if(!d.clientId)ensureClient(d)});
   save();
 }
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
@@ -255,9 +260,9 @@ const searchBox=()=>`<input class="search" id="q" type="search" placeholder="Rec
 function render(){
   const low=S.items.filter(isLow);
   $("#dot").hidden=!low.length; $("#dot").textContent=low.length;
-  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===view));
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===view||(b.dataset.v==="boutique"&&view==="commande")));
   $("#addBtn").hidden=view!=="boutique";
-  const al=$("#alert"); al.hidden=!low.length||view==="commande"||view==="devis";
+  const al=$("#alert"); al.hidden=!low.length||view!=="camion"&&view!=="boutique";
   al.textContent=`⚠️ ${low.length} pièce${low.length>1?"s":""} à commander →`;
   const V=$("#view");
 
@@ -278,19 +283,23 @@ function render(){
   else if(view==="boutique"){
     $("#title").textContent="Boutique";
     const L=S.items.filter(match);
-    V.innerHTML=searchBox()+(L.length?grouped(L,p=>row(p,`${p.ref?esc(p.ref)+" · ":""}dont ${p.cam} au camion`,`<div class="num ${isLow(p)?"lo":""}">${p.bou}</div>`))
+    V.innerHTML=bseg(low.length)+searchBox()+(L.length?grouped(L,p=>row(p,`${p.ref?esc(p.ref)+" · ":""}dont ${p.cam} au camion`,`<div class="num ${isLow(p)?"lo":""}">${p.bou}</div>`))
       :'<div class="empty">Aucune pièce trouvée.</div>');
   }
-  else if(view==="devis"){ renderDevis(V); }
+  else if(view==="devis") renderDevisTab(V);
+  else if(view==="factures") renderFact(V);
+  else if(view==="clients") renderClients(V);
   else{
-    $("#title").textContent="À commander";
-    V.innerHTML=low.length
+    $("#title").textContent="Boutique";
+    V.innerHTML=bseg(low.length)+(low.length
       ?`<div class="list">${low.sort((a,b)=>a.bou-b.bou).map(p=>row(p,`Reste <span class="lo">${p.bou}</span> · commander ${p.cmd}`,`<a class="big acc" href="${esc(orderUrl(p))}" target="_blank" rel="noopener">Commander</a>`)).join("")}</div>
         <div class="acts" style="margin-top:12px"><button class="act" data-x="share">Copier la liste pour le fournisseur</button></div>
         <p class="sub" style="margin-top:10px">Appuie sur une pièce quand la commande arrive pour la marquer reçue.</p>`
-      :'<div class="empty">Rien à commander. Tout est au-dessus du seuil.</div>';
+      :'<div class="empty">Rien à commander. Tout est au-dessus du seuil.</div>');
   }
 }
+
+const bseg=n=>`<div class="seg"><button data-x="goView" data-v2="boutique" class="${view==="boutique"?"on":""}">Stock</button><button data-x="goView" data-v2="commande" class="${view==="commande"?"on":""}">À commander${n?` (${n})`:""}</button></div>`;
 
 /* ---------- Feuille du bas ---------- */
 let cur=null, qtyFn=null;
@@ -331,7 +340,7 @@ function editItem(p){
     <datalist id="cats">${[...new Set(S.items.map(x=>x.cat).filter(Boolean))].map(c=>`<option value="${esc(c)}">`).join("")}</datalist>
     <div class="two">${f("fBou","Stock boutique",p?p.bou:DEPART,"number",'min="0" inputmode="numeric"')}${f("fCam","Dont au camion",p?p.cam:0,"number",'min="0" inputmode="numeric"')}</div>
     <div class="two">${f("fSeuil","Seuil d'alerte",p?p.seuil:SEUIL,"number",'min="0" inputmode="numeric"')}${f("fCmd","Qté à commander",p?p.cmd:DEPART-SEUIL,"number",'min="1" inputmode="numeric"')}</div>
-    ${f("fPrix","Prix de vente HT (€) pour les devis",p?String(p.prix||0).replace(".",","):"","text",'inputmode="decimal" placeholder="ex : 12,50"')}
+    <div class="two">${f("fAchat","Prix d'achat HT (€)",p&&p.achat?String(p.achat).replace(".",","):"","text",'inputmode="decimal" placeholder="ex : 7,20"')}${f("fPrix","Prix de vente HT (€)",p?String(p.prix||0).replace(".",","):"","text",'inputmode="decimal" placeholder="ex : 12,50"')}</div>
     ${f("fUrl","Lien du produit chez le fournisseur",p?p.url:"","url",'placeholder="https://…"')}
     <div class="two"><button class="act ghost" data-x="close">Annuler</button><button class="act pri" data-x="saveItem">Enregistrer</button></div>
     ${p?'<button class="act danger" data-x="del">Supprimer la pièce</button>':""}`);
@@ -353,7 +362,7 @@ function hist(){
 function saveItem(){
   const v=id=>$(id).value.trim(), n=(id,d)=>{const x=parseInt($(id).value,10);return isNaN(x)||x<0?d:x};
   const name=v("#fName"); if(!name){toast("Donne un nom à la pièce");$("#fName").focus();return}
-  const d={name,ref:v("#fRef"),cat:v("#fCat"),bou:n("#fBou",DEPART),seuil:n("#fSeuil",SEUIL),cmd:Math.max(1,n("#fCmd",DEPART-SEUIL)),url:v("#fUrl"),prix:num($("#fPrix").value)};
+  const d={name,ref:v("#fRef"),cat:v("#fCat"),bou:n("#fBou",DEPART),seuil:n("#fSeuil",SEUIL),cmd:Math.max(1,n("#fCmd",DEPART-SEUIL)),url:v("#fUrl"),prix:num($("#fPrix").value),achat:num($("#fAchat").value)};
   d.cam=Math.min(n("#fCam",0),d.bou);
   if(d.url&&!/^https?:\/\//i.test(d.url))d.url="https://"+d.url;
   if(cur){Object.assign(cur,d);log(`Fiche modifiée : ${name}`)}else{S.items.push({id:uid(),...d});log(`Nouvelle pièce : ${name} (${d.bou})`)}
@@ -367,9 +376,9 @@ function copyText(txt){
 /* ---------- Clics ---------- */
 document.addEventListener("click",e=>{
   const b=e.target.closest("[data-x],[data-m],nav button"); if(!b) return;
-  if(b.dataset.v){view=b.dataset.v;q="";camMode="in";if(view==="devis")edId=null;render();scrollTo(0,0);return}
+  if(b.dataset.v){view=b.dataset.v;q="";camMode="in";edId=null;cliId=null;cq="";render();scrollTo(0,0);return}
   if(b.dataset.m){camMode=b.dataset.m;render();return}
-  if(b.dataset.x&&b.dataset.x.startsWith("d_")) return devisClick(b,e);
+  if(b.dataset.x&&/^[dfc]_/.test(b.dataset.x)) return devisClick(b,e);
   const host=b.closest("[data-id]"), p=host?byId(host.dataset.id):cur;
   const nv=()=>parseInt($("#qN").value,10)||0;
   switch(b.dataset.x){
@@ -380,7 +389,7 @@ document.addEventListener("click",e=>{
     case "loadN": return askQty("Charger dans le camion",`${p.name} · ${dispo(p)} au dépôt`,Math.min(2,dispo(p)),n=>loadT(p,n));
     case "useN": return askQty("Utiliser au dépôt",`${p.name} · ${dispo(p)} au dépôt`,1,n=>use(p,n));
     case "unloadN": return askQty("Remettre au dépôt",`${p.name} · ${p.cam} au camion`,p.cam,n=>unload(p,n));
-    case "recvN": return askQty("Commande reçue",`${p.name} · stock actuel ${p.bou}`,p.cmd,n=>recv(p,n));
+    case "recvN": return recvSheet(p);
     case "minus": $("#qN").value=Math.max(1,nv()-1); return;
     case "plus": $("#qN").value=nv()+1; return;
     case "qok": {const n=nv(),f=qtyFn;qtyFn=null;close();if(n>0&&f)f(n);else toast("Mets une quantité d'au moins 1");return}
@@ -393,8 +402,9 @@ document.addEventListener("click",e=>{
     case "copy": return copyText($("#tX").value);
     case "hist": return hist();
     case "exp": return textBox("Sauvegarde","Copie ce texte et garde-le dans tes notes ou un mail. Pour restaurer, mets-le dans un fichier .json.",JSON.stringify(S));
-    case "imp": {close();const i=document.createElement("input");i.type="file";i.accept="application/json,.json,.txt";i.onchange=()=>{const f=i.files[0];if(!f)return;f.text().then(t=>{const d=JSON.parse(t);if(!Array.isArray(d.items))throw 0;S={items:d.items,log:d.log||[],conf:d.conf,presta:d.presta,devis:d.devis};localStorage.setItem(KEY,JSON.stringify(S));load();render();toast("Sauvegarde restaurée")}).catch(()=>toast("Fichier invalide : ce n'est pas une sauvegarde du stock"))};i.click();return}
-    case "reset": return confirmBox("Remettre le stock à zéro ? (les devis sont gardés)",()=>{const k={conf:S.conf,presta:S.presta,devis:S.devis};S={...fresh(),...k};save();render();toast("Stock remis à zéro")});
+    case "imp": {close();const i=document.createElement("input");i.type="file";i.accept="application/json,.json,.txt";i.onchange=()=>{const f=i.files[0];if(!f)return;f.text().then(t=>{const d=JSON.parse(t);if(!Array.isArray(d.items))throw 0;S={...d,log:d.log||[]};localStorage.setItem(KEY,JSON.stringify(S));load();render();toast("Sauvegarde restaurée")}).catch(()=>toast("Fichier invalide : ce n'est pas une sauvegarde du stock"))};i.click();return}
+    case "reset": return confirmBox("Remettre le stock à zéro ? (devis, factures et clients sont gardés)",()=>{const k={conf:S.conf,presta:S.presta,devis:S.devis,factures:S.factures,depenses:S.depenses,clients:S.clients};S={...fresh(),...k};save();render();toast("Stock remis à zéro")});
+    case "goView": view=b.dataset.v2; render(); scrollTo(0,0); return;
     case "close": return close();
   }
 });
@@ -404,48 +414,92 @@ $("#alert").onclick=()=>{view="commande";render();scrollTo(0,0)};
 $("#view").addEventListener("input",e=>{if(e.target.id!=="q")return;q=e.target.value;const pos=e.target.selectionStart;render();const i=$("#q");i.focus();i.setSelectionRange(pos,pos)});
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&dlg.open){const ok=$("#sh [data-x=qok],#sh [data-x=saveItem]");if(ok&&e.target.tagName==="INPUT"){e.preventDefault();ok.click()}}});
 
-/* ================= DEVIS ================= */
-let edId=null, pickFn=null, prEd=null;
+/* ================= DEVIS, FACTURES, DÉPENSES, CLIENTS ================= */
+let edId=null, edKind="devis", pickFn=null, prEd=null, depEd=null, cliId=null, fMode="fac", cq="";
 function num(v){const x=parseFloat(String(v??"").replace(/\s/g,"").replace(",","."));return isNaN(x)?0:x}
 function eur(n){return (Math.round(n*100)/100).toLocaleString("fr-FR",{style:"currency",currency:"EUR"})}
+const r2=n=>Math.round(n*100)/100;
 const fr=n=>String(n).replace(".",",");
 const hfmt=h=>fr(h)+" h";
 const dfr=d=>new Date(d+"T12:00:00").toLocaleDateString("fr-FR");
-const curD=()=>S.devis.find(d=>d.id===edId);
+const todayISO=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+const addDays=(iso,n)=>{const d=new Date(iso+"T12:00:00");d.setDate(d.getDate()+n);return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+const arr=k=>k==="facture"?S.factures:S.devis;
+const curD=()=>arr(edKind).find(d=>d.id===edId);
+const cliById=id=>S.clients.find(c=>c.id===id);
 function lineTotal(d,l){return l.mode==="forfait"?num(l.forfait):l.h*d.taux+l.pieces.reduce((a,x)=>a+x.pu*x.q,0)}
 function totals(d){const ht=d.lignes.reduce((a,l)=>a+lineTotal(d,l),0)+(d.depl?d.deplPrix:0);const tva=ht*d.tva/100;return{ht,tva,ttc:ht+tva}}
-function nextNum(){
-  const c=S.conf, y=new Date().getFullYear();
-  if(c.numY!==y){c.numY=y;c.num=0}
-  c.num=(c.num||0)+1;
-  return `D-${y}-${String(c.num).padStart(3,"0")}`;
+function nextNum(pfx){
+  const c=S.conf, y=new Date().getFullYear(), k="n"+pfx;
+  if(!c[k]||c[k].y!==y) c[k]={y,n:0};
+  c[k].n++; return `${pfx}-${y}-${String(c[k].n).padStart(3,"0")}`;
 }
-const todayISO=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
-function newDevis(){
+const dueISO=f=>addDays(f.date,parseInt(S.conf.delai,10)||0);
+const isLate=f=>f.statut!=="payee"&&(parseInt(S.conf.delai,10)||0)>0&&dueISO(f)<todayISO();
+function fStatus(f){return f.statut==="payee"?'<span style="color:var(--ok);font-weight:700">payée</span>':isLate(f)?'<span class="lo">en retard</span>':"à payer"}
+
+/* --- Clients liés aux documents --- */
+function ensureClient(d){
+  const n=(d.client.nom||"").trim(); if(!n) return;
+  let c=d.clientId&&cliById(d.clientId);
+  if(!c){c=S.clients.find(x=>x.nom.trim().toLowerCase()===n.toLowerCase());if(!c){c={id:uid(),nom:n,adr:"",tel:"",mail:"",notes:""};S.clients.push(c)}d.clientId=c.id}
+  c.nom=n; if(d.client.adr) c.adr=d.client.adr; if(d.client.tel) c.tel=d.client.tel;
+  save();
+}
+function newDoc(kind,cl){
   const c=S.conf;
-  const d={id:uid(),num:nextNum(),date:todayISO(),client:{nom:"",adr:"",tel:""},lignes:[],depl:true,deplPrix:num(c.depl),taux:num(c.taux),tva:num(c.tva),statut:"brouillon",stockDone:false};
-  S.devis.unshift(d); save(); edId=d.id; render(); scrollTo(0,0);
+  const d={id:uid(),num:nextNum(kind==="facture"?"F":"D"),date:todayISO(),clientId:cl?cl.id:null,client:cl?{nom:cl.nom,adr:cl.adr,tel:cl.tel}:{nom:"",adr:"",tel:""},lignes:[],depl:true,deplPrix:num(c.depl),taux:num(c.taux),tva:num(c.tva),stockDone:false,statut:kind==="facture"?"a_payer":"brouillon",paye:null};
+  arr(kind).unshift(d); save(); openDoc(kind,d.id);
+}
+function openDoc(kind,id){edKind=kind;edId=id;cliId=null;view=kind==="facture"?"factures":"devis";render();scrollTo(0,0)}
+function toFacture(d){
+  ensureClient(d);
+  const f=JSON.parse(JSON.stringify(d));
+  Object.assign(f,{id:uid(),num:nextNum("F"),date:todayISO(),statut:"a_payer",paye:null,devisId:d.id,devisNum:d.num});
+  delete f.factureId; delete f.factureNum;
+  S.factures.unshift(f); d.factureId=f.id; d.factureNum=f.num; d.statut="accepte";
+  save(); openDoc("facture",f.id); toast(`Facture ${f.num} créée`);
 }
 function pieceSnap(x){if(x.id){const it=byId(x.id);return it?{id:it.id,nom:it.name,pu:it.prix||0,q:x.q}:null}return{nom:x.nom,pu:num(x.pu),q:x.q}}
 const prestaToLine=t=>({nom:t.nom,desc:t.desc,mode:"temps",h:t.h,forfait:t.forfait,pieces:t.pieces.map(pieceSnap).filter(Boolean)});
 
-function renderDevis(V){
-  const d=curD();
-  if(!d){
-    $("#title").textContent="Devis";
-    V.innerHTML=`<div class="acts" style="margin-bottom:12px"><button class="act pri" data-x="d_new">+ Nouveau devis</button></div>`
-      +(S.devis.length?`<div class="list">${S.devis.map(x=>`<div class="row" data-di="${x.id}"><button class="main" data-x="d_open"><span class="nm">${esc(x.client.nom||"Client à renseigner")}</span><span class="meta">${esc(x.num)} · ${dfr(x.date)}${x.statut==="accepte"?' · <span style="color:var(--ok);font-weight:700">accepté</span>':""}</span></button><span class="num" style="font-size:20px">${eur(totals(x).ttc)}</span></div>`).join("")}</div>`
-      :'<div class="empty">Aucun devis pour l\'instant.<br>Appuie sur « + Nouveau devis ».</div>')
-      +`<p class="sub" style="margin-top:12px">Taux horaire ${eur(S.conf.taux)} HT · Déplacement ${eur(S.conf.depl)} HT. À changer dans ⋯ → Mon entreprise et mes tarifs.</p>`;
-    return;
+/* --- Onglet Devis --- */
+function renderDevisTab(V){
+  const d=edKind==="devis"?curD():null;
+  if(d) return renderEditor(V,d,"devis");
+  $("#title").textContent="Devis";
+  V.innerHTML=`<div class="acts" style="margin-bottom:12px"><button class="act pri" data-x="d_new">+ Nouveau devis</button></div>`
+    +(S.devis.length?`<div class="list">${S.devis.map(x=>`<div class="row"><button class="main" data-x="d_open" data-k="devis" data-did="${x.id}"><span class="nm">${esc(x.client.nom||"Client à renseigner")}</span><span class="meta">${esc(x.num)} · ${dfr(x.date)}${x.factureId?' · <span style="color:var(--ok);font-weight:700">facturé</span>':x.statut==="accepte"?' · <span style="color:var(--ok);font-weight:700">accepté</span>':""}</span></button><span class="num" style="font-size:20px">${eur(totals(x).ttc)}</span></div>`).join("")}</div>`
+    :'<div class="empty">Aucun devis pour l\'instant.<br>Appuie sur « + Nouveau devis ».</div>')
+    +`<p class="sub" style="margin-top:12px">Taux horaire ${eur(S.conf.taux)} HT · Déplacement ${eur(S.conf.depl)} HT. À changer dans ⋯ → Mon entreprise et mes tarifs.</p>`;
+}
+
+/* --- Éditeur commun devis / facture --- */
+function renderEditor(V,d,kind){
+  const F=kind==="facture", t=totals(d);
+  $("#title").textContent=(F?"Facture ":"Devis ")+d.num;
+  let acts;
+  if(F){
+    acts=`<button class="act acc" data-x="d_doc">Voir la facture / PDF</button>
+      ${d.statut==="payee"?`<button class="act" data-x="d_unpay">✓ Payée le ${dfr(d.paye.date)} (${esc(d.paye.mode)}) · appuie pour annuler</button>`:`<button class="act pri" data-x="d_pay">Marquer comme payée</button>`}
+      <button class="act" data-x="d_stock" ${d.stockDone?"disabled":""}>${d.stockDone?"✓ Pièces déjà retirées du stock":"Retirer les pièces du stock"}</button>
+      <button class="act danger" data-x="d_del">Supprimer la facture</button>`;
+  }else{
+    acts=`<button class="act acc" data-x="d_doc">Voir le devis / PDF</button>
+      ${d.factureId?`<button class="act" data-x="d_goF">✓ Facturé : ${esc(d.factureNum||"voir la facture")} →</button>`
+        :d.statut==="accepte"?`<button class="act pri" data-x="d_conv">Transformer en facture</button><button class="act" data-x="d_status">✓ Devis accepté · appuie pour annuler</button>`
+        :`<button class="act" data-x="d_status">Marquer le devis comme accepté</button>`}
+      <button class="act" data-x="d_stock" ${d.stockDone?"disabled":""}>${d.stockDone?"✓ Pièces déjà retirées du stock":"Chantier terminé : retirer les pièces du stock"}</button>
+      <button class="act" data-x="d_dup">Dupliquer le devis</button>
+      <button class="act danger" data-x="d_del">Supprimer le devis</button>`;
   }
-  $("#title").textContent="Devis "+d.num;
-  const t=totals(d);
-  V.innerHTML=`<button class="back" data-x="d_back">← Mes devis</button>
+  V.innerHTML=`<button class="back" data-x="d_back">← ${F?"Mes factures":"Mes devis"}</button>
+  ${F&&d.devisNum?`<p class="sub" style="margin-bottom:8px">D'après le devis ${esc(d.devisNum)}</p>`:""}
   <div class="card"><h3>Client</h3>
     <div class="fld"><label for="cNom">Nom</label><input id="cNom" data-f="client.nom" value="${esc(d.client.nom)}" autocomplete="off" placeholder="ex : M. Dupont"></div>
     <div class="fld"><label for="cAdr">Adresse du chantier</label><textarea class="ta" id="cAdr" data-f="client.adr" rows="2">${esc(d.client.adr)}</textarea></div>
     <div class="fld"><label for="cTel">Téléphone</label><input id="cTel" data-f="client.tel" type="tel" value="${esc(d.client.tel)}"></div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap"><button class="link" data-x="d_pickC">Choisir dans mes clients</button>${d.clientId?'<button class="link" data-x="d_goC">Fiche client →</button>':""}</div>
   </div>
   ${d.lignes.map((l,i)=>lineCard(d,l,i)).join("")}
   <div class="acts" style="margin-bottom:10px"><button class="act pri" data-x="d_addT">+ Ajouter des travaux</button></div>
@@ -455,13 +509,7 @@ function renderDevis(V){
     <p class="sub" style="margin-top:6px">10 % : rénovation d'un logement de plus de 2 ans · 20 % : logement neuf ou local pro · 5,5 % : rénovation énergétique.</p></div>
     <div class="tot"><div><span>Total HT</span><span id="tHT">${eur(t.ht)}</span></div><div><span>TVA ${fr(d.tva)} %</span><span id="tTVA">${eur(t.tva)}</span></div><div class="ttc"><span>Total TTC</span><span id="tTTC">${eur(t.ttc)}</span></div></div>
   </div>
-  <div class="acts">
-    <button class="act acc" data-x="d_doc">Voir le devis / PDF</button>
-    <button class="act" data-x="d_status">${d.statut==="accepte"?"✓ Devis accepté (appuie pour annuler)":"Marquer le devis comme accepté"}</button>
-    <button class="act" data-x="d_stock" ${d.stockDone?"disabled":""}>${d.stockDone?"✓ Pièces déjà retirées du stock":"Chantier terminé : retirer les pièces du stock"}</button>
-    <button class="act" data-x="d_dup">Dupliquer le devis</button>
-    <button class="act danger" data-x="d_del">Supprimer le devis</button>
-  </div>`;
+  <div class="acts">${acts}</div>`;
 }
 function lineCard(d,l,i){
   const forf=l.mode==="forfait";
@@ -478,7 +526,101 @@ function lineCard(d,l,i){
   </div>`;
 }
 
-/* --- Choix des travaux et des pièces --- */
+/* --- Onglet Factures --- */
+function renderFact(V){
+  const d=edKind==="facture"?curD():null;
+  if(d) return renderEditor(V,d,"facture");
+  $("#title").textContent="Factures";
+  const m=todayISO().slice(0,7), mois=new Date().toLocaleDateString("fr-FR",{month:"long",year:"numeric"});
+  const facM=S.factures.filter(f=>f.date.slice(0,7)===m).reduce((a,f)=>a+totals(f).ht,0);
+  const encM=S.factures.filter(f=>f.statut==="payee"&&f.paye&&f.paye.date.slice(0,7)===m).reduce((a,f)=>a+totals(f).ttc,0);
+  const due=S.factures.filter(f=>f.statut!=="payee"), dueT=due.reduce((a,f)=>a+totals(f).ttc,0);
+  const depM=S.depenses.filter(e=>e.date.slice(0,7)===m), depT=depM.reduce((a,e)=>a+e.ttc,0), depHT=depM.reduce((a,e)=>a+e.ttc/(1+e.tva/100),0);
+  const seg=`<div class="seg"><button data-x="f_mode" data-v2="fac" class="${fMode==="fac"?"on":""}">Factures</button><button data-x="f_mode" data-v2="dep" class="${fMode==="dep"?"on":""}">Dépenses</button></div>`;
+  const sum=`<div class="card"><div class="grp" style="margin:0">${esc(mois)}</div>
+    <div class="nums"><div><small>Facturé HT</small><b>${eur(facM).replace(/,\d\d/,"")}</b></div><div><small>Dépenses TTC</small><b>${eur(depT).replace(/,\d\d/,"")}</b></div><div><small>À encaisser</small><b class="${due.length?"lo":""}">${eur(dueT).replace(/,\d\d/,"")}</b></div></div>
+    <p class="sub">Encaissé ce mois : ${eur(encM)} · Résultat estimé : ${eur(facM-depHT)} HT</p></div>`;
+  if(fMode==="fac"){
+    const acc=S.devis.filter(x=>x.statut==="accepte"&&!x.factureId);
+    V.innerHTML=seg+sum+`<div class="acts" style="margin-bottom:12px">${acc.length?`<button class="act pri" data-x="f_fromDevis">Facturer un devis accepté (${acc.length})</button>`:""}<button class="act ${acc.length?"":"pri"}" data-x="f_new">+ Nouvelle facture</button></div>`
+      +(S.factures.length?`<div class="list">${S.factures.map(f=>`<div class="row ${isLate(f)?"low":""}"><button class="main" data-x="d_open" data-k="facture" data-did="${f.id}"><span class="nm">${esc(f.client.nom||"Client à renseigner")}</span><span class="meta">${esc(f.num)} · ${dfr(f.date)} · ${fStatus(f)}</span></button><span class="num" style="font-size:20px">${eur(totals(f).ttc)}</span></div>`).join("")}</div>`
+      :'<div class="empty">Aucune facture pour l\'instant.<br>Accepte un devis puis « Transformer en facture », ou crée une facture directement.</div>');
+  }else{
+    const g={};S.depenses.slice().sort((a,b)=>b.date.localeCompare(a.date)).forEach(e=>(g[e.date.slice(0,7)]=g[e.date.slice(0,7)]||[]).push(e));
+    V.innerHTML=seg+sum+`<div class="acts" style="margin-bottom:4px"><button class="act pri" data-x="f_dep">+ Ajouter une dépense</button></div>`
+      +(S.depenses.length?Object.keys(g).map(k=>`<div class="grp">${esc(new Date(k+"-15T12:00:00").toLocaleDateString("fr-FR",{month:"long",year:"numeric"}))} · ${eur(g[k].reduce((a,e)=>a+e.ttc,0))}</div><div class="list">${g[k].map(e=>`<div class="row"><button class="main" data-x="f_depEdit" data-eid="${e.id}"><span class="nm">${esc(e.lib||e.cat)}</span><span class="meta">${esc(e.cat)} · ${dfr(e.date)} · TVA ${fr(e.tva)} %</span></button><span class="num" style="font-size:20px">${eur(e.ttc)}</span></div>`).join("")}</div>`).join("")
+      :'<div class="empty">Aucune dépense enregistrée.<br>Essence, repas, péage, pièces… ajoute-les ici.</div>')
+      +`<p class="sub" style="margin-top:10px">Les commandes de pièces reçues (Boutique → pièce → Commande reçue) peuvent s'ajouter ici automatiquement.</p>`;
+  }
+}
+const CATS={"Carburant":20,"Repas":10,"Pièces":20,"Outillage":20,"Péage / parking":20,"Autre":20};
+function depSheet(){
+  const e=depEd;
+  sheet(`<h2>${e._new?"Nouvelle dépense":"Modifier la dépense"}</h2>
+   <div class="cats">${Object.keys(CATS).map(c=>`<button data-x="f_cat" data-v2="${esc(c)}" class="${e.cat===c?"on":""}">${esc(c)}</button>`).join("")}</div>
+   <div class="fld"><label for="eT">Montant TTC (€)</label><input id="eT" inputmode="decimal" value="${e.ttc===""?"":fr(e.ttc)}" placeholder="ex : 45,80" style="font:700 26px/1 var(--disp)"></div>
+   <div class="fld"><label for="eL">Libellé</label><input id="eL" value="${esc(e.lib)}" placeholder="${e.cat==="Repas"?"ex : Repas du midi":e.cat==="Carburant"?"ex : Plein gasoil":"ex : Facture fournisseur"}"></div>
+   <div class="two"><div class="fld"><label for="eD">Date</label><input id="eD" type="date" value="${e.date}"></div><div class="fld"><label for="eV">TVA (%)</label><input id="eV" inputmode="decimal" value="${fr(e.tva)}"></div></div>
+   <div class="two"><button class="act ghost" data-x="close">Annuler</button><button class="act pri" data-x="f_depOk">Enregistrer</button></div>
+   ${e._new?"":'<button class="act danger" data-x="f_depDel">Supprimer la dépense</button>'}`);
+  if(e._new) setTimeout(()=>{const i=$("#eT");if(i)i.focus()},60);
+}
+function grabE(){depEd.ttc=$("#eT").value.trim()===""?"":num($("#eT").value);depEd.lib=$("#eL").value.trim();depEd.date=$("#eD").value||todayISO();depEd.tva=num($("#eV").value)}
+function recvSheet(p){
+  cur=p; const m=p.achat?fr(r2(p.cmd*p.achat*1.2)):"";
+  sheet(`<h2>Commande reçue</h2><p class="sub">${esc(p.name)} · stock actuel ${p.bou}</p>
+   <label for="qN">Quantité reçue</label>
+   <div class="step"><button data-x="minus" aria-label="Moins">−</button><input id="qN" type="number" min="1" inputmode="numeric" value="${p.cmd}"><button data-x="plus" aria-label="Plus">+</button></div>
+   <div class="fld"><label for="rM">Montant de la facture fournisseur TTC (€)</label><input id="rM" inputmode="decimal" value="${m}" placeholder="facultatif"></div>
+   <p class="sub">Avec un montant, la commande est ajoutée à tes dépenses (catégorie Pièces).</p>
+   <div class="two"><button class="act ghost" data-x="close">Annuler</button><button class="act pri" data-x="f_recvOk">Valider</button></div>`);
+}
+
+/* --- Onglet Clients --- */
+function renderClients(V){
+  const c=cliId&&cliById(cliId);
+  if(!c){
+    $("#title").textContent="Clients";
+    const s=cq.trim().toLowerCase();
+    const L=S.clients.filter(x=>!s||(x.nom+" "+x.adr+" "+x.tel).toLowerCase().includes(s)).sort((a,b)=>a.nom.localeCompare(b.nom,"fr"));
+    V.innerHTML=`<div class="acts" style="margin-bottom:10px"><button class="act pri" data-x="c_new">+ Nouveau client</button></div>
+      <input class="search" id="cq" type="search" placeholder="Rechercher un client…" value="${esc(cq)}" autocomplete="off">`
+      +(L.length?`<div class="list">${L.map(x=>{const n=S.factures.filter(f=>f.clientId===x.id).length;return `<div class="row"><button class="main" data-x="c_open" data-cid="${x.id}"><span class="nm">${esc(x.nom)}</span><span class="meta">${esc((x.adr||"").split("\n").join(", ")||"Adresse à renseigner")}${n?` · ${n} facture${n>1?"s":""}`:""}</span></button></div>`}).join("")}</div>`
+      :`<div class="empty">${s?"Aucun client trouvé.":"Aucun client pour l'instant.<br>Ils s'ajoutent aussi tout seuls quand tu fais un devis."}</div>`);
+    return;
+  }
+  $("#title").textContent=c.nom;
+  const fac=S.factures.filter(f=>f.clientId===c.id), dev=S.devis.filter(d=>d.clientId===c.id);
+  const totF=fac.reduce((a,f)=>a+totals(f).ttc,0);
+  const docRow=(d,k)=>`<div class="row"><button class="main" data-x="d_open" data-k="${k}" data-did="${d.id}"><span class="nm">${esc(d.lignes.map(l=>l.nom).join(", ")||"Sans travaux")}</span><span class="meta">${esc(d.num)} · ${dfr(d.date)}${k==="facture"?" · "+fStatus(d):d.factureId?" · facturé":d.statut==="accepte"?" · accepté":""}</span></button><span class="num" style="font-size:18px">${eur(totals(d).ttc)}</span></div>`;
+  const q=encodeURIComponent((c.adr||"").replace(/\n/g," "));
+  V.innerHTML=`<button class="back" data-x="c_back">← Clients</button>
+  <div class="card">
+    <div class="hrow"><h3>${esc(c.nom)}</h3><button class="x" data-x="c_edit" aria-label="Modifier le client">✎</button></div>
+    ${c.adr?`<p style="margin:0;white-space:pre-line">${esc(c.adr)}</p>`:""}
+    ${c.tel?`<p style="margin:0">📞 <span style="user-select:all">${esc(c.tel)}</span></p>`:""}
+    ${c.mail?`<p style="margin:0">✉️ <span style="user-select:all">${esc(c.mail)}</span></p>`:""}
+    <div class="two">${c.tel?`<a class="act" style="text-align:center" href="tel:${esc(c.tel.replace(/[^\d+]/g,""))}">Appeler</a>`:""}${c.adr?`<a class="act" style="text-align:center" href="https://maps.apple.com/?q=${q}" target="_blank" rel="noopener">Itinéraire</a>`:""}</div>
+    ${c.notes?`<div><label>Notes (matériel installé, accès, digicode…)</label><p style="margin:0;white-space:pre-line">${esc(c.notes)}</p></div>`:`<button class="link" data-x="c_edit">+ Ajouter des notes (matériel installé, digicode…)</button>`}
+  </div>
+  <div class="two" style="margin-bottom:6px"><button class="act pri" data-x="c_newD">+ Devis</button><button class="act pri" data-x="c_newF">+ Facture</button></div>
+  <div class="grp">Travaux effectués · ${eur(totF)} TTC facturé</div>
+  ${fac.length?`<div class="list">${fac.map(f=>docRow(f,"facture")).join("")}</div>`:'<p class="sub">Aucune facture pour ce client.</p>'}
+  <div class="grp">Devis</div>
+  ${dev.length?`<div class="list">${dev.map(d=>docRow(d,"devis")).join("")}</div>`:'<p class="sub">Aucun devis pour ce client.</p>'}`;
+}
+function clientSheet(c){
+  const e=c||{nom:"",adr:"",tel:"",mail:"",notes:""};
+  sheet(`<h2>${c?"Modifier le client":"Nouveau client"}</h2>
+   <div class="fld"><label for="kcN">Nom</label><input id="kcN" value="${esc(e.nom)}" placeholder="ex : Mme Leroy"></div>
+   <div class="fld"><label for="kcA">Adresse</label><textarea class="ta" id="kcA" rows="2">${esc(e.adr)}</textarea></div>
+   <div class="two"><div class="fld"><label for="kcT">Téléphone</label><input id="kcT" type="tel" value="${esc(e.tel)}"></div><div class="fld"><label for="kcM">E-mail</label><input id="kcM" type="email" value="${esc(e.mail)}"></div></div>
+   <div class="fld"><label for="kcO">Notes (matériel installé, accès, digicode…)</label><textarea class="ta" id="kcO" rows="3">${esc(e.notes)}</textarea></div>
+   <div class="two"><button class="act ghost" data-x="close">Annuler</button><button class="act pri" data-x="c_save">Enregistrer</button></div>
+   ${c?'<button class="act danger" data-x="c_del">Supprimer le client</button>':""}`);
+}
+
+/* --- Choix des travaux, pièces, clients --- */
 function pickPresta(){
   sheet(`<h2>Ajouter des travaux</h2><div class="list">${S.presta.map(t=>`<div class="row"><button class="main" data-x="d_pickT" data-t="${t.id}"><span class="nm">${esc(t.nom)}</span><span class="meta">${hfmt(t.h)} · forfait ${eur(t.forfait)}</span></button></div>`).join("")}</div>
   <button class="act" data-x="d_free">Autres travaux (à écrire)</button><button class="act ghost" data-x="close">Fermer</button>`);
@@ -488,6 +630,11 @@ function pickPiece(fn){
   sheet(`<h2>Ajouter une pièce</h2><input class="search" id="pq" type="search" placeholder="Rechercher…" autocomplete="off" style="margin:0">
   <div class="list">${S.items.map(p=>`<div class="row pk" data-txt="${esc((p.name+" "+p.ref+" "+p.cat).toLowerCase())}"><button class="main" data-x="d_pick" data-pid="${p.id}"><span class="nm">${esc(p.name)}</span><span class="meta">${eur(p.prix||0)} HT · camion ${p.cam} · boutique ${p.bou}</span></button></div>`).join("")}</div>
   <button class="act" data-x="d_pickFree">Fourniture hors stock</button><button class="act ghost" data-x="close">Fermer</button>`);
+}
+function pickClient(){
+  sheet(`<h2>Choisir un client</h2>${S.clients.length?`<input class="search" id="pq" type="search" placeholder="Rechercher…" autocomplete="off" style="margin:0">
+  <div class="list">${S.clients.slice().sort((a,b)=>a.nom.localeCompare(b.nom,"fr")).map(c=>`<div class="row pk" data-txt="${esc((c.nom+" "+c.adr+" "+c.tel).toLowerCase())}"><button class="main" data-x="d_setC" data-cid="${c.id}"><span class="nm">${esc(c.nom)}</span><span class="meta">${esc((c.adr||"").split("\n").join(", "))}</span></button></div>`).join("")}</div>`:'<p class="sub">Aucun client enregistré. Tape simplement le nom : le client sera créé tout seul.</p>'}
+  <button class="act ghost" data-x="close">Fermer</button>`);
 }
 
 /* --- Catalogue de travaux --- */
@@ -519,8 +666,9 @@ function confSheet(){
    ${f("kSiret","SIRET",c.siret,'inputmode="numeric"')}
    <div class="two">${f("kTaux","Taux horaire HT (€)",fr(c.taux),'inputmode="decimal"')}${f("kDepl","Déplacement HT (€)",fr(c.depl),'inputmode="decimal"')}</div>
    <div class="two">${f("kTva","TVA par défaut (%)",fr(c.tva),'inputmode="decimal"')}${f("kVal","Validité du devis (jours)",c.valid,'inputmode="numeric"')}</div>
-   <div class="fld"><label for="kMent">Mentions en bas du devis</label><textarea class="ta" id="kMent" rows="5">${esc(c.ment)}</textarea></div>
-   <p class="sub">Les nouveaux tarifs s'appliquent aux prochains devis.</p>
+   ${f("kDelai","Délai de paiement des factures (jours, 0 = à réception)",c.delai,'inputmode="numeric"')}
+   <div class="fld"><label for="kMent">Mentions en bas des devis et factures</label><textarea class="ta" id="kMent" rows="5">${esc(c.ment)}</textarea></div>
+   <p class="sub">Les nouveaux tarifs s'appliquent aux prochains devis et factures.</p>
    <div class="two"><button class="act ghost" data-x="close">Annuler</button><button class="act pri" data-x="d_confOk">Enregistrer</button></div>`);
 }
 
@@ -528,22 +676,23 @@ function confSheet(){
 function stockOut(d){
   let n=0;
   d.lignes.forEach(l=>l.pieces.forEach(x=>{if(!x.id)return;const p=byId(x.id);if(!p)return;const k=Math.min(x.q,p.bou);p.cam-=Math.min(p.cam,k);p.bou-=k;n+=k}));
-  d.stockDone=true; log(`Devis ${d.num} : ${n} pièce(s) retirée(s) du stock`); save(); render();
+  d.stockDone=true;
+  const twin=d.devisId?S.devis.find(x=>x.id===d.devisId):d.factureId?S.factures.find(x=>x.id===d.factureId):null; if(twin) twin.stockDone=true;
+  log(`${d.num} : ${n} pièce(s) retirée(s) du stock`); save(); render();
   const low=S.items.filter(isLow).length;
   toast(`${n} pièce${n>1?"s":""} retirée${n>1?"s":""} du stock${low?` · ${low} à commander`:""}`);
 }
 
-/* --- Document --- */
-function docText(d){
+/* --- Document imprimable --- */
+function docText(d,F){
   const t=totals(d);
-  let s=`DEVIS ${d.num} du ${dfr(d.date)}\n${S.conf.nom} · SIRET ${S.conf.siret}\nClient : ${d.client.nom||"—"}\n\n`;
+  let s=`${F?"FACTURE":"DEVIS"} ${d.num} du ${dfr(d.date)}\n${S.conf.nom} · SIRET ${S.conf.siret}\nClient : ${d.client.nom||"—"}\n\n`;
   d.lignes.forEach(l=>{s+=`- ${l.nom} : ${eur(lineTotal(d,l))} HT${l.mode==="forfait"?" (forfait)":` (${hfmt(l.h)} de main-d'œuvre + pièces)`}\n`});
   if(d.depl) s+=`- Déplacement : ${eur(d.deplPrix)} HT\n`;
   return s+`\nTotal HT : ${eur(t.ht)}\nTVA ${fr(d.tva)} % : ${eur(t.tva)}\nTotal TTC : ${eur(t.ttc)}`;
 }
-function showDoc(d){
-  const c=S.conf, t=totals(d);
-  const val=new Date(d.date+"T12:00:00"); val.setDate(val.getDate()+(parseInt(c.valid,10)||30));
+function showDoc(d,F){
+  const c=S.conf, t=totals(d), delai=parseInt(c.delai,10)||0;
   let rows="";
   d.lignes.forEach(l=>{
     rows+=`<tr class="ti"><td colspan="4">${esc(l.nom)}${l.desc?`<span class="ds">${esc(l.desc)}</span>`:""}</td></tr>`;
@@ -556,6 +705,15 @@ function showDoc(d){
     }
   });
   if(d.depl) rows+=`<tr class="ti"><td colspan="4">Déplacement</td></tr><tr><td>Frais de déplacement</td><td class="r">1</td><td class="r">${eur(d.deplPrix)}</td><td class="r">${eur(d.deplPrix)}</td></tr>`;
+  const meta=F?`N° ${esc(d.num)}
+Date : ${dfr(d.date)}${d.devisNum?"\nRéf. devis : "+esc(d.devisNum):""}
+Échéance : ${delai?dfr(dueISO(d)):"à réception"}`
+    :`N° ${esc(d.num)}
+Date : ${dfr(d.date)}
+Valable jusqu'au ${dfr(addDays(d.date,parseInt(c.valid,10)||30))}`;
+  const ment=(F?`Date de la prestation : ${dfr(d.date)}. Conditions de paiement : ${delai?`à ${delai} jours, soit le ${dfr(dueISO(d))}`:"à réception de la facture"}. Pas d'escompte pour paiement anticipé.`
+    :`Devis gratuit. Taux horaire de main-d'œuvre : ${eur(d.taux)} HT.`)
+    +(d.tva<20?"\nTVA à taux réduit : attestation du client requise (logement achevé depuis plus de 2 ans).":"")+"\n"+esc(c.ment);
   const inFrame=(()=>{try{return window.self!==window.top}catch(e){return true}})();
   $("#doc").innerHTML=`<div class="docbar"><button class="act" data-x="d_docClose">← Retour</button><span class="sp"></span>${inFrame?"":'<button class="act pri" data-x="d_print">PDF / Imprimer</button>'}<button class="act" data-x="d_copy">Copier</button></div>
   <div class="paper">
@@ -564,33 +722,32 @@ ${esc(c.adr)}
 Tél. ${esc(c.tel)}
 ${esc(c.mail)}
 SIRET ${esc(c.siret)}</div>
-   <div class="meta2"><h1>DEVIS</h1>N° ${esc(d.num)}
-Date : ${dfr(d.date)}
-Valable jusqu'au ${val.toLocaleDateString("fr-FR")}</div></div>
+   <div class="meta2"><h1>${F?"FACTURE":"DEVIS"}</h1>${meta}</div></div>
    <div class="cli"><small>Client</small>${esc(d.client.nom||"—")}${d.client.adr?"\n"+esc(d.client.adr):""}${d.client.tel?"\nTél. "+esc(d.client.tel):""}</div>
    <div class="tw"><table><thead><tr><th>Désignation</th><th class="r">Qté</th><th class="r">PU HT</th><th class="r">Total HT</th></tr></thead><tbody>${rows||'<tr><td colspan="4">Aucun travaux ajoutés.</td></tr>'}</tbody></table></div>
-   <div class="ptot"><div><span>Total HT</span><span>${eur(t.ht)}</span></div><div><span>TVA ${fr(d.tva)} %</span><span>${eur(t.tva)}</span></div><div class="g"><span>Total TTC</span><span>${eur(t.ttc)}</span></div></div>
-   <div class="ment">Devis gratuit. Taux horaire de main-d'œuvre : ${eur(d.taux)} HT.${d.tva<20?"\nTVA à taux réduit : attestation du client requise (logement achevé depuis plus de 2 ans).":""}
-${esc(c.ment)}</div>
-   <div class="sign"><div>Date et signature du client, précédées de la mention « Bon pour accord »</div><div>Signature et cachet de l'entreprise</div></div>
+   <div class="ptot"><div><span>Total HT</span><span>${eur(t.ht)}</span></div><div><span>TVA ${fr(d.tva)} %</span><span>${eur(t.tva)}</span></div><div class="g"><span>${F?"Net à payer TTC":"Total TTC"}</span><span>${eur(t.ttc)}</span></div></div>
+   ${F&&d.statut==="payee"?`<p style="margin:12px 0 0;font-weight:700;color:var(--phead)">Facture acquittée le ${dfr(d.paye.date)} par ${esc(d.paye.mode.toLowerCase())}.</p>`:""}
+   <div class="ment">${ment}</div>
+   ${F?"":'<div class="sign"><div>Date et signature du client, précédées de la mention « Bon pour accord »</div><div>Signature et cachet de l\'entreprise</div></div>'}
   </div>`;
   $("#doc").hidden=false; $("#doc").scrollTop=0;
 }
 
-/* --- Clics du devis --- */
+/* --- Clics --- */
 function devisClick(b){
-  const x=b.dataset.x, d=curD();
+  const x=b.dataset.x, d=curD(), F=edKind==="facture";
   const li=b.closest("[data-li]"), L=li&&d?d.lignes[+li.dataset.li]:null;
   const pi=b.closest("[data-pi]");
   switch(x){
-    case "d_new": return newDevis();
-    case "d_open": edId=b.closest("[data-di]").dataset.di; render(); scrollTo(0,0); return;
-    case "d_back": edId=null; render(); scrollTo(0,0); return;
+    case "d_new": return newDoc("devis");
+    case "f_new": return newDoc("facture");
+    case "d_open": return openDoc(b.dataset.k,b.dataset.did);
+    case "d_back": if(d) ensureClient(d); edId=null; render(); scrollTo(0,0); return;
     case "d_addT": return pickPresta();
     case "d_pickT": {const t=S.presta.find(p=>p.id===b.dataset.t); close(); if(t&&d){d.lignes.push(prestaToLine(t)); save(); render(); toast("Travaux ajoutés")} return}
     case "d_free": return sheet(`<h2>Autres travaux</h2><div class="fld"><label for="wN">Intitulé</label><input id="wN" placeholder="ex : Remplacement vanne d'arrivée"></div><div class="fld"><label for="wD">Description</label><textarea class="ta" id="wD" rows="3"></textarea></div><div class="two"><button class="act ghost" data-x="close">Annuler</button><button class="act pri" data-x="d_freeOk">Ajouter</button></div>`);
     case "d_freeOk": {const nom=$("#wN").value.trim(); if(!nom){toast("Écris un intitulé");return} d.lignes.push({nom,desc:$("#wD").value.trim(),mode:"temps",h:1,forfait:0,pieces:[]}); close(); save(); render(); toast("Travaux ajoutés"); return}
-    case "d_rmL": {const i=+li.dataset.li; return confirmBox(`Retirer « ${L.nom} » du devis ?`,()=>{d.lignes.splice(i,1);save();render()})}
+    case "d_rmL": {const i=+li.dataset.li; return confirmBox(`Retirer « ${L.nom} » ?`,()=>{d.lignes.splice(i,1);save();render()})}
     case "d_mode": L.mode=b.dataset.v2; save(); render(); return;
     case "d_h": L.h=Math.max(0,Math.round((L.h+num(b.dataset.v2))*2)/2); save(); render(); return;
     case "d_pq": {const j=+pi.dataset.pi, P=L.pieces[j]; P.q+=num(b.dataset.v2); if(P.q<=0) L.pieces.splice(j,1); save(); render(); return}
@@ -600,14 +757,48 @@ function devisClick(b){
     case "d_freeP": {const nom=$("#fpN").value.trim(); if(!nom){toast("Écris la désignation");return} const f=pickFn; pickFn=null; const P={nom,pu:num($("#fpP").value),q:1}; close(); if(f) f(P); return}
     case "d_depl": d.depl=b.checked; save(); render(); return;
     case "d_tva": d.tva=num(b.dataset.v2); save(); render(); return;
-    case "d_doc": return showDoc(d);
+    case "d_pickC": return pickClient();
+    case "d_setC": {const c=cliById(b.dataset.cid); close(); if(c&&d){d.clientId=c.id; d.client={nom:c.nom,adr:c.adr,tel:c.tel}; save(); render()} return}
+    case "d_goC": ensureClient(d); cliId=d.clientId; edId=null; view="clients"; render(); scrollTo(0,0); return;
+    case "d_doc": ensureClient(d); return showDoc(d,F);
     case "d_docClose": $("#doc").hidden=true; return;
     case "d_print": window.print(); return;
-    case "d_copy": {const t=docText(d);try{navigator.clipboard.writeText(t).then(()=>toast("Devis copié"),()=>textBox("Devis",t.split("\n")[0],t))}catch(e){textBox("Devis","",t)}return}
-    case "d_status": d.statut=d.statut==="accepte"?"brouillon":"accepte"; save(); render(); toast(d.statut==="accepte"?"Devis accepté":"Devis repassé en brouillon"); return;
-    case "d_stock": return confirmBox("Retirer les pièces de ce devis du stock ? (camion d'abord, puis dépôt)",()=>stockOut(d));
-    case "d_dup": {const c=JSON.parse(JSON.stringify(d)); Object.assign(c,{id:uid(),num:nextNum(),date:todayISO(),statut:"brouillon",stockDone:false}); S.devis.unshift(c); edId=c.id; save(); render(); scrollTo(0,0); toast(`Copie créée : ${c.num}`); return}
-    case "d_del": return confirmBox(`Supprimer le devis ${d.num} ?`,()=>{S.devis=S.devis.filter(z=>z!==d);edId=null;save();render();toast("Devis supprimé")});
+    case "d_copy": {const t=docText(d,F);try{navigator.clipboard.writeText(t).then(()=>toast("Copié"),()=>textBox(F?"Facture":"Devis","",t))}catch(e){textBox(F?"Facture":"Devis","",t)}return}
+    case "d_status": d.statut=d.statut==="accepte"?"brouillon":"accepte"; ensureClient(d); save(); render(); toast(d.statut==="accepte"?"Devis accepté":"Devis repassé en brouillon"); return;
+    case "d_conv": return toFacture(d);
+    case "d_goF": return openDoc("facture",d.factureId);
+    case "d_pay": return sheet(`<h2>Facture payée</h2><p class="sub">${esc(d.num)} · ${eur(totals(d).ttc)} TTC</p><div class="fld"><label for="pyD">Date du paiement</label><input id="pyD" type="date" value="${todayISO()}"></div><label>Moyen de paiement</label><div class="acts">${["Virement","Chèque","Espèces","Carte bancaire"].map(m=>`<button class="act" data-x="d_payOk" data-v2="${m}">${m}</button>`).join("")}</div><button class="act ghost" data-x="close">Annuler</button>`);
+    case "d_payOk": d.statut="payee"; d.paye={date:$("#pyD").value||todayISO(),mode:b.dataset.v2}; close(); save(); render(); toast("Facture marquée payée"); return;
+    case "d_unpay": return confirmBox("Repasser la facture en « à payer » ?",()=>{d.statut="a_payer";d.paye=null;save();render()});
+    case "d_stock": return confirmBox("Retirer les pièces du stock ? (camion d'abord, puis dépôt)",()=>stockOut(d));
+    case "d_dup": {const c=JSON.parse(JSON.stringify(d)); Object.assign(c,{id:uid(),num:nextNum("D"),date:todayISO(),statut:"brouillon",stockDone:false}); delete c.factureId; delete c.factureNum; S.devis.unshift(c); save(); openDoc("devis",c.id); toast(`Copie créée : ${c.num}`); return}
+    case "d_del": return confirmBox(`Supprimer ${F?"la facture":"le devis"} ${d.num} ?`,()=>{
+      if(F){S.factures=S.factures.filter(z=>z!==d);const dv=S.devis.find(z=>z.factureId===d.id);if(dv){delete dv.factureId;delete dv.factureNum}}
+      else S.devis=S.devis.filter(z=>z!==d);
+      edId=null;save();render();toast(F?"Facture supprimée":"Devis supprimé")});
+    /* factures et dépenses */
+    case "f_mode": fMode=b.dataset.v2; render(); return;
+    case "f_fromDevis": {const acc=S.devis.filter(z=>z.statut==="accepte"&&!z.factureId); return sheet(`<h2>Facturer un devis accepté</h2><div class="list">${acc.map(z=>`<div class="row"><button class="main" data-x="f_conv" data-did="${z.id}"><span class="nm">${esc(z.client.nom||"Client")}</span><span class="meta">${esc(z.num)} · ${dfr(z.date)}</span></button><span class="num" style="font-size:18px">${eur(totals(z).ttc)}</span></div>`).join("")}</div><button class="act ghost" data-x="close">Fermer</button>`)}
+    case "f_conv": {const z=S.devis.find(v=>v.id===b.dataset.did); close(); if(z) toFacture(z); return}
+    case "f_dep": depEd={_new:true,id:uid(),date:todayISO(),cat:"Carburant",lib:"",ttc:"",tva:20}; return depSheet();
+    case "f_depEdit": depEd=JSON.parse(JSON.stringify(S.depenses.find(e=>e.id===b.dataset.eid))); return depSheet();
+    case "f_cat": grabE(); depEd.cat=b.dataset.v2; depEd.tva=CATS[depEd.cat]; return depSheet();
+    case "f_depOk": {grabE(); if(!(depEd.ttc>0)){toast("Indique le montant");return} const {_new,...e}=depEd; if(!e.lib) e.lib=e.cat; if(_new) S.depenses.unshift(e); else S.depenses=S.depenses.map(z=>z.id===e.id?e:z); close(); save(); render(); toast(_new?"Dépense ajoutée":"Dépense modifiée"); return}
+    case "f_depDel": {const id=depEd.id; return confirmBox("Supprimer cette dépense ?",()=>{S.depenses=S.depenses.filter(e=>e.id!==id);save();render();toast("Dépense supprimée")})}
+    case "f_recvOk": {const n=parseInt($("#qN").value,10)||0, m=num($("#rM").value), p=cur; if(n<=0){toast("Mets une quantité d'au moins 1");return} close(); recv(p,n);
+      if(m>0){S.depenses.unshift({id:uid(),date:todayISO(),cat:"Pièces",lib:`${n} × ${p.name}${p.ref?" ("+p.ref+")":""}`,ttc:m,tva:20});save();render();toast(`+${n} ${p.name} · ${eur(m)} ajouté aux dépenses`)} return}
+    /* clients */
+    case "c_new": cliEdit=null; return clientSheet(null);
+    case "c_open": cliId=b.dataset.cid; render(); scrollTo(0,0); return;
+    case "c_back": cliId=null; render(); scrollTo(0,0); return;
+    case "c_edit": cliEdit=cliById(cliId); return clientSheet(cliEdit);
+    case "c_save": {const v=id=>$(id).value.trim(); const nom=v("#kcN"); if(!nom){toast("Donne un nom au client");return}
+      const o={nom,adr:$("#kcA").value.trim(),tel:v("#kcT"),mail:v("#kcM"),notes:$("#kcO").value.trim()};
+      if(cliEdit) Object.assign(cliEdit,o); else {const c={id:uid(),...o};S.clients.push(c);cliId=c.id}
+      close(); save(); render(); toast("Client enregistré"); return}
+    case "c_del": {const c=cliEdit; return confirmBox(`Supprimer ${c.nom} ? (ses devis et factures sont gardés)`,()=>{S.clients=S.clients.filter(z=>z!==c);[...S.devis,...S.factures].forEach(z=>{if(z.clientId===c.id)z.clientId=null});cliId=null;save();render();toast("Client supprimé")})}
+    case "c_newD": return newDoc("devis",cliById(cliId));
+    case "c_newF": return newDoc("facture",cliById(cliId));
     /* catalogue */
     case "d_prestas": return prestas();
     case "d_editT": prEd=JSON.parse(JSON.stringify(S.presta.find(t=>t.id===b.dataset.t))); return editPresta();
@@ -618,12 +809,14 @@ function devisClick(b){
     case "d_tDel": {const id=prEd.id, nom=prEd.nom; return confirmBox(`Supprimer « ${nom} » de tes travaux ?`,()=>{S.presta=S.presta.filter(t=>t.id!==id);save();toast("Travaux supprimés")})}
     /* réglages */
     case "d_conf": return confSheet();
-    case "d_confOk": {const v=id=>$(id).value.trim(); Object.assign(S.conf,{nom:v("#kNom"),adr:$("#kAdr").value.trim(),tel:v("#kTel"),mail:v("#kMail"),siret:v("#kSiret"),taux:num(v("#kTaux")),depl:num(v("#kDepl")),tva:num(v("#kTva")),valid:parseInt(v("#kVal"),10)||30,ment:$("#kMent").value.trim()}); save(); close(); render(); toast("Réglages enregistrés"); return}
+    case "d_confOk": {const v=id=>$(id).value.trim(); Object.assign(S.conf,{nom:v("#kNom"),adr:$("#kAdr").value.trim(),tel:v("#kTel"),mail:v("#kMail"),siret:v("#kSiret"),taux:num(v("#kTaux")),depl:num(v("#kDepl")),tva:num(v("#kTva")),valid:parseInt(v("#kVal"),10)||30,delai:parseInt(v("#kDelai"),10)||0,ment:$("#kMent").value.trim()}); save(); close(); render(); toast("Réglages enregistrés"); return}
   }
 }
+let cliEdit=null;
 document.addEventListener("input",e=>{
   const el=e.target;
   if(el.id==="pq"){const s=el.value.trim().toLowerCase();document.querySelectorAll("#sh .pk").forEach(r=>r.hidden=!!s&&!r.dataset.txt.includes(s));return}
+  if(el.id==="cq"){cq=el.value;const pos=el.selectionStart;render();const i=$("#cq");i.focus();i.setSelectionRange(pos,pos);return}
   if(!el.dataset||!el.dataset.f) return;
   const d=curD(); if(!d) return;
   const f=el.dataset.f;

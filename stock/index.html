@@ -2,6 +2,7 @@
 <html lang="fr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Stock Plomberie</title>
+<meta name="claude:viewport-fit-sides" content="cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Stock">
@@ -13,7 +14,8 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0B121C;--card:#142030;--ink:#EEF2F7;--mut:#94A1B3;--line:#25364B;--warm:#0F1926;--sel:#F5B700;--selfg:#101826;--acc:#6FA8F0;--accbg:#13294A;--ok:#59D3A4;--okbg:#12372D;--warn:#F5B700;--warnbg:#3A2D0A;--bad:#FF8A80;--badbg:#3D1614;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0B121C;--card:#142030;--ink:#EEF2F7;--mut:#94A1B3;--line:#25364B;--warm:#0F1926;--sel:#F5B700;--selfg:#101826;--acc:#6FA8F0;--accbg:#13294A;--ok:#59D3A4;--okbg:#12372D;--warn:#F5B700;--warnbg:#3A2D0A;--bad:#FF8A80;--badbg:#3D1614;color-scheme:dark}
 html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 Barlow,system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
-main{max-width:600px;margin:0 auto;padding:calc(10px + env(safe-area-inset-top,0px)) 16px calc(110px + env(safe-area-inset-bottom,0px))}
+main{max-width:600px;margin:0 auto;padding-block:10px calc(110px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+textarea{width:100%;height:220px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:13px/1.4 ui-monospace,Menlo,monospace}
 button,input,select{font-family:inherit;font-size:16px}
 button{cursor:pointer}
 h1{margin:6px 0 2px;font:700 40px/1 "Barlow Condensed",Barlow,sans-serif}
@@ -47,7 +49,7 @@ h1{margin:6px 0 2px;font:700 40px/1 "Barlow Condensed",Barlow,sans-serif}
 .acts .sp{flex:1}
 a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .empty{text-align:center;color:var(--mut);padding:30px 10px}
-nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:repeat(4,1fr);gap:4px;z-index:5}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));display:grid;grid-template-columns:repeat(4,1fr);gap:4px;z-index:5}
 nav button{border:0;background:none;color:var(--mut);font-weight:600;font-size:14px;padding:6px 2px;border-radius:10px;position:relative;display:flex;flex-direction:column;align-items:center;gap:2px}
 nav button svg{width:24px;height:24px}
 nav .on{color:var(--ink);background:var(--warm)}
@@ -67,6 +69,9 @@ dialog input,dialog select{width:100%;padding:10px 12px;border:1px solid var(--l
 .log span{color:var(--mut);font-size:13px;flex:none}
 .toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--sel);color:var(--selfg);padding:10px 16px;border-radius:12px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:10;max-width:calc(100vw - 32px)}
 .toast.show{opacity:1}
+.step{display:grid;grid-template-columns:56px 1fr 56px;gap:8px}.step .btn{font-size:22px;padding:6px 0}.step input{text-align:center;font-size:22px;font-weight:700}
+.lr{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--line)}.lr .nm{flex:1;min-width:0}.lr .nm small{display:block;color:var(--mut);font-size:13px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:10px}.seg button{border:0;background:none;color:var(--mut);font-weight:600;padding:9px;border-radius:9px}.seg .on{background:var(--sel);color:var(--selfg)}
 .sec{font:700 20px/1.2 "Barlow Condensed",Barlow,sans-serif;margin:18px 0 8px;text-transform:uppercase;letter-spacing:.03em;color:var(--mut)}
 </style></head>
 <body>
@@ -84,7 +89,7 @@ dialog input,dialog select{width:100%;padding:10px 12px;border:1px solid var(--l
   <button data-v="historique"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Historique</button>
 </nav>
 
-<dialog id="dlg"><form method="dialog" id="frm">
+<dialog id="dlg"><form id="frm">
   <h2 id="dlgT">Nouvelle pièce</h2>
   <label for="fName">Nom de la pièce</label>
   <input id="fName" required placeholder="ex : Raccord laiton 15/21">
@@ -107,21 +112,31 @@ dialog input,dialog select{width:100%;padding:10px 12px;border:1px solid var(--l
   <div class="foot">
     <button type="button" class="btn del" id="fDel">Supprimer</button>
     <button type="button" class="btn" id="fCancel">Annuler</button>
-    <button type="submit" class="btn pri" id="fOk">Enregistrer</button>
+    <button type="button" class="btn pri" id="fOk">Enregistrer</button>
   </div>
 </form></dialog>
 
-<dialog id="qdlg"><form method="dialog" id="qfrm">
+<dialog id="qdlg"><form id="qfrm">
   <h2 id="qT"></h2>
   <p class="sub" id="qS"></p>
   <label for="qN">Quantité</label>
-  <input id="qN" type="number" min="1" inputmode="numeric" value="1">
+  <div class="step"><button type="button" class="btn" id="qMinus" aria-label="Moins">−</button><input id="qN" type="number" min="1" inputmode="numeric" value="1"><button type="button" class="btn" id="qPlus" aria-label="Plus">+</button></div>
   <div class="foot">
     <button type="button" class="btn" id="qCancel">Annuler</button>
-    <button type="submit" class="btn pri">Valider</button>
+    <button type="button" class="btn pri" id="qOk">Valider</button>
   </div>
 </form></dialog>
 
+<dialog id="cdlg"><form id="cfrm">
+  <h2 id="cT"></h2>
+  <div class="foot"><button type="button" class="btn" id="cNo">Annuler</button><button type="button" class="btn pri" id="cYes" style="background:var(--bad);border-color:var(--bad);color:#fff">Confirmer</button></div>
+</form></dialog>
+<dialog id="tdlg"><form id="tfrm">
+  <h2 id="tT"></h2>
+  <p class="sub" id="tS"></p>
+  <textarea id="tX" readonly></textarea>
+  <div class="foot"><button type="button" class="btn" id="tCopy">Copier</button><button type="button" class="btn pri" id="tClose">Fermer</button></div>
+</form></dialog>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -159,7 +174,16 @@ const isLow=p=>p.bou<=p.seuil;
 const orderUrl=p=>p.url||("https://www.google.com/search?tbm=shop&q="+encodeURIComponent(p.name+(p.ref?" "+p.ref:"")+" plomberie"));
 function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove("show"),2400)}
 
-let view="boutique", q="", cat="";
+let cFn=null;
+function ask(msg,fn){$("#cT").textContent=msg;cFn=fn;$("#cdlg").showModal()}
+$("#cNo").onclick=()=>{cFn=null;$("#cdlg").close()};
+$("#cYes").onclick=()=>{const f=cFn;cFn=null;$("#cdlg").close();if(f)f()};
+$("#tClose").onclick=()=>$("#tdlg").close();
+document.querySelectorAll("dialog form").forEach(f=>f.addEventListener("submit",e=>{e.preventDefault();const ok=f.querySelector(".btn.pri[id]");if(ok&&ok.id!=="tClose")ok.click()}));
+function showText(title,sub,txt){$("#tT").textContent=title;$("#tS").textContent=sub;$("#tX").value=txt;$("#tdlg").showModal()}
+$("#tCopy").onclick=()=>{const x=$("#tX");const sel=()=>{x.focus();x.select();toast("Texte sélectionné : fais Copier")};
+  try{navigator.clipboard.writeText(x.value).then(()=>toast("Copié ✓"),sel)}catch(e){sel()}};
+let view="boutique", q="", cat="", camMode="in";
 
 function badge(p){
   if(p.bou===0) return '<span class="badge low">Rupture</span>';
@@ -214,15 +238,22 @@ function render(){
     $("#subtitle").textContent=`${totC} pièces chargées · chaque pièce prise ici baisse aussi le stock boutique`;
     const L=filtered(S.items.filter(p=>p.cam>0));
     const rest=S.items.filter(p=>p.cam===0&&p.bou>0).length;
-    V.innerHTML=toolsHtml(false)+(L.length?L.map(p=>`<div class="card ${isLow(p)?"low":""}" data-id="${p.id}">${head(p)}${qtys(p)}
+    const dep=filtered(S.items.filter(p=>p.bou-p.cam>0));
+    const seg=`<div class="seg"><button data-m="in" class="${camMode==="in"?"on":""}">Dans le camion (${totC})</button><button data-m="load" class="${camMode==="load"?"on":""}">+ Charger le camion</button></div>`;
+    if(camMode==="load"){
+      V.innerHTML=seg+toolsHtml(false)
+      +(rest?`<button class="btn" id="loadAll" style="margin-bottom:6px;width:100%">Charger 2 de chaque pièce absente du camion (${rest})</button>`:"")
+      +(dep.length?dep.map(p=>`<div class="lr" data-id="${p.id}"><div class="nm">${esc(p.name)}<small>Au dépôt : ${p.bou-p.cam} · Camion : ${p.cam}</small></div><button class="btn sm pri" data-a="load1">+1</button><button class="btn sm" data-a="load">+…</button></div>`).join(""):'<div class="empty">Plus rien au dépôt à charger.</div>');
+      return;
+    }
+    V.innerHTML=seg+toolsHtml(false)+(L.length?L.map(p=>`<div class="card ${isLow(p)?"low":""}" data-id="${p.id}">${head(p)}${qtys(p)}
       <div class="acts">
         <button class="btn sm pri" data-a="take">− Prendre 1</button>
         <button class="btn sm" data-a="takeN">Prendre…</button>
         <button class="btn sm" data-a="unload">← Décharger</button>
         <span class="sp"></span>
         ${isLow(p)?cmdBtn(p):""}
-      </div></div>`).join(""):`<div class="empty">Le camion est vide${q||cat?" pour ce filtre":""}.<br>Va dans <b>Boutique</b> et appuie sur « → Camion » pour charger des pièces.</div>`)
-      +(rest?`<div class="sec">Charger depuis la boutique</div><button class="btn" id="loadAll">Charger 2 de chaque pièce manquante (${rest})</button>`:"");
+      </div></div>`).join(""):`<div class="empty">Le camion est vide${q||cat?" pour ce filtre":""}.<br>Appuie sur « + Charger le camion » en haut.</div>`);
   }
   else if(view==="commande"){
     $("#title").textContent="À commander";
@@ -277,7 +308,9 @@ function askQty(title,subtitle,def,fn){
   $("#qT").textContent=title; $("#qS").textContent=subtitle; $("#qN").value=def; qAct=fn;
   $("#qdlg").showModal(); setTimeout(()=>$("#qN").select(),50);
 }
-$("#qfrm").addEventListener("submit",()=>{const n=parseInt($("#qN").value,10)||0; if(qAct&&n>0) qAct(n); qAct=null});
+$("#qOk").onclick=()=>{const n=parseInt($("#qN").value,10)||0; const f=qAct; qAct=null; $("#qdlg").close(); if(f&&n>0) f(n); else if(n<=0) toast("Mets une quantité d'au moins 1")};
+$("#qMinus").onclick=()=>{$("#qN").value=Math.max(1,(parseInt($("#qN").value,10)||1)-1)};
+$("#qPlus").onclick=()=>{$("#qN").value=(parseInt($("#qN").value,10)||0)+1};
 $("#qCancel").onclick=()=>$("#qdlg").close();
 
 /* --- Fiche pièce --- */
@@ -292,40 +325,42 @@ function openEdit(p){
   $("#cats").innerHTML=[...new Set(S.items.map(x=>x.cat).filter(Boolean))].map(c=>`<option value="${esc(c)}">`).join("");
   $("#dlg").showModal();
 }
-$("#frm").addEventListener("submit",e=>{
-  const name=$("#fName").value.trim(); if(!name){e.preventDefault();return}
+$("#fOk").addEventListener("click",()=>{
+  const name=$("#fName").value.trim(); if(!name){toast("Donne un nom à la pièce");$("#fName").focus();return}
   const num=(id,d)=>{const v=parseInt($(id).value,10);return isNaN(v)||v<0?d:v};
   const d={name,ref:$("#fRef").value.trim(),cat:$("#fCat").value.trim(),bou:num("#fBou",DEPART),seuil:num("#fSeuil",SEUIL),cmd:Math.max(1,num("#fCmd",DEPART-SEUIL)),url:$("#fUrl").value.trim()};
   d.cam=Math.min(num("#fCam",0),d.bou);
   if(d.url&&!/^https?:\/\//i.test(d.url)) d.url="https://"+d.url;
   if(editId){Object.assign(byId(editId),d); log(`Fiche modifiée : ${name}`)}
   else{S.items.push({id:uid(),...d}); log(`Nouvelle pièce : ${name} (${d.bou})`)}
-  save();render();
+  $("#dlg").close(); save();render(); toast("Pièce enregistrée");
 });
 $("#fCancel").onclick=()=>$("#dlg").close();
 $("#fDel").onclick=()=>{
-  const p=byId(editId); if(p&&confirm(`Supprimer « ${p.name} » ?`)){S.items=S.items.filter(x=>x!==p);log(`Pièce supprimée : ${p.name}`);save();$("#dlg").close();render()}
+  const p=byId(editId); if(!p) return; $("#dlg").close(); ask(`Supprimer « ${p.name} » ?`,()=>{S.items=S.items.filter(x=>x!==p);log(`Pièce supprimée : ${p.name}`);save();render()})
 };
 
 /* --- Clics --- */
-$("#nav").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;view=b.dataset.v;q="";cat="";render();scrollTo(0,0)});
+$("#nav").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;view=b.dataset.v;q="";cat="";camMode="in";render();scrollTo(0,0)});
 $("#alert").onclick=()=>{view="commande";render();scrollTo(0,0)};
 $("#view").addEventListener("input",e=>{if(e.target.id==="q"){q=e.target.value;const pos=e.target.selectionStart;render();const i=$("#q");i.focus();i.setSelectionRange(pos,pos)}});
 $("#view").addEventListener("click",e=>{
   const c=e.target.closest(".chips button"); if(c){cat=c.dataset.c;render();return}
+  const m=e.target.closest(".seg button"); if(m){camMode=m.dataset.m;render();return}
   const b=e.target.closest("button"); if(!b) return;
   if(b.id==="add") return openEdit(null);
   if(b.id==="share") return shareList();
   if(b.id==="exp") return exportData();
   if(b.id==="imp") return importData();
-  if(b.id==="reset"){ if(confirm("Tout remettre à zéro (10 pièces par référence) ?")){localStorage.removeItem(KEY);load();render();toast("Stock réinitialisé")} return }
+  if(b.id==="reset"){ ask("Tout remettre à zéro (10 pièces par référence) ?",()=>{try{localStorage.removeItem(KEY)}catch(e){}S=null;load();render();toast("Stock réinitialisé")}); return }
   if(b.id==="loadAll"){ let n=0; S.items.forEach(p=>{if(p.cam===0){const k=Math.min(2,p.bou);if(k>0){p.cam=k;n+=k}}}); log(`Chargement camion : ${n} pièces`); save();render(); toast(`${n} pièces chargées`); return }
-  const card=b.closest(".card"); if(!card) return; const p=byId(card.dataset.id); if(!p) return;
+  const card=b.closest("[data-id]"); if(!card) return; const p=byId(card.dataset.id); if(!p) return;
   switch(b.dataset.a){
     case "take": return takeFromTruck(p,1);
     case "takeN": return askQty("Prendre dans le camion",p.name+` — ${p.cam} dans le camion`,1,n=>takeFromTruck(p,n));
     case "unload": return askQty("Remettre au dépôt",p.name,p.cam,n=>unloadTruck(p,n));
     case "use": return useFromShop(p,1);
+    case "load1": return loadTruck(p,1);
     case "load": return askQty("Charger dans le camion",p.name+` — ${p.bou-p.cam} dispo au dépôt`,Math.min(2,Math.max(1,p.bou-p.cam)),n=>loadTruck(p,n));
     case "recv": return askQty("Réception de commande",p.name+` — stock actuel ${p.bou}`,p.cmd,n=>receive(p,n));
     case "edit": return openEdit(p);
@@ -335,17 +370,14 @@ $("#view").addEventListener("click",e=>{
 function shareList(){
   const low=S.items.filter(isLow);
   const txt="Commande plomberie :\n"+low.map(p=>`- ${p.cmd} × ${p.name}${p.ref?" ("+p.ref+")":""}${p.url?" : "+p.url:""}`).join("\n");
-  if(navigator.share) navigator.share({title:"Commande plomberie",text:txt}).catch(()=>{});
-  else navigator.clipboard?.writeText(txt).then(()=>toast("Liste copiée"),()=>alert(txt));
+  showText("Liste de commande","Copie-la puis colle-la dans un SMS ou un mail à ton fournisseur.",txt);
 }
 function exportData(){
-  const blob=new Blob([JSON.stringify(S,null,1)],{type:"application/json"});
-  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="stock-plomberie-"+new Date().toISOString().slice(0,10)+".json"; a.click();
-  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  showText("Sauvegarde","Copie ce texte et garde-le dans tes notes ou un mail. Pour restaurer : Importer, puis choisis un fichier .json contenant ce texte.",JSON.stringify(S));
 }
 function importData(){
   const i=document.createElement("input"); i.type="file"; i.accept="application/json,.json";
-  i.onchange=()=>{const f=i.files[0]; if(!f) return; f.text().then(t=>{const d=JSON.parse(t); if(!Array.isArray(d.items)) throw 0; S={items:d.items,log:d.log||[]}; save(); render(); toast("Stock importé")}).catch(()=>alert("Fichier invalide"))};
+  i.onchange=()=>{const f=i.files[0]; if(!f) return; f.text().then(t=>{const d=JSON.parse(t); if(!Array.isArray(d.items)) throw 0; S={items:d.items,log:d.log||[]}; save(); render(); toast("Stock importé")}).catch(()=>toast("Fichier invalide : ce n'est pas une sauvegarde du stock"))};
   i.click();
 }
 

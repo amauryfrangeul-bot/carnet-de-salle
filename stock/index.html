@@ -43,8 +43,8 @@ h1{margin:0;flex:1;font:700 36px/1 var(--disp);text-wrap:balance}
 .num{flex:none;min-width:52px;text-align:right;font:700 30px/1 var(--disp);font-variant-numeric:tabular-nums;padding-right:4px}
 .num.lo{color:var(--bad)}
 .empty{text-align:center;color:var(--mut);padding:28px 12px}
-nav{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--card);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
-nav button{border:0;background:none;color:var(--mut);font-weight:700;font-size:14px;padding:6px 2px;border-radius:10px;display:flex;flex-direction:column;align-items:center;gap:2px;position:relative}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--card);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);gap:2px;padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+nav button{border:0;background:none;color:var(--mut);font-weight:700;font-size:13px;padding:6px 2px;border-radius:10px;display:flex;flex-direction:column;align-items:center;gap:2px;position:relative}
 nav svg{width:26px;height:26px}
 nav .on{color:var(--ink);background:var(--soft)}
 .dot{position:absolute;top:2px;left:calc(50% + 6px);background:var(--bad);color:#fff;font-size:11px;min-width:18px;height:18px;line-height:18px;border-radius:9px;padding:0 4px;font-style:normal}
@@ -78,6 +78,69 @@ textarea{width:100%;height:200px;padding:10px;border:1px solid var(--line);borde
 .toast.show{opacity:1;pointer-events:auto}
 .toast button{border:0;background:none;color:inherit;font-weight:700;text-decoration:underline;padding:4px}
 .toast button[hidden]{display:none}
+/* ---- Devis ---- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:10px;margin-bottom:10px}
+.card h3{margin:0;font:700 20px/1.15 var(--disp);flex:1;min-width:0}
+.hrow{display:flex;align-items:flex-start;gap:8px}
+.x{flex:none;width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--soft);font-size:18px;padding:0}
+.card .fld input,.card textarea.ta{width:100%}
+textarea.ta{height:auto;min-height:64px;font:inherit;font-size:16px;padding:10px 12px}
+.seg.sm{margin:0}.seg.sm button{padding:8px 4px;font-size:15px}
+.hstep{display:grid;grid-template-columns:48px 1fr 48px;gap:8px;align-items:center}
+.hstep button{height:44px;border-radius:10px;border:1px solid var(--line);background:var(--soft);font:700 24px/1 var(--disp)}
+.hstep b{text-align:center;font:700 26px/1 var(--disp)}
+.calc{color:var(--mut);font-size:15px;font-variant-numeric:tabular-nums}
+.pc{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--line)}
+.pc .nm{flex:1;min-width:0;font-weight:500;font-size:15px}
+.pc .meta{font-size:13px}
+.qs{display:flex;align-items:center;gap:4px;flex:none}
+.qs button{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:var(--soft);font-weight:700;padding:0}
+.qs b{min-width:22px;text-align:center;font-variant-numeric:tabular-nums}
+.link{border:0;background:none;color:var(--acc);font-weight:700;padding:6px 0;text-align:left}
+.st{display:flex;justify-content:space-between;font-weight:700;font-variant-numeric:tabular-nums}
+.tot{display:grid;gap:4px;font-variant-numeric:tabular-nums}
+.tot div{display:flex;justify-content:space-between}
+.tot .ttc{font:700 30px/1.1 var(--disp);border-top:1px solid var(--line);padding-top:8px;margin-top:4px}
+.chk{display:flex;align-items:center;gap:10px;font-weight:600}
+.chk input{width:24px;height:24px;accent-color:var(--sel)}
+.back{border:0;background:none;color:var(--acc);font-weight:700;padding:4px 0;margin-bottom:6px}
+.chip{flex:none;font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px;background:var(--soft);color:var(--mut);text-transform:uppercase;letter-spacing:.04em}
+.chip.ok{color:var(--ok)}
+/* Document du devis : volontairement papier blanc dans les deux thèmes */
+:root{--paper:#FFFFFF;--pink:#14181F;--pmut:#5B6470;--pline:#D6DBE1;--phead:#0F2036}
+#doc{position:fixed;inset:0;z-index:20;background:var(--bg);overflow:auto;-webkit-overflow-scrolling:touch}
+.docbar{position:sticky;top:0;z-index:1;display:flex;gap:8px;align-items:center;background:var(--card);border-bottom:1px solid var(--line);padding:calc(8px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 8px max(12px,env(safe-area-inset-left,0px))}
+.docbar .sp{flex:1}
+.docbar .act{width:auto;padding:9px 14px}
+.paper{background:var(--paper);color:var(--pink);max-width:820px;margin:12px auto 40px;padding:28px 26px;font:13px/1.45 var(--body);box-shadow:0 1px 6px rgba(0,0,0,.15)}
+.paper h1{font:700 30px/1 var(--disp);color:var(--phead);margin:0}
+.ph{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:2px solid var(--phead);padding-bottom:14px;margin-bottom:16px}
+.ph .co b{font-size:17px;color:var(--phead)}
+.ph .co,.ph .meta2{white-space:pre-line}
+.ph .meta2{text-align:right}
+.cli{margin:0 0 16px auto;max-width:300px;border:1px solid var(--pline);padding:10px 12px;white-space:pre-line}
+.cli small{display:block;color:var(--pmut);text-transform:uppercase;font-size:10px;letter-spacing:.06em;font-weight:700}
+.tw{overflow-x:auto}
+.paper table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.paper th{background:var(--phead);color:#fff;text-align:left;padding:6px 8px;font-size:12px}
+.paper td{padding:6px 8px;border-bottom:1px solid var(--pline);vertical-align:top}
+.paper td.r,.paper th.r{text-align:right;white-space:nowrap}
+.paper tr.ti td{font-weight:700;background:#F1F4F7;border-bottom:0}
+.paper .ds{color:var(--pmut);font-size:12px;font-weight:400;display:block}
+.paper .inc{color:var(--pmut);font-style:italic}
+.ptot{margin:14px 0 0 auto;max-width:300px;font-variant-numeric:tabular-nums}
+.ptot div{display:flex;justify-content:space-between;padding:4px 0}
+.ptot .g{font-weight:700;font-size:17px;border-top:2px solid var(--phead);padding-top:8px;color:var(--phead)}
+.ment{margin-top:18px;color:var(--pmut);font-size:11px;white-space:pre-line}
+.sign{margin-top:18px;display:flex;gap:16px;flex-wrap:wrap}
+.sign div{flex:1;min-width:220px;border:1px solid var(--pline);height:110px;padding:8px;font-size:12px;color:var(--pmut)}
+@media print{
+  body{background:#fff}
+  main,nav,.toast,.docbar,dialog{display:none!important}
+  #doc{position:static;overflow:visible;background:#fff}
+  .paper{box-shadow:none;margin:0;max-width:none;padding:0}
+  @page{margin:14mm}
+}
 @media (prefers-reduced-motion:reduce){.toast{transition:none}}
 </style>
 
@@ -93,34 +156,67 @@ textarea{width:100%;height:200px;padding:10px;border:1px solid var(--line);borde
   <button data-v="camion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 6h13v10H1zM14 10h4l4 4v2h-8z"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>Camion</button>
   <button data-v="boutique"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l1-5h16l1 5M3 9h18v11H3zM9 20v-6h6v6"/></svg>Boutique</button>
   <button data-v="commande"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4h2l2 11h12l2-8H6"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg>À commander<i class="dot" id="dot" hidden></i></button>
+  <button data-v="devis"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h8M9 17h6"/></svg>Devis</button>
 </nav>
 
 <dialog id="dlg"><div class="sh" id="sh"></div></dialog>
+<div id="doc" hidden></div>
 <div class="toast" id="toast" role="status"><span id="toastT"></span><button id="undo" hidden>Annuler</button></div>
 
 <script>
 const KEY="stock_plombier_v1", SEUIL=3, DEPART=10;
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+// [nom, catégorie, prix de vente HT indicatif en €]
 const DEFAULTS=[
- ["Raccord laiton mâle/femelle 15/21","Raccords"],["Raccord laiton mâle/femelle 20/27","Raccords"],
- ["Coude cuivre 90° Ø14","Raccords"],["Coude cuivre 90° Ø16","Raccords"],["Té cuivre égal Ø14","Raccords"],
- ["Manchon cuivre Ø16","Raccords"],["Raccord PER à sertir Ø16","Raccords"],["Raccord multicouche Ø16","Raccords"],
- ["Robinet d'arrêt 1/4 de tour 15/21","Robinetterie"],["Vanne à sphère 20/27","Robinetterie"],
- ["Robinet flotteur WC","Robinetterie"],["Mitigeur lavabo","Robinetterie"],
- ["Flexible inox 30 cm 15/21","Flexibles"],["Flexible inox 50 cm 15/21","Flexibles"],
- ["Joint fibre 15/21 (sachet)","Joints"],["Joint fibre 20/27 (sachet)","Joints"],["Joint torique assortiment","Joints"],
- ["Siphon lavabo PVC Ø32","Évacuation"],["Coude PVC 87° Ø40","Évacuation"],["Coude PVC 87° Ø100","Évacuation"],
- ["Mécanisme de chasse WC","Sanitaire"],["Pipe WC coudée","Sanitaire"],
- ["Rouleau téflon","Consommables"],["Pâte à joint (tube)","Consommables"],["Filasse (écheveau)","Consommables"],
- ["Brasure étain (bobine)","Consommables"],["Colle PVC (pot)","Consommables"],["Collier de fixation Ø16","Fixation"]
+ ["Raccord laiton mâle/femelle 15/21","Raccords",4.5],["Raccord laiton mâle/femelle 20/27","Raccords",6],
+ ["Coude cuivre 90° Ø14","Raccords",2.5],["Coude cuivre 90° Ø16","Raccords",3],["Té cuivre égal Ø14","Raccords",3.5],
+ ["Manchon cuivre Ø16","Raccords",2],["Raccord PER à sertir Ø16","Raccords",7],["Raccord multicouche Ø16","Raccords",8],
+ ["Robinet d'arrêt 1/4 de tour 15/21","Robinetterie",12],["Vanne à sphère 20/27","Robinetterie",15],
+ ["Robinet flotteur WC","Robinetterie",18],["Mitigeur lavabo","Robinetterie",85],
+ ["Flexible inox 30 cm 15/21","Flexibles",8],["Flexible inox 50 cm 15/21","Flexibles",10],
+ ["Joint fibre 15/21 (sachet)","Joints",3],["Joint fibre 20/27 (sachet)","Joints",3.5],["Joint torique assortiment","Joints",9],
+ ["Siphon lavabo PVC Ø32","Évacuation",12],["Coude PVC 87° Ø40","Évacuation",2.5],["Coude PVC 87° Ø100","Évacuation",6],
+ ["Mécanisme de chasse WC","Sanitaire",45],["Pipe WC coudée","Sanitaire",15],
+ ["Rouleau téflon","Consommables",2],["Pâte à joint (tube)","Consommables",8],["Filasse (écheveau)","Consommables",5],
+ ["Brasure étain (bobine)","Consommables",25],["Colle PVC (pot)","Consommables",12],["Collier de fixation Ø16","Fixation",1.5]
+];
+const CONF0={nom:"Mon entreprise de plomberie",adr:"12 rue des Artisans\n75000 Paris",tel:"06 00 00 00 00",mail:"contact@exemple.fr",siret:"123 456 789 00012",taux:70,depl:50,tva:10,valid:30,
+  ment:"Assurance décennale : à compléter (assureur, n° de contrat, zone couverte).\nPaiement : 30 % d'acompte à la signature, solde à la fin des travaux.\nPénalités de retard : 3 fois le taux d'intérêt légal. Indemnité forfaitaire pour frais de recouvrement : 40 €."};
+// Pièces : [nom de la pièce en stock, quantité] ou {nom, pu, q} pour une fourniture hors stock
+const PRESTA0=[
+ ["Installation de toilettes","Dépose de l'ancien WC, pose et raccordement du nouveau WC, réglage et essais d'étanchéité.",3,290,[["Pipe WC coudée",1],["Robinet d'arrêt 1/4 de tour 15/21",1],["Flexible inox 30 cm 15/21",1],["Joint fibre 15/21 (sachet)",1]]],
+ ["Remplacement de flexible","Fermeture de l'eau, remplacement du flexible d'alimentation, contrôle d'étanchéité.",0.5,60,[["Flexible inox 30 cm 15/21",1],["Joint fibre 15/21 (sachet)",1]]],
+ ["Installation ballon d'eau chaude 200 L","Dépose de l'ancien chauffe-eau, pose et raccordement du nouveau, groupe de sécurité, mise en eau et essais.",4,790,[{nom:"Chauffe-eau électrique 200 L",pu:420,q:1},{nom:"Groupe de sécurité",pu:35,q:1},["Flexible inox 50 cm 15/21",2],["Rouleau téflon",1]]],
+ ["Débouchage de canalisation","Débouchage manuel ou au furet, contrôle de l'écoulement.",1,120,[]],
+ ["Remplacement mitigeur lavabo","Dépose de l'ancien robinet, pose et raccordement du mitigeur, contrôle d'étanchéité.",1,150,[["Mitigeur lavabo",1],["Joint fibre 15/21 (sachet)",1]]],
+ ["Remplacement mécanisme de chasse","Remplacement du mécanisme de chasse d'eau et réglage.",1,120,[["Mécanisme de chasse WC",1]]],
+ ["Remplacement robinet d'arrêt","Remplacement du robinet d'arrêt et contrôle d'étanchéité.",0.5,70,[["Robinet d'arrêt 1/4 de tour 15/21",1],["Rouleau téflon",1]]],
+ ["Remplacement siphon","Dépose et pose d'un siphon neuf, contrôle de l'écoulement.",0.5,60,[["Siphon lavabo PVC Ø32",1]]],
+ ["Recherche et réparation de fuite","Recherche de la fuite, réparation de la canalisation, contrôle.",1.5,150,[["Manchon cuivre Ø16",1],["Brasure étain (bobine)",1]]]
 ];
 
 /* ---------- Données ---------- */
 let S;
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
-function fresh(){return{items:DEFAULTS.map(([name,cat],i)=>({id:"p"+i,name,cat,ref:"",bou:DEPART,cam:2,seuil:SEUIL,cmd:DEPART-SEUIL,url:""})),log:[]}}
-function load(){try{S=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){S=null}if(!S||!Array.isArray(S.items)){S=fresh();save()}S.log=S.log||[]}
+function fresh(){return{items:DEFAULTS.map(([name,cat,prix],i)=>({id:"p"+i,name,cat,ref:"",bou:DEPART,cam:2,seuil:SEUIL,cmd:DEPART-SEUIL,url:"",prix})),log:[]}}
+function freshPresta(){
+  return PRESTA0.map(([nom,desc,h,forfait,pcs],i)=>({id:"t"+i,nom,desc,h,forfait,pieces:pcs.map(x=>{
+    if(!Array.isArray(x)) return {...x};
+    const it=S.items.find(p=>p.name===x[0]); return it?{id:it.id,q:x[1]}:{nom:x[0],pu:0,q:x[1]};
+  })}));
+}
+function load(){
+  try{S=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){S=null}
+  if(!S||!Array.isArray(S.items)) S=fresh();
+  S.log=S.log||[];
+  const dp={};DEFAULTS.forEach(d=>dp[d[0]]=d[2]);
+  S.items.forEach(p=>{if(typeof p.prix!=="number")p.prix=dp[p.name]||0});
+  S.conf={...CONF0,...(S.conf||{})};
+  if(!Array.isArray(S.presta)) S.presta=freshPresta();
+  if(!Array.isArray(S.devis)) S.devis=[];
+  save();
+}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function log(t){S.log.unshift({t:Date.now(),txt:t});S.log=S.log.slice(0,200)}
 const byId=id=>S.items.find(p=>p.id===id);
@@ -161,7 +257,7 @@ function render(){
   $("#dot").hidden=!low.length; $("#dot").textContent=low.length;
   document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===view));
   $("#addBtn").hidden=view!=="boutique";
-  const al=$("#alert"); al.hidden=!low.length||view==="commande";
+  const al=$("#alert"); al.hidden=!low.length||view==="commande"||view==="devis";
   al.textContent=`⚠️ ${low.length} pièce${low.length>1?"s":""} à commander →`;
   const V=$("#view");
 
@@ -185,6 +281,7 @@ function render(){
     V.innerHTML=searchBox()+(L.length?grouped(L,p=>row(p,`${p.ref?esc(p.ref)+" · ":""}dont ${p.cam} au camion`,`<div class="num ${isLow(p)?"lo":""}">${p.bou}</div>`))
       :'<div class="empty">Aucune pièce trouvée.</div>');
   }
+  else if(view==="devis"){ renderDevis(V); }
   else{
     $("#title").textContent="À commander";
     V.innerHTML=low.length
@@ -211,6 +308,7 @@ function openItem(p){
   if(p.cam>0) a.push(`<button class="act" data-x="unloadN">Remettre au dépôt…</button>`);
   a.push(`<button class="act" data-x="recvN">Commande reçue…</button>`);
   sheet(`<h2>${esc(p.name)}</h2>${p.ref||p.cat?`<p class="sub">${esc([p.ref,p.cat].filter(Boolean).join(" · "))}</p>`:""}
+    ${p.prix?`<p class="sub">Prix de vente : ${eur(p.prix)} HT</p>`:""}
     <div class="nums"><div><small>Boutique</small><b class="${isLow(p)?"lo":""}">${p.bou}</b></div><div><small>Camion</small><b>${p.cam}</b></div><div><small>Seuil</small><b>${p.seuil}</b></div></div>
     <a class="act acc" href="${esc(orderUrl(p))}" target="_blank" rel="noopener">Commander ↗</a>
     <div class="acts">${a.join("")}<button class="act" data-x="edit">Modifier la fiche</button></div>
@@ -233,12 +331,15 @@ function editItem(p){
     <datalist id="cats">${[...new Set(S.items.map(x=>x.cat).filter(Boolean))].map(c=>`<option value="${esc(c)}">`).join("")}</datalist>
     <div class="two">${f("fBou","Stock boutique",p?p.bou:DEPART,"number",'min="0" inputmode="numeric"')}${f("fCam","Dont au camion",p?p.cam:0,"number",'min="0" inputmode="numeric"')}</div>
     <div class="two">${f("fSeuil","Seuil d'alerte",p?p.seuil:SEUIL,"number",'min="0" inputmode="numeric"')}${f("fCmd","Qté à commander",p?p.cmd:DEPART-SEUIL,"number",'min="1" inputmode="numeric"')}</div>
+    ${f("fPrix","Prix de vente HT (€) pour les devis",p?String(p.prix||0).replace(".",","):"","text",'inputmode="decimal" placeholder="ex : 12,50"')}
     ${f("fUrl","Lien du produit chez le fournisseur",p?p.url:"","url",'placeholder="https://…"')}
     <div class="two"><button class="act ghost" data-x="close">Annuler</button><button class="act pri" data-x="saveItem">Enregistrer</button></div>
     ${p?'<button class="act danger" data-x="del">Supprimer la pièce</button>':""}`);
 }
 function menu(){
   sheet(`<h2>Menu</h2><div class="acts">
+    <button class="act" data-x="d_conf">Mon entreprise et mes tarifs</button>
+    <button class="act" data-x="d_prestas">Mes travaux et forfaits</button>
     <button class="act" data-x="hist">Historique des mouvements</button>
     <button class="act" data-x="new">Ajouter une pièce</button>
     <button class="act" data-x="exp">Sauvegarder mes données</button>
@@ -252,7 +353,7 @@ function hist(){
 function saveItem(){
   const v=id=>$(id).value.trim(), n=(id,d)=>{const x=parseInt($(id).value,10);return isNaN(x)||x<0?d:x};
   const name=v("#fName"); if(!name){toast("Donne un nom à la pièce");$("#fName").focus();return}
-  const d={name,ref:v("#fRef"),cat:v("#fCat"),bou:n("#fBou",DEPART),seuil:n("#fSeuil",SEUIL),cmd:Math.max(1,n("#fCmd",DEPART-SEUIL)),url:v("#fUrl")};
+  const d={name,ref:v("#fRef"),cat:v("#fCat"),bou:n("#fBou",DEPART),seuil:n("#fSeuil",SEUIL),cmd:Math.max(1,n("#fCmd",DEPART-SEUIL)),url:v("#fUrl"),prix:num($("#fPrix").value)};
   d.cam=Math.min(n("#fCam",0),d.bou);
   if(d.url&&!/^https?:\/\//i.test(d.url))d.url="https://"+d.url;
   if(cur){Object.assign(cur,d);log(`Fiche modifiée : ${name}`)}else{S.items.push({id:uid(),...d});log(`Nouvelle pièce : ${name} (${d.bou})`)}
@@ -266,8 +367,9 @@ function copyText(txt){
 /* ---------- Clics ---------- */
 document.addEventListener("click",e=>{
   const b=e.target.closest("[data-x],[data-m],nav button"); if(!b) return;
-  if(b.dataset.v){view=b.dataset.v;q="";camMode="in";render();scrollTo(0,0);return}
+  if(b.dataset.v){view=b.dataset.v;q="";camMode="in";if(view==="devis")edId=null;render();scrollTo(0,0);return}
   if(b.dataset.m){camMode=b.dataset.m;render();return}
+  if(b.dataset.x&&b.dataset.x.startsWith("d_")) return devisClick(b,e);
   const host=b.closest("[data-id]"), p=host?byId(host.dataset.id):cur;
   const nv=()=>parseInt($("#qN").value,10)||0;
   switch(b.dataset.x){
@@ -291,8 +393,8 @@ document.addEventListener("click",e=>{
     case "copy": return copyText($("#tX").value);
     case "hist": return hist();
     case "exp": return textBox("Sauvegarde","Copie ce texte et garde-le dans tes notes ou un mail. Pour restaurer, mets-le dans un fichier .json.",JSON.stringify(S));
-    case "imp": {close();const i=document.createElement("input");i.type="file";i.accept="application/json,.json,.txt";i.onchange=()=>{const f=i.files[0];if(!f)return;f.text().then(t=>{const d=JSON.parse(t);if(!Array.isArray(d.items))throw 0;S={items:d.items,log:d.log||[]};save();render();toast("Sauvegarde restaurée")}).catch(()=>toast("Fichier invalide : ce n'est pas une sauvegarde du stock"))};i.click();return}
-    case "reset": return confirmBox("Tout remettre à zéro ?",()=>{S=fresh();save();render();toast("Stock remis à zéro")});
+    case "imp": {close();const i=document.createElement("input");i.type="file";i.accept="application/json,.json,.txt";i.onchange=()=>{const f=i.files[0];if(!f)return;f.text().then(t=>{const d=JSON.parse(t);if(!Array.isArray(d.items))throw 0;S={items:d.items,log:d.log||[],conf:d.conf,presta:d.presta,devis:d.devis};localStorage.setItem(KEY,JSON.stringify(S));load();render();toast("Sauvegarde restaurée")}).catch(()=>toast("Fichier invalide : ce n'est pas une sauvegarde du stock"))};i.click();return}
+    case "reset": return confirmBox("Remettre le stock à zéro ? (les devis sont gardés)",()=>{const k={conf:S.conf,presta:S.presta,devis:S.devis};S={...fresh(),...k};save();render();toast("Stock remis à zéro")});
     case "close": return close();
   }
 });
@@ -301,6 +403,235 @@ $("#addBtn").onclick=()=>editItem(null);
 $("#alert").onclick=()=>{view="commande";render();scrollTo(0,0)};
 $("#view").addEventListener("input",e=>{if(e.target.id!=="q")return;q=e.target.value;const pos=e.target.selectionStart;render();const i=$("#q");i.focus();i.setSelectionRange(pos,pos)});
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&dlg.open){const ok=$("#sh [data-x=qok],#sh [data-x=saveItem]");if(ok&&e.target.tagName==="INPUT"){e.preventDefault();ok.click()}}});
+
+/* ================= DEVIS ================= */
+let edId=null, pickFn=null, prEd=null;
+function num(v){const x=parseFloat(String(v??"").replace(/\s/g,"").replace(",","."));return isNaN(x)?0:x}
+function eur(n){return (Math.round(n*100)/100).toLocaleString("fr-FR",{style:"currency",currency:"EUR"})}
+const fr=n=>String(n).replace(".",",");
+const hfmt=h=>fr(h)+" h";
+const dfr=d=>new Date(d+"T12:00:00").toLocaleDateString("fr-FR");
+const curD=()=>S.devis.find(d=>d.id===edId);
+function lineTotal(d,l){return l.mode==="forfait"?num(l.forfait):l.h*d.taux+l.pieces.reduce((a,x)=>a+x.pu*x.q,0)}
+function totals(d){const ht=d.lignes.reduce((a,l)=>a+lineTotal(d,l),0)+(d.depl?d.deplPrix:0);const tva=ht*d.tva/100;return{ht,tva,ttc:ht+tva}}
+function nextNum(){
+  const c=S.conf, y=new Date().getFullYear();
+  if(c.numY!==y){c.numY=y;c.num=0}
+  c.num=(c.num||0)+1;
+  return `D-${y}-${String(c.num).padStart(3,"0")}`;
+}
+const todayISO=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+function newDevis(){
+  const c=S.conf;
+  const d={id:uid(),num:nextNum(),date:todayISO(),client:{nom:"",adr:"",tel:""},lignes:[],depl:true,deplPrix:num(c.depl),taux:num(c.taux),tva:num(c.tva),statut:"brouillon",stockDone:false};
+  S.devis.unshift(d); save(); edId=d.id; render(); scrollTo(0,0);
+}
+function pieceSnap(x){if(x.id){const it=byId(x.id);return it?{id:it.id,nom:it.name,pu:it.prix||0,q:x.q}:null}return{nom:x.nom,pu:num(x.pu),q:x.q}}
+const prestaToLine=t=>({nom:t.nom,desc:t.desc,mode:"temps",h:t.h,forfait:t.forfait,pieces:t.pieces.map(pieceSnap).filter(Boolean)});
+
+function renderDevis(V){
+  const d=curD();
+  if(!d){
+    $("#title").textContent="Devis";
+    V.innerHTML=`<div class="acts" style="margin-bottom:12px"><button class="act pri" data-x="d_new">+ Nouveau devis</button></div>`
+      +(S.devis.length?`<div class="list">${S.devis.map(x=>`<div class="row" data-di="${x.id}"><button class="main" data-x="d_open"><span class="nm">${esc(x.client.nom||"Client à renseigner")}</span><span class="meta">${esc(x.num)} · ${dfr(x.date)}${x.statut==="accepte"?' · <span style="color:var(--ok);font-weight:700">accepté</span>':""}</span></button><span class="num" style="font-size:20px">${eur(totals(x).ttc)}</span></div>`).join("")}</div>`
+      :'<div class="empty">Aucun devis pour l\'instant.<br>Appuie sur « + Nouveau devis ».</div>')
+      +`<p class="sub" style="margin-top:12px">Taux horaire ${eur(S.conf.taux)} HT · Déplacement ${eur(S.conf.depl)} HT. À changer dans ⋯ → Mon entreprise et mes tarifs.</p>`;
+    return;
+  }
+  $("#title").textContent="Devis "+d.num;
+  const t=totals(d);
+  V.innerHTML=`<button class="back" data-x="d_back">← Mes devis</button>
+  <div class="card"><h3>Client</h3>
+    <div class="fld"><label for="cNom">Nom</label><input id="cNom" data-f="client.nom" value="${esc(d.client.nom)}" autocomplete="off" placeholder="ex : M. Dupont"></div>
+    <div class="fld"><label for="cAdr">Adresse du chantier</label><textarea class="ta" id="cAdr" data-f="client.adr" rows="2">${esc(d.client.adr)}</textarea></div>
+    <div class="fld"><label for="cTel">Téléphone</label><input id="cTel" data-f="client.tel" type="tel" value="${esc(d.client.tel)}"></div>
+  </div>
+  ${d.lignes.map((l,i)=>lineCard(d,l,i)).join("")}
+  <div class="acts" style="margin-bottom:10px"><button class="act pri" data-x="d_addT">+ Ajouter des travaux</button></div>
+  <div class="card">
+    <label class="chk"><input type="checkbox" data-x="d_depl" ${d.depl?"checked":""}> Déplacement (${eur(d.deplPrix)} HT)</label>
+    <div><label>TVA</label><div class="seg sm" style="grid-template-columns:repeat(3,1fr)">${[5.5,10,20].map(v=>`<button data-x="d_tva" data-v2="${v}" class="${d.tva===v?"on":""}">${fr(v)} %</button>`).join("")}</div>
+    <p class="sub" style="margin-top:6px">10 % : rénovation d'un logement de plus de 2 ans · 20 % : logement neuf ou local pro · 5,5 % : rénovation énergétique.</p></div>
+    <div class="tot"><div><span>Total HT</span><span id="tHT">${eur(t.ht)}</span></div><div><span>TVA ${fr(d.tva)} %</span><span id="tTVA">${eur(t.tva)}</span></div><div class="ttc"><span>Total TTC</span><span id="tTTC">${eur(t.ttc)}</span></div></div>
+  </div>
+  <div class="acts">
+    <button class="act acc" data-x="d_doc">Voir le devis / PDF</button>
+    <button class="act" data-x="d_status">${d.statut==="accepte"?"✓ Devis accepté (appuie pour annuler)":"Marquer le devis comme accepté"}</button>
+    <button class="act" data-x="d_stock" ${d.stockDone?"disabled":""}>${d.stockDone?"✓ Pièces déjà retirées du stock":"Chantier terminé : retirer les pièces du stock"}</button>
+    <button class="act" data-x="d_dup">Dupliquer le devis</button>
+    <button class="act danger" data-x="d_del">Supprimer le devis</button>
+  </div>`;
+}
+function lineCard(d,l,i){
+  const forf=l.mode==="forfait";
+  return `<div class="card" data-li="${i}">
+   <div class="hrow"><h3>${esc(l.nom)}</h3><button class="x" data-x="d_rmL" aria-label="Retirer ces travaux">✕</button></div>
+   ${l.desc?`<p class="sub">${esc(l.desc)}</p>`:""}
+   <div class="seg sm"><button data-x="d_mode" data-v2="temps" class="${forf?"":"on"}">Prestation</button><button data-x="d_mode" data-v2="forfait" class="${forf?"on":""}">Forfait</button></div>
+   ${forf?`<div class="fld"><label for="fo${i}">Prix du forfait HT (€), pièces comprises</label><input id="fo${i}" inputmode="decimal" data-f="forfait" data-li2="${i}" value="${fr(l.forfait)}"></div>`
+   :`<div class="hstep"><button data-x="d_h" data-v2="-0.5" aria-label="Moins une demi-heure">−</button><b>${hfmt(l.h)}</b><button data-x="d_h" data-v2="0.5" aria-label="Plus une demi-heure">+</button></div>
+     <div class="calc">Main-d'œuvre : ${hfmt(l.h)} × ${eur(d.taux)} = ${eur(l.h*d.taux)}</div>`}
+   <div>${l.pieces.map((x,j)=>`<div class="pc" data-pi="${j}"><div class="nm">${esc(x.nom)}<span class="meta">${forf?"comprise dans le forfait":`${eur(x.pu)} × ${x.q} = ${eur(x.pu*x.q)}`}</span></div><div class="qs"><button data-x="d_pq" data-v2="-1" aria-label="Moins">−</button><b>${x.q}</b><button data-x="d_pq" data-v2="1" aria-label="Plus">+</button></div></div>`).join("")}
+   <button class="link" data-x="d_addP">+ Ajouter une pièce</button></div>
+   <div class="st"><span>Sous-total HT</span><span id="st${i}">${eur(lineTotal(d,l))}</span></div>
+  </div>`;
+}
+
+/* --- Choix des travaux et des pièces --- */
+function pickPresta(){
+  sheet(`<h2>Ajouter des travaux</h2><div class="list">${S.presta.map(t=>`<div class="row"><button class="main" data-x="d_pickT" data-t="${t.id}"><span class="nm">${esc(t.nom)}</span><span class="meta">${hfmt(t.h)} · forfait ${eur(t.forfait)}</span></button></div>`).join("")}</div>
+  <button class="act" data-x="d_free">Autres travaux (à écrire)</button><button class="act ghost" data-x="close">Fermer</button>`);
+}
+function pickPiece(fn){
+  pickFn=fn;
+  sheet(`<h2>Ajouter une pièce</h2><input class="search" id="pq" type="search" placeholder="Rechercher…" autocomplete="off" style="margin:0">
+  <div class="list">${S.items.map(p=>`<div class="row pk" data-txt="${esc((p.name+" "+p.ref+" "+p.cat).toLowerCase())}"><button class="main" data-x="d_pick" data-pid="${p.id}"><span class="nm">${esc(p.name)}</span><span class="meta">${eur(p.prix||0)} HT · camion ${p.cam} · boutique ${p.bou}</span></button></div>`).join("")}</div>
+  <button class="act" data-x="d_pickFree">Fourniture hors stock</button><button class="act ghost" data-x="close">Fermer</button>`);
+}
+
+/* --- Catalogue de travaux --- */
+function prestas(){
+  sheet(`<h2>Mes travaux et forfaits</h2><p class="sub">Ces modèles remplissent tes devis. Dans chaque devis, tu peux encore changer le temps, le forfait et les pièces.</p>
+  <div class="list">${S.presta.map(t=>`<div class="row"><button class="main" data-x="d_editT" data-t="${t.id}"><span class="nm">${esc(t.nom)}</span><span class="meta">${hfmt(t.h)} · forfait ${eur(t.forfait)} · ${t.pieces.length} pièce${t.pieces.length>1?"s":""}</span></button></div>`).join("")}</div>
+  <button class="act pri" data-x="d_newT">+ Nouveaux travaux</button><button class="act ghost" data-x="close">Fermer</button>`);
+}
+function editPresta(){
+  const t=prEd;
+  sheet(`<h2>${t._new?"Nouveaux travaux":"Modifier les travaux"}</h2>
+   <div class="fld"><label for="tN">Nom</label><input id="tN" value="${esc(t.nom)}" placeholder="ex : Remplacement WC"></div>
+   <div class="fld"><label for="tD">Description (affichée sur le devis)</label><textarea class="ta" id="tD" rows="3">${esc(t.desc)}</textarea></div>
+   <div class="two"><div class="fld"><label for="tH">Temps (heures)</label><input id="tH" inputmode="decimal" value="${fr(t.h)}"></div><div class="fld"><label for="tF">Forfait HT (€)</label><input id="tF" inputmode="decimal" value="${fr(t.forfait)}"></div></div>
+   <div><label>Pièces utilisées</label>${t.pieces.map((x,j)=>{const s=pieceSnap(x);return `<div class="pc" data-pi="${j}"><div class="nm">${esc(s?s.nom:"Pièce supprimée du stock")}<span class="meta">${s?eur(s.pu)+" HT":""}</span></div><div class="qs"><button data-x="d_tq" data-v2="-1" aria-label="Moins">−</button><b>${x.q}</b><button data-x="d_tq" data-v2="1" aria-label="Plus">+</button></div></div>`}).join("")||'<p class="sub">Aucune pièce.</p>'}
+   <button class="link" data-x="d_tAddP">+ Ajouter une pièce</button></div>
+   <div class="two"><button class="act ghost" data-x="d_prestas">Annuler</button><button class="act pri" data-x="d_tSave">Enregistrer</button></div>
+   ${t._new?"":'<button class="act danger" data-x="d_tDel">Supprimer ces travaux</button>'}`);
+}
+function grabT(){prEd.nom=$("#tN").value.trim();prEd.desc=$("#tD").value.trim();prEd.h=num($("#tH").value);prEd.forfait=num($("#tF").value)}
+
+/* --- Réglages entreprise --- */
+function confSheet(){
+  const c=S.conf, f=(id,lab,val,extra="")=>`<div class="fld"><label for="${id}">${lab}</label><input id="${id}" value="${esc(val)}" ${extra}></div>`;
+  sheet(`<h2>Mon entreprise et mes tarifs</h2>
+   ${f("kNom","Nom de l'entreprise",c.nom)}
+   <div class="fld"><label for="kAdr">Adresse</label><textarea class="ta" id="kAdr" rows="2">${esc(c.adr)}</textarea></div>
+   <div class="two">${f("kTel","Téléphone",c.tel,'type="tel"')}${f("kMail","E-mail",c.mail,'type="email"')}</div>
+   ${f("kSiret","SIRET",c.siret,'inputmode="numeric"')}
+   <div class="two">${f("kTaux","Taux horaire HT (€)",fr(c.taux),'inputmode="decimal"')}${f("kDepl","Déplacement HT (€)",fr(c.depl),'inputmode="decimal"')}</div>
+   <div class="two">${f("kTva","TVA par défaut (%)",fr(c.tva),'inputmode="decimal"')}${f("kVal","Validité du devis (jours)",c.valid,'inputmode="numeric"')}</div>
+   <div class="fld"><label for="kMent">Mentions en bas du devis</label><textarea class="ta" id="kMent" rows="5">${esc(c.ment)}</textarea></div>
+   <p class="sub">Les nouveaux tarifs s'appliquent aux prochains devis.</p>
+   <div class="two"><button class="act ghost" data-x="close">Annuler</button><button class="act pri" data-x="d_confOk">Enregistrer</button></div>`);
+}
+
+/* --- Retrait du stock --- */
+function stockOut(d){
+  let n=0;
+  d.lignes.forEach(l=>l.pieces.forEach(x=>{if(!x.id)return;const p=byId(x.id);if(!p)return;const k=Math.min(x.q,p.bou);p.cam-=Math.min(p.cam,k);p.bou-=k;n+=k}));
+  d.stockDone=true; log(`Devis ${d.num} : ${n} pièce(s) retirée(s) du stock`); save(); render();
+  const low=S.items.filter(isLow).length;
+  toast(`${n} pièce${n>1?"s":""} retirée${n>1?"s":""} du stock${low?` · ${low} à commander`:""}`);
+}
+
+/* --- Document --- */
+function docText(d){
+  const t=totals(d);
+  let s=`DEVIS ${d.num} du ${dfr(d.date)}\n${S.conf.nom} · SIRET ${S.conf.siret}\nClient : ${d.client.nom||"—"}\n\n`;
+  d.lignes.forEach(l=>{s+=`- ${l.nom} : ${eur(lineTotal(d,l))} HT${l.mode==="forfait"?" (forfait)":` (${hfmt(l.h)} de main-d'œuvre + pièces)`}\n`});
+  if(d.depl) s+=`- Déplacement : ${eur(d.deplPrix)} HT\n`;
+  return s+`\nTotal HT : ${eur(t.ht)}\nTVA ${fr(d.tva)} % : ${eur(t.tva)}\nTotal TTC : ${eur(t.ttc)}`;
+}
+function showDoc(d){
+  const c=S.conf, t=totals(d);
+  const val=new Date(d.date+"T12:00:00"); val.setDate(val.getDate()+(parseInt(c.valid,10)||30));
+  let rows="";
+  d.lignes.forEach(l=>{
+    rows+=`<tr class="ti"><td colspan="4">${esc(l.nom)}${l.desc?`<span class="ds">${esc(l.desc)}</span>`:""}</td></tr>`;
+    if(l.mode==="forfait"){
+      rows+=`<tr><td>Forfait main-d'œuvre et fournitures</td><td class="r">1</td><td class="r">${eur(num(l.forfait))}</td><td class="r">${eur(num(l.forfait))}</td></tr>`;
+      l.pieces.forEach(x=>rows+=`<tr><td class="inc">${esc(x.nom)} (compris)</td><td class="r inc">${x.q}</td><td></td><td></td></tr>`);
+    }else{
+      rows+=`<tr><td>Main-d'œuvre</td><td class="r">${hfmt(l.h)}</td><td class="r">${eur(d.taux)}</td><td class="r">${eur(l.h*d.taux)}</td></tr>`;
+      l.pieces.forEach(x=>rows+=`<tr><td>${esc(x.nom)}</td><td class="r">${x.q}</td><td class="r">${eur(x.pu)}</td><td class="r">${eur(x.pu*x.q)}</td></tr>`);
+    }
+  });
+  if(d.depl) rows+=`<tr class="ti"><td colspan="4">Déplacement</td></tr><tr><td>Frais de déplacement</td><td class="r">1</td><td class="r">${eur(d.deplPrix)}</td><td class="r">${eur(d.deplPrix)}</td></tr>`;
+  const inFrame=(()=>{try{return window.self!==window.top}catch(e){return true}})();
+  $("#doc").innerHTML=`<div class="docbar"><button class="act" data-x="d_docClose">← Retour</button><span class="sp"></span>${inFrame?"":'<button class="act pri" data-x="d_print">PDF / Imprimer</button>'}<button class="act" data-x="d_copy">Copier</button></div>
+  <div class="paper">
+   <div class="ph"><div class="co"><b>${esc(c.nom)}</b>
+${esc(c.adr)}
+Tél. ${esc(c.tel)}
+${esc(c.mail)}
+SIRET ${esc(c.siret)}</div>
+   <div class="meta2"><h1>DEVIS</h1>N° ${esc(d.num)}
+Date : ${dfr(d.date)}
+Valable jusqu'au ${val.toLocaleDateString("fr-FR")}</div></div>
+   <div class="cli"><small>Client</small>${esc(d.client.nom||"—")}${d.client.adr?"\n"+esc(d.client.adr):""}${d.client.tel?"\nTél. "+esc(d.client.tel):""}</div>
+   <div class="tw"><table><thead><tr><th>Désignation</th><th class="r">Qté</th><th class="r">PU HT</th><th class="r">Total HT</th></tr></thead><tbody>${rows||'<tr><td colspan="4">Aucun travaux ajoutés.</td></tr>'}</tbody></table></div>
+   <div class="ptot"><div><span>Total HT</span><span>${eur(t.ht)}</span></div><div><span>TVA ${fr(d.tva)} %</span><span>${eur(t.tva)}</span></div><div class="g"><span>Total TTC</span><span>${eur(t.ttc)}</span></div></div>
+   <div class="ment">Devis gratuit. Taux horaire de main-d'œuvre : ${eur(d.taux)} HT.${d.tva<20?"\nTVA à taux réduit : attestation du client requise (logement achevé depuis plus de 2 ans).":""}
+${esc(c.ment)}</div>
+   <div class="sign"><div>Date et signature du client, précédées de la mention « Bon pour accord »</div><div>Signature et cachet de l'entreprise</div></div>
+  </div>`;
+  $("#doc").hidden=false; $("#doc").scrollTop=0;
+}
+
+/* --- Clics du devis --- */
+function devisClick(b){
+  const x=b.dataset.x, d=curD();
+  const li=b.closest("[data-li]"), L=li&&d?d.lignes[+li.dataset.li]:null;
+  const pi=b.closest("[data-pi]");
+  switch(x){
+    case "d_new": return newDevis();
+    case "d_open": edId=b.closest("[data-di]").dataset.di; render(); scrollTo(0,0); return;
+    case "d_back": edId=null; render(); scrollTo(0,0); return;
+    case "d_addT": return pickPresta();
+    case "d_pickT": {const t=S.presta.find(p=>p.id===b.dataset.t); close(); if(t&&d){d.lignes.push(prestaToLine(t)); save(); render(); toast("Travaux ajoutés")} return}
+    case "d_free": return sheet(`<h2>Autres travaux</h2><div class="fld"><label for="wN">Intitulé</label><input id="wN" placeholder="ex : Remplacement vanne d'arrivée"></div><div class="fld"><label for="wD">Description</label><textarea class="ta" id="wD" rows="3"></textarea></div><div class="two"><button class="act ghost" data-x="close">Annuler</button><button class="act pri" data-x="d_freeOk">Ajouter</button></div>`);
+    case "d_freeOk": {const nom=$("#wN").value.trim(); if(!nom){toast("Écris un intitulé");return} d.lignes.push({nom,desc:$("#wD").value.trim(),mode:"temps",h:1,forfait:0,pieces:[]}); close(); save(); render(); toast("Travaux ajoutés"); return}
+    case "d_rmL": {const i=+li.dataset.li; return confirmBox(`Retirer « ${L.nom} » du devis ?`,()=>{d.lignes.splice(i,1);save();render()})}
+    case "d_mode": L.mode=b.dataset.v2; save(); render(); return;
+    case "d_h": L.h=Math.max(0,Math.round((L.h+num(b.dataset.v2))*2)/2); save(); render(); return;
+    case "d_pq": {const j=+pi.dataset.pi, P=L.pieces[j]; P.q+=num(b.dataset.v2); if(P.q<=0) L.pieces.splice(j,1); save(); render(); return}
+    case "d_addP": return pickPiece(P=>{L.pieces.push(P);save();render();toast("Pièce ajoutée")});
+    case "d_pick": {const it=byId(b.dataset.pid), f=pickFn; pickFn=null; close(); if(f&&it) f({id:it.id,nom:it.name,pu:it.prix||0,q:1}); return}
+    case "d_pickFree": return sheet(`<h2>Fourniture hors stock</h2><div class="fld"><label for="fpN">Désignation</label><input id="fpN" placeholder="ex : Cuvette WC suspendue"></div><div class="fld"><label for="fpP">Prix unitaire HT (€)</label><input id="fpP" inputmode="decimal" placeholder="ex : 180"></div><div class="two"><button class="act ghost" data-x="close">Annuler</button><button class="act pri" data-x="d_freeP">Ajouter</button></div>`);
+    case "d_freeP": {const nom=$("#fpN").value.trim(); if(!nom){toast("Écris la désignation");return} const f=pickFn; pickFn=null; const P={nom,pu:num($("#fpP").value),q:1}; close(); if(f) f(P); return}
+    case "d_depl": d.depl=b.checked; save(); render(); return;
+    case "d_tva": d.tva=num(b.dataset.v2); save(); render(); return;
+    case "d_doc": return showDoc(d);
+    case "d_docClose": $("#doc").hidden=true; return;
+    case "d_print": window.print(); return;
+    case "d_copy": {const t=docText(d);try{navigator.clipboard.writeText(t).then(()=>toast("Devis copié"),()=>textBox("Devis",t.split("\n")[0],t))}catch(e){textBox("Devis","",t)}return}
+    case "d_status": d.statut=d.statut==="accepte"?"brouillon":"accepte"; save(); render(); toast(d.statut==="accepte"?"Devis accepté":"Devis repassé en brouillon"); return;
+    case "d_stock": return confirmBox("Retirer les pièces de ce devis du stock ? (camion d'abord, puis dépôt)",()=>stockOut(d));
+    case "d_dup": {const c=JSON.parse(JSON.stringify(d)); Object.assign(c,{id:uid(),num:nextNum(),date:todayISO(),statut:"brouillon",stockDone:false}); S.devis.unshift(c); edId=c.id; save(); render(); scrollTo(0,0); toast(`Copie créée : ${c.num}`); return}
+    case "d_del": return confirmBox(`Supprimer le devis ${d.num} ?`,()=>{S.devis=S.devis.filter(z=>z!==d);edId=null;save();render();toast("Devis supprimé")});
+    /* catalogue */
+    case "d_prestas": return prestas();
+    case "d_editT": prEd=JSON.parse(JSON.stringify(S.presta.find(t=>t.id===b.dataset.t))); return editPresta();
+    case "d_newT": prEd={_new:true,id:uid(),nom:"",desc:"",h:1,forfait:0,pieces:[]}; return editPresta();
+    case "d_tq": {grabT(); const j=+pi.dataset.pi; prEd.pieces[j].q+=num(b.dataset.v2); if(prEd.pieces[j].q<=0) prEd.pieces.splice(j,1); return editPresta()}
+    case "d_tAddP": grabT(); return pickPiece(P=>{prEd.pieces.push(P.id?{id:P.id,q:1}:{nom:P.nom,pu:P.pu,q:1}); editPresta()});
+    case "d_tSave": {grabT(); if(!prEd.nom){toast("Donne un nom aux travaux");return} const {_new,...o}=prEd; if(_new) S.presta.push(o); else S.presta=S.presta.map(t=>t.id===o.id?o:t); save(); prestas(); toast("Travaux enregistrés"); return}
+    case "d_tDel": {const id=prEd.id, nom=prEd.nom; return confirmBox(`Supprimer « ${nom} » de tes travaux ?`,()=>{S.presta=S.presta.filter(t=>t.id!==id);save();toast("Travaux supprimés")})}
+    /* réglages */
+    case "d_conf": return confSheet();
+    case "d_confOk": {const v=id=>$(id).value.trim(); Object.assign(S.conf,{nom:v("#kNom"),adr:$("#kAdr").value.trim(),tel:v("#kTel"),mail:v("#kMail"),siret:v("#kSiret"),taux:num(v("#kTaux")),depl:num(v("#kDepl")),tva:num(v("#kTva")),valid:parseInt(v("#kVal"),10)||30,ment:$("#kMent").value.trim()}); save(); close(); render(); toast("Réglages enregistrés"); return}
+  }
+}
+document.addEventListener("input",e=>{
+  const el=e.target;
+  if(el.id==="pq"){const s=el.value.trim().toLowerCase();document.querySelectorAll("#sh .pk").forEach(r=>r.hidden=!!s&&!r.dataset.txt.includes(s));return}
+  if(!el.dataset||!el.dataset.f) return;
+  const d=curD(); if(!d) return;
+  const f=el.dataset.f;
+  if(f.startsWith("client.")) d.client[f.slice(7)]=el.value;
+  else if(f==="forfait"){const i=el.dataset.li2,l=d.lignes[+i];l.forfait=num(el.value);$("#st"+i).textContent=eur(lineTotal(d,l))}
+  const t=totals(d); $("#tHT").textContent=eur(t.ht); $("#tTVA").textContent=eur(t.tva); $("#tTTC").textContent=eur(t.ttc);
+  save();
+});
 
 load(); render();
 if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});

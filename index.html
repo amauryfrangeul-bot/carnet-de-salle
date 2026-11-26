@@ -280,6 +280,8 @@ input::placeholder{color:var(--mut);opacity:1}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
 section.c>.ct{flex-wrap:wrap;row-gap:8px}section.c>.ct>h2{flex:1 1 9ch;overflow-wrap:break-word}
+
+.last.stg{color:var(--mut);font-style:normal;border-left:3px solid var(--acc,#C2410C);padding-left:8px}
 </style></head><body>
 
 <main><div id="app"></div><footer class="ft"><a href="confidentialite.html">Confidentialité</a><a href="cgu.html">CGU et mentions légales</a></footer></main>
@@ -357,16 +359,51 @@ function rec(i,j){const k=i+"."+j;if(H[k])return H[k];{const o=S0[i][j];if(!o||!
 const DB=/haltère|curl marteau(?! poulie)|curl incliné|élévations latérales/i;
 function stepOf(e){const p=e.split("|"),v=parseFloat(p[5]);return v>0?v:(DB.test(nmOf(e))?2:0)}
 const inc0=kg=>kg<15?1:2.5;
-function inc(kg,st,lad){if(st)return st;const d=inc0(kg);if(lad&&lad.length>1){const up=lad.filter(v=>v>kg+.01);if(up.length&&up[0]-kg<=Math.max(10,3*d))return Math.round((up[0]-kg)*10)/10;let m=99;for(let i=1;i<lad.length;i++){const x=lad[i]-lad[i-1];if(x>=.4&&x<m)m=x}if(m<=10)return Math.round(m*10)/10}return d}
-function ladder(i,j){const s=new Set(),add=v=>{if(typeof v=="number"&&v>0)s.add(v)},rc=r=>{if(!r)return;add(r.kg);(r.sets||[]).forEach(add);[r.L,r.R].forEach(a=>(a||[]).forEach(x=>x&&add(x[0])));if(r.p)rc(r.p)};rc(rec(i,j));(H["h."+i+"."+j]||[]).forEach(e=>e&&add(e.kg));return[...s].sort((a,b)=>a-b)}
+function inc(kg,st,lad){if(st)return st;const d=inc0(kg);if(lad&&lad.length>1){const up=lad.filter(v=>v>kg+.01);if(up.length&&up[0]-kg<=Math.max(10,3*d))return Math.round((up[0]-kg)*10)/10;const g=lad.bar&&lad.tg?lad.tg:lad;let m=99;for(let i=1;i<g.length;i++){const x=g[i]-g[i-1];if(x>=.4&&x<m)m=x}if(m<=10)return Math.round(m*10)/10}return d}
+function ladder(i,j){const s=new Set(),add=v=>{if(typeof v=="number"&&v>0)s.add(v)},rc=r=>{if(!r)return;add(r.kg);(r.sets||[]).forEach(add);[r.L,r.R].forEach(a=>(a||[]).forEach(x=>x&&add(x[0])));if(r.p)rc(r.p)};rc(rec(i,j));(H["h."+i+"."+j]||[]).forEach(e=>e&&add(e.kg));const o=[...s].sort((a,b)=>a-b),t=new Set();(H["h."+i+"."+j]||[]).forEach(e=>{if(e&&typeof e.kg=="number"&&e.kg>0)t.add(e.kg)});for(let r=rec(i,j);r;r=r.p)if(typeof r.kg=="number"&&r.kg>0)t.add(r.kg);o.tg=[...t].sort((a,b)=>a-b);{const e=S[i]&&S[i][3]&&S[i][3][j];o.bar=!!e&&/\bez\b|barre|smith/i.test(nmOf(e))}return o}
 let LADS={};
-function sug(r,reps,st,lad){
+function rng(rg){const m=String(rg).match(/^(\d+)(?:-(\d+))?$/);return m?[+m[1],+(m[2]||m[1])]:null}
+function dnStep(kg,st,lad){if(st)return Math.max(0,Math.round((kg-st)*100)/100);if(lad&&lad.length){const lw=lad.filter(v=>v<kg-.01);if(lw.length){const v=lw[lw.length-1];if(kg-v<=Math.max(10,3*inc0(kg)))return v}}return Math.max(0,Math.round((kg-inc0(kg))*100)/100)}
+function prog(rows,st,lad,prev){
+ return rows.map((r,q)=>Object.assign((()=>{const R=rng(r.rg),sec=/s$/.test(String(r.rg).trim());
+  if(r.kg==null)return{k:null,r:R?R[0]:(sec?parseInt(r.rg):null),w:"none"};
+  if(r.reps==null)return{k:r.kg,r:R?R[0]:null,w:"none"};
+  if(r.kg===0||!R)return{k:r.kg,r:sec?r.reps+5:r.reps+1,w:sec?"sec":"bw"};
+  const lo=R[0],hi=R[1],d=inc(r.kg,st,lad),big=r.kg>0&&d/r.kg>.2,thr=hi+(big?2:0);
+  if(r.reps>=thr){const nk=Math.round((r.kg+d)*100)/100;
+   const b=rows.find((o,k)=>{if(k===q||o.kg==null||o.reps==null||o.kg<r.kg-.01||o.kg>nk+.01)return false;const O=rng(o.rg);return O&&o.reps<O[0]});
+   if(b)return{k:r.kg,r:r.reps,w:"hold",bk:b.kg,blo:rng(b.rg)[0]};
+   return{k:nk,r:lo,w:"up"}}
+  if(r.reps>=hi)return{k:r.kg,r:r.reps+1,w:"big",d:d,thr:thr};
+  if(r.reps<lo){const pv=(prev||[]).find(o=>o&&o.kg!=null&&o.reps!=null&&Math.abs(o.kg-r.kg)<.01&&o.reps<lo&&o.reps>=r.reps);
+   if(pv){const nk=dnStep(r.kg,st,lad);if(nk>0&&nk<r.kg)return{k:nk,r:Math.round((lo+hi)/2),w:"down"}}
+   return{k:r.kg,r:lo,w:"lo"}}
+  return{k:r.kg,r:r.reps+1,w:"same"}})(),{rg:r.rg}))}
+function ptx(t){const f=fmt;switch(t.w){
+ case"up":return`monte à ${f(t.k)} kg, vise ${t.r} reps`;
+ case"hold":return Math.abs(t.bk-t.k)<.01?`garde ${f(t.k)} kg, vise ${t.r} reps : monte quand toutes tes séries à ${f(t.k)} kg auront atteint ${t.blo} reps`:`garde ${f(t.k)} kg, vise ${t.r} reps : monte quand ta série à ${f(t.bk)} kg aura atteint ${t.blo} reps`;
+ case"big":return`même charge (${f(t.k)} kg), vise ${t.r} reps (cran suivant +${f(t.d)} kg : monte à ${t.thr} reps)`;
+ case"down":return`baisse à ${f(t.k)} kg, vise ${t.r} reps (2 séances sous la fourchette)`;
+ case"sec":return t.k===0?"poids du corps, vise +5 secondes":"même charge, vise +5 secondes";
+ case"bw":return t.k===0?`poids du corps, vise ${t.r} reps`:`même charge (${f(t.k)} kg), vise ${t.r} reps`;
+ case"none":return"";
+ default:return`même charge (${f(t.k)} kg), vise ${t.r} reps`}}
+function rowsOf(r,rg,pyr,side){if(!r)return[];let a;
+ if(side){const x=r[side];if(!Array.isArray(x))return rowsOf(r,rg,pyr);a=x.map(v=>v?[v[0],v[1]]:[null,null])}
+ else a=r.sets?r.sets.map((kg,i)=>[kg,repsOf(r,i)]):(r.kg!=null?[[r.kg,r.reps]]:[]);
+ if(pyr)a=a.slice().sort((x,y)=>(y[0]||0)-(x[0]||0));
+ return a.map((v,i)=>({kg:v[0],reps:v[1]==null?null:v[1],rg:rgRow(rg,i+1,pyr)}))}
+function topI(rows){let b=-1;rows.forEach((r,i)=>{if(r.kg==null||r.reps==null)return;const o=rows[b];if(b<0||r.kg>o.kg||(r.kg==o.kg&&r.reps>o.reps))b=i});return b}
+function stag(i,j){const a=(H["h."+i+"."+j]||[]).filter(e=>e&&e.d!==today()&&e.kg!=null&&e.reps!=null);if(a.length<3)return false;const l=a.slice(-3),f=l[0];return l.slice(1).every(e=>e.kg<f.kg||(e.kg==f.kg&&e.reps<=f.reps))}
+function sug(r,reps,st,lad,pyr){
  if(!r)return["Pas encore d’historique","Note ta première série de travail"];
  const last=(r.sets&&r.sets.length>1?r.sets.map(fmt).join(" → "):fmt(r.kg))+" kg"+(r.reps?`, ${r.reps} reps sur la plus lourde`:""),h=hi(reps);
  if(!r.reps||!h)return[last,"Note tes reps pour débloquer l’objectif"];
- if(r.kg===0)return[last,`Objectif : ${r.reps+1} reps au poids du corps`];
- if(r.reps>=h)return[last,`Objectif : ${fmt(Math.round((r.kg+inc(r.kg,st,lad))*100)/100)} kg`];
- return[last,`Objectif : ${fmt(r.kg)} kg × ${r.reps+1} reps`]}
+ const rows=rowsOf(r,reps,pyr),T=prog(rows,st,lad,rowsOf(r.p,reps,pyr)),i=topI(rows),t=T[i];
+ if(!t)return[last,"Note tes reps pour débloquer l’objectif"];
+ if(t.k===0)return[last,`Objectif : ${t.r} reps au poids du corps`];
+ const why={up:" (tu montes)",down:" (tu redescends d’un cran pour repartir)",hold:" (tu gardes la charge)"}[t.w]||"";
+ return[last,`Objectif : ${fmt(t.k)} kg × ${t.r} reps`+why]}
 const INFO=[
 [/pullover|bras tendu/,"Grand dorsal","Triceps (longue portion), grand rond, pectoraux","Coudes à peine fléchis et fixes. Tire avec le dos, pas avec les bras, et garde le buste immobile."],
 [/spider/,"Biceps (courte portion)","Brachial, avant-bras","Poitrine calée sur le banc, coudes verticaux et fixes. Descends sans relâcher en bas."],
@@ -450,31 +487,32 @@ function repsOf(rc,i){
  if(rc.reps&&rc.sets&&i==rc.sets.indexOf(Math.max(...rc.sets)))return rc.reps;
  return null}
 function ref(i,j){const r=rec(i,j);return r&&r.d==today()?(r.p||null):r}
-function advise(c,top){
- const rg=c.dataset.r,rf=ref(cur,+c.dataset.j),m=String(rg).match(/^(\d+)(?:-(\d+))?$/);
- const lo=m?+m[1]:null,hi=m?+(m[2]||m[1]):null;let t="flat";
+function advise(c,top,tt){
+ const rg=c.dataset.r,rf=ref(cur,+c.dataset.j);let t="flat";
  if(rf){if(top.kg>rf.kg)t="up";else if(top.kg<rf.kg)t="dn";else if(rf.reps){if(top.reps>rf.reps)t="up";else if(top.reps<rf.reps)t="dn"}}
  const lead={up:"En progression. ",dn:"En dessous de la dernière fois. ",flat:rf?"Même niveau que la dernière fois. ":""}[t];
- let tip="";
- if(hi!==null){if(top.reps>=hi)tip="Tu es au haut de la fourchette : monte la charge la prochaine fois.";else if(top.reps<lo)tip=`Sous la fourchette (${rg} reps) : garde cette charge jusqu’à atteindre ${lo} reps.`;else tip="Dans la fourchette : vise une rep de plus."}
+ let tip="";const R=rng(tt&&tt.rg||rg);
+ if(tt)tip={up:"Haut de la fourchette atteint : tu monteras la charge la prochaine fois.",hold:"Haut de la fourchette atteint, mais garde cette charge : ta série plus lourde doit d’abord tenir la fourchette.",big:"Haut de la fourchette atteint. Le cran suivant est gros : fais encore 2 reps de plus avant de monter.",down:"Deux séances sous la fourchette : la prochaine fois, baisse d’un cran pour repartir proprement.",lo:R?`Sous la fourchette (${R[0]}-${R[1]} reps) : garde cette charge jusqu’à atteindre ${R[0]} reps.`:"",same:"Dans la fourchette : vise une rep de plus."}[tt.w]||"";
  return[t,lead+tip]}
 function rgRow(rg,n,pyr){if(!pyr||n<=1)return rg;const m=String(rg).match(/^(\d+)-(\d+)$/);if(!m)return rg;const d=2*(n-1);return(+m[1]+d)+"-"+(+m[2]+d)}
 function plan(kg,reps,rg,st,lad){const sec=/s$/.test(String(rg).trim()),m=String(rg).match(/^(\d+)(?:-(\d+))?$/),lo=m?+m[1]:(sec?parseInt(rg):null);
  if(kg==null)return[null,lo];if(!reps)return[kg,lo];if(kg===0||!m)return[kg,sec?reps+5:reps+1];
  const hi=+(m[2]||m[1]);if(reps>=hi)return[Math.round((kg+inc(kg,st,lad))*100)/100,lo];if(reps<lo)return[kg,lo];return[kg,reps+1]}
 function card(p,j,tag,nm){
- const w=Math.min(+p[1],3),st=stepOf(S[cur][3][j]),rc=ref(cur,j),lad=LADS[j]=ladder(cur,j),sg=sug(rc,p[2],st,lad),pr=prOf(cur,j),uni=/unilat|bûcheron/i.test(nm),pyr=/pyramide/i.test(nm);
+ const w=Math.min(+p[1],3),st=stepOf(S[cur][3][j]),rc=ref(cur,j),lad=LADS[j]=ladder(cur,j),uni=/unilat|bûcheron/i.test(nm),pyr=/pyramide/i.test(nm),sg=sug(rc,p[2],st,lad,pyr),pr=prOf(cur,j),sgn=rc&&rc.reps&&stag(cur,j);
+ const TC=prog(rowsOf(rc,p[2],pyr),st,lad,rowsOf(rc&&rc.p,p[2],pyr)),TL=uni?prog(rowsOf(rc,p[2],pyr,"L"),st,lad,rowsOf(rc&&rc.p,p[2],pyr,"L")):null,TR=uni?prog(rowsOf(rc,p[2],pyr,"R"),st,lad,rowsOf(rc&&rc.p,p[2],pyr,"R")):null,tp=t=>t&&t.w!=="none"?[t.k,t.r]:null;
  let pairs=rc&&rc.sets?rc.sets.map((kg,i)=>[kg,repsOf(rc,i)]):[];if(pyr)pairs=pairs.slice().sort((a,b)=>b[0]-a[0]);
  let rows="";
  for(let q=1;q<=w+1;q++){
-  const lp=pairs[q-2]||null,pv=lp?lp[0]:null,ph=pv!==null?fmt(pv):"kg",rrg=q>1?rgRow(p[2],q-1,pyr):p[2],pl=q>1?plan(pv,lp&&lp[1],rrg,st,lad):[null,10];
+  const lp=pairs[q-2]||null,pv=lp?lp[0]:null,ph=pv!==null?fmt(pv):"kg",rrg=q>1?rgRow(p[2],q-1,pyr):p[2],pl=q>1?(tp(TC[q-2])||plan(pv,lp&&lp[1],rrg,st,lad)):[null,10];
   const sd=a=>{const v=rc&&rc[a]&&rc[a][q-2]&&rc[a][q-2][0]!=null?rc[a][q-2][0]:pv;return`placeholder="${v!==null?fmt(v):"kg"}" data-ph="${v===null?"":v}"`};
-  const spl=a=>{const x=rc&&rc[a]&&rc[a][q-2];return q>1&&x&&x[0]!=null?plan(x[0],x[1],rrg,st,lad):pl},pa=uni?spl("L"):pl,pb=uni?spl("R"):pl,dv=v=>v==null?"":v;
+  const spl=a=>{const T=a=="L"?TL:TR,t=q>1&&T?tp(T[q-2]):null;return t||pl},pa=uni?spl("L"):pl,pb=uni?spl("R"):pl,dv=v=>v==null?"":v;
+  let px="";if(q>1){const c0=TC[q-2];if(uni&&TL&&TR&&TL[q-2]&&TR[q-2]&&TL[q-2].w!=="none"&&TR[q-2].w!=="none"&&ptx(TL[q-2])!==ptx(TR[q-2]))px="Gauche : "+ptx(TL[q-2])+"\nDroite : "+ptx(TR[q-2]);else if(c0&&c0.w!=="none")px=ptx(c0)}
   const qb=(s2,sn)=>`<button class="qk" data-q="p"${s2} aria-label="Remplir avec l’objectif${sn}, ligne ${q}">OK</button><button class="qk" data-q="m"${s2} aria-label="Une rep de moins${sn}, ligne ${q}" disabled>−1</button>`;
-  rows+=`<div class="row${uni?" u":""}" data-j="${j}" data-rg="${rrg}" data-lk="${dv(pv)}" data-lr="${dv(lp&&lp[1])}" data-pk="${dv(pa[0])}" data-pr="${dv(pa[1])}" data-pk2="${dv(pb[0])}" data-pr2="${dv(pb[1])}"><label class="chip"><input type="checkbox" class="wu"${q==1?" checked":""}><span class="a">Échauf.</span><span class="b">Série ${q-1}</span></label>`+(uni?`<span class="sd">G</span><input class="kg" inputmode="decimal" autocomplete="off" aria-label="Charge côté gauche, ligne ${q}" ${sd("L")}><input class="rp" inputmode="numeric" autocomplete="off" aria-label="Répétitions côté gauche, ligne ${q}" placeholder="reps">${qb("",", côté gauche")}<span class="sd">D</span><input class="kg2" inputmode="decimal" autocomplete="off" aria-label="Charge côté droit, ligne ${q}" ${sd("R")}><input class="rp2" inputmode="numeric" autocomplete="off" aria-label="Répétitions côté droit, ligne ${q}" placeholder="reps">${qb(' data-sd="2"',", côté droit")}`:`<input class="kg" inputmode="decimal" autocomplete="off" aria-label="Charge, ligne ${q}" placeholder="${ph}" data-ph="${pv===null?"":pv}"><input class="rp" inputmode="numeric" autocomplete="off" aria-label="Répétitions, ligne ${q}" placeholder="reps">${qb("","")}`)+`</div><div class="nx"></div>`}
+  rows+=`<div class="row${uni?" u":""}" data-j="${j}" data-rg="${rrg}" data-lk="${dv(pv)}" data-lr="${dv(lp&&lp[1])}" data-pk="${dv(pa[0])}" data-pr="${dv(pa[1])}" data-pk2="${dv(pb[0])}" data-pr2="${dv(pb[1])}" data-px="${esc(px)}"><label class="chip"><input type="checkbox" class="wu"${q==1?" checked":""}><span class="a">Échauf.</span><span class="b">Série ${q-1}</span></label>`+(uni?`<span class="sd">G</span><input class="kg" inputmode="decimal" autocomplete="off" aria-label="Charge côté gauche, ligne ${q}" ${sd("L")}><input class="rp" inputmode="numeric" autocomplete="off" aria-label="Répétitions côté gauche, ligne ${q}" placeholder="reps">${qb("",", côté gauche")}<span class="sd">D</span><input class="kg2" inputmode="decimal" autocomplete="off" aria-label="Charge côté droit, ligne ${q}" ${sd("R")}><input class="rp2" inputmode="numeric" autocomplete="off" aria-label="Répétitions côté droit, ligne ${q}" placeholder="reps">${qb(' data-sd="2"',", côté droit")}`:`<input class="kg" inputmode="decimal" autocomplete="off" aria-label="Charge, ligne ${q}" placeholder="${ph}" data-ph="${pv===null?"":pv}"><input class="rp" inputmode="numeric" autocomplete="off" aria-label="Répétitions, ligne ${q}" placeholder="reps">${qb("","")}`)+`</div><div class="nx"></div>`}
  const rest=p[3]=="0 s"?`<span class="r z">Sans repos</span>`:`<button class="r" data-s="${p[3]}">Repos ${p[3]}</button>`,
   fmtL=pyr?`${w} séries : ${Array.from({length:w},(_,n)=>rgRow(p[2],n+1,true)).join(" / ")} reps + 1 échauffement`:`${w}×${p[2]}${uni?" par côté":""} + 1 échauffement`;
- return `<section class="c" data-j="${j}" data-r="${p[2]}" data-st="${st}"><div class="ct"><h2>${tag?`<em>${tag}</em>`:""}${pyr?nm.replace(/\s*\(pyramide inversée\)/i,""):nm}</h2>${rest}</div><p class="m"><span>${fmtL}</span><button class="lk ed" data-e="${j}">Modifier</button></p>${pyr?`<p class="last"><b>Pyramide inversée.</b> Série la plus lourde en premier, puis allège d’environ 10 % à chaque série en visant plus de reps.</p>`:""}<p class="last">Dernière séance : ${sg[0]}</p>${pr?`<p class="last rcd">${prTxt(pr)}</p>`:""}<p class="goal"><b>${sg[1]}</b></p><div class="hdr${uni?" u":""}"><span></span>${uni?"<span></span>":""}<span>kg</span><span>reps</span><span></span><span></span></div>${rows}<input class="nt" maxlength="140" placeholder="Note : réglage, sensation…" aria-label="Note pour cet exercice" value="${esc(H["t."+cur+"."+j]||"")}" autocomplete="off" enterkeyhint="done"><p class="adv"></p>${info(nm,p[4])}</section>`}
+ return `<section class="c" data-j="${j}" data-r="${p[2]}" data-st="${st}" data-py="${pyr?1:""}"><div class="ct"><h2>${tag?`<em>${tag}</em>`:""}${pyr?nm.replace(/\s*\(pyramide inversée\)/i,""):nm}</h2>${rest}</div><p class="m"><span>${fmtL}</span><button class="lk ed" data-e="${j}">Modifier</button></p>${pyr?`<p class="last"><b>Pyramide inversée.</b> Série la plus lourde en premier, puis allège d’environ 10 % à chaque série en visant plus de reps.</p>`:""}<p class="last">Dernière séance : ${sg[0]}</p>${pr?`<p class="last rcd">${prTxt(pr)}</p>`:""}<p class="goal"><b>${sg[1]}</b></p>${sgn?`<p class="last stg">Pas de progrès depuis 3 séances. C’est normal en sèche : garde la charge et vise une rep de plus. Si ça dure, soigne ton sommeil.</p>`:""}<div class="hdr${uni?" u":""}"><span></span>${uni?"<span></span>":""}<span>kg</span><span>reps</span><span></span><span></span></div>${rows}<input class="nt" maxlength="140" placeholder="Note : réglage, sensation…" aria-label="Note pour cet exercice" value="${esc(H["t."+cur+"."+j]||"")}" autocomplete="off" enterkeyhint="done"><p class="adv"></p>${info(nm,p[4])}</section>`}
 const COURS=[
 
 {t:"Les muscles, simplement",k:"Un muscle ne sait que tirer. Pour bouger dans les deux sens, il en faut deux opposés.",b:[
@@ -629,7 +667,9 @@ function bkBanner(){let last=null,sz=null;try{last=localStorage.getItem(KEY+"_bk
 function side2(r){const k2=r.querySelector(".kg2");if(!k2)return null;const p2=r.querySelector(".rp2");return{kg:k2.value!==""?num(k2.value):(k2.dataset.ph!==""?+k2.dataset.ph:null),reps:rpn(p2.value),typed:k2.value!==""||p2.value!==""}}
 function upd(){if(!document.getElementById("pb"))return;
  const cs=app.querySelectorAll("section.c"),tally={up:0,flat:0,dn:0};let d=0,all=cs.length>0;
- cs.forEach((c,ci)=>{let n=0,ok=false,top=null;const rc=ref(cur,+c.dataset.j),rg=c.dataset.r,st=+c.dataset.st||0,lad=LADS[c.dataset.j];
+ cs.forEach((c,ci)=>{let n=0,ok=false,top=null,topT=null;const rc=ref(cur,+c.dataset.j),rg=c.dataset.r,st=+c.dataset.st||0,lad=LADS[c.dataset.j],pyrC=c.dataset.py=="1",uniC=!!c.querySelector(".row.u");
+  const live=[...c.querySelectorAll(".row")].filter(r=>!r.querySelector(".wu").checked).map(r=>{const k=r.querySelector(".kg"),rpL=rpn(r.querySelector(".rp").value),s2=side2(r),kgL=k.value!==""?num(k.value):(k.dataset.ph!==""?+k.dataset.ph:(rpL!==null||(s2&&s2.reps!==null)?0:null)),rrg=r.dataset.rg||rg;let kg=kgL,rp=rpL;if(s2){const kgR=s2.kg!==null?s2.kg:kgL;if(kgL===null||rpL===null||s2.reps===null)rp=null;else if(kgR<kgL||(kgR==kgL&&s2.reps<rpL)){kg=kgR;rp=s2.reps}return{c:{kg:kg,reps:rp,rg:rrg},l:{kg:kgL,reps:rpL,rg:rrg},r:{kg:s2.kg!==null?s2.kg:kgL,reps:s2.reps,rg:rrg}}}return{c:{kg:kg,reps:rp,rg:rrg}}});
+  const LC=prog(live.map(x=>x.c),st,lad,rowsOf(rc,rg,pyrC)),LL=uniC?prog(live.map(x=>x.l||x.c),st,lad,rowsOf(rc,rg,pyrC,"L")):null,LR=uniC?prog(live.map(x=>x.r||x.c),st,lad,rowsOf(rc,rg,pyrC,"R")):null;
   const fw=[...c.querySelectorAll(".row")].find(r=>!r.querySelector(".wu").checked),fk=fw&&fw.querySelector(".kg"),base=fk?(fk.value!==""?num(fk.value):(fk.dataset.ph!==""?+fk.dataset.ph:null)):null;
   c.querySelectorAll(".row").forEach(r=>{r.querySelectorAll(".qk").forEach(b=>{const f=r.querySelector(b.dataset.sd?".rp2":".rp").value!=="";if(b.dataset.q=="p"){b.textContent=f?"+1":"OK";b.setAttribute("aria-label",(f?"Une rep de plus":"Remplir avec l’objectif")+(b.dataset.sd?", côté droit":""))}else b.disabled=!f});if(!r.querySelector(".wu").checked){n++;r.querySelector(".b").textContent="Série "+n;
    const k=r.querySelector(".kg"),p=r.querySelector(".rp"),s2=side2(r);
@@ -638,14 +678,14 @@ function upd(){if(!document.getElementById("pb"))return;
    const rpL=rpn(p.value),kgL=k.value!==""?num(k.value):(k.dataset.ph!==""?+k.dataset.ph:(rpL!==null||(s2&&s2.reps!==null)?0:null));
    let kg=kgL,rp=rpL;
    if(s2){const kgR=s2.kg!==null?s2.kg:kgL;if(kgL===null||rpL===null||s2.reps===null)rp=null;else if(kgR<kgL||(kgR==kgL&&s2.reps<rpL)){kg=kgR;rp=s2.reps}}
-   if(kg!==null&&rp!==null&&(!top||kg>top.kg||(kg==top.kg&&rp>top.reps)))top={kg:kg,reps:rp};
+   if(kg!==null&&rp!==null&&(!top||kg>top.kg||(kg==top.kg&&rp>top.reps))){top={kg:kg,reps:rp};topT=LC[n-1]}
    const nx=r.nextElementSibling,rrg=r.dataset.rg||rg;let tx="",cl="nx";
-   if(kg!==null&&rp!==null){tx="Prochaine fois : "+nxt(kg,rp,rrg,st,lad);cl="nx on";if(s2){const kgR=s2.kg!==null?s2.kg:kgL;if(kgR!==kgL||s2.reps!==rpL)tx="Gauche : "+nxt(kgL,rpL,rrg,st,lad)+"\nDroite : "+nxt(kgR,s2.reps,rrg,st,lad)}}
-   else if(r.dataset.lk!==""&&r.dataset.lr!==""){tx="Objectif : "+nxt(+r.dataset.lk,+r.dataset.lr,rrg,st,lad)}
+   if(kg!==null&&rp!==null){tx="Prochaine fois : "+ptx(LC[n-1]);cl="nx on";if(s2&&LL&&LR){const a=ptx(LL[n-1]),b2=ptx(LR[n-1]);if(a!==b2)tx="Gauche : "+a+"\nDroite : "+b2}}
+   else if(r.dataset.px){tx=/^Gauche/.test(r.dataset.px)?"Objectif\n"+r.dataset.px:"Objectif : "+r.dataset.px}
    nx.textContent=tx;nx.className=cl}else{const nx=r.nextElementSibling;let tx="";if(base&&r.querySelector(".kg").value===""&&r.querySelector(".rp").value===""){const q=st||(base<20?.5:1),rd=f=>Math.max(q,Math.round(base*f/q)*q);tx="Échauffement conseillé : environ "+fmt(rd(.5))+" kg × "+(ci==0?"12 reps, puis 3 à 5 reps à "+fmt(rd(.75))+" kg":"8 à 10 reps")}nx.textContent=tx;nx.className="nx"}});
   if(ok)d++;else all=false;
   const adv=c.querySelector(".adv");
-  if(top){const a=advise(c,top),pr=prOf(cur,+c.dataset.j,today()),isPr=pr&&(top.kg>pr.kg||(top.kg==pr.kg&&top.reps>(pr.reps||0)));adv.textContent=(isPr?"Nouveau record personnel. ":"")+a[1];adv.className="adv "+a[0]+(isPr?" pr":"");tally[a[0]]++}else{adv.textContent="";adv.className="adv"}});
+  if(top){const a=advise(c,top,topT),pr=prOf(cur,+c.dataset.j,today()),isPr=pr&&(top.kg>pr.kg||(top.kg==pr.kg&&top.reps>(pr.reps||0)));adv.textContent=(isPr?"Nouveau record personnel. ":"")+a[1];adv.className="adv "+a[0]+(isPr?" pr":"");tally[a[0]]++}else{adv.textContent="";adv.className="adv"}});
  const val=H["v."+cur]==today(),pt=document.getElementById("pt"),sm=document.getElementById("sm");
  document.getElementById("pb").style.width=(cs.length?d/cs.length*100:0)+"%";
  pt.textContent=`${d} sur ${cs.length} exercices notés`+(val?", séance validée":"");

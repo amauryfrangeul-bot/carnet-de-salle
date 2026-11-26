@@ -282,6 +282,9 @@ input::placeholder{color:var(--mut);opacity:1}
 section.c>.ct{flex-wrap:wrap;row-gap:8px}section.c>.ct>h2{flex:1 1 9ch;overflow-wrap:break-word}
 
 .last.stg{color:var(--mut);font-style:normal;border-left:3px solid var(--acc,#C2410C);padding-left:8px}
+
+.fe{margin:4px 0 0;font-size:14px;color:var(--mut)}.fe b.up{color:var(--ok,#15803D)}
+.rcp{list-style:none;margin:8px 0 0;padding:0;text-align:left;font-size:15px;line-height:1.45;font-weight:400}.rcp li,.rcp li.up{margin:4px 0;color:var(--ink)}.rcp b{color:var(--ink)}
 </style></head><body>
 
 <main><div id="app"></div><footer class="ft"><a href="confidentialite.html">Confidentialité</a><a href="cgu.html">CGU et mentions légales</a></footer></main>
@@ -567,15 +570,18 @@ function setTheme(t){const r=document.documentElement;if(t)r.dataset.theme=t;els
  app.querySelectorAll(".thm button").forEach(b=>{const on=b.dataset.t==t;b.classList.toggle("on",on);b.setAttribute("aria-pressed",on)})}
 function themeHtml(){const t=themeNow();return`<div class="thm"><span>Apparence</span><div class="seg">${[["","Auto"],["light","Clair"],["dark","Sombre"]].map(x=>`<button data-t="${x[0]}" class="${x[0]==t?"on":""}" aria-pressed="${x[0]==t}">${x[1]}</button>`).join("")}</div></div>`}
 function coursHtml(){return `<div class="hero"><h1>Cours</h1><p class="sub">4 fiches : les muscles, la progression, la perte de gras, les articulations</p></div>`+COURS.map(c=>`<details class="fc"><summary><b>${c.t}</b><span>${c.k}</span></summary>${c.b.map(x=>`<h3>${x[0]}</h3><p>${x[1]}</p>`).join("")+`<p class="rt"><b>À retenir :</b> ${c.r}</p>`}</details>`).join("")}
+const e1=p=>p.kg>0?(p.reps?p.kg*(1+Math.min(p.reps,15)/30):p.kg):(p.reps||0);
 function chart(pts){
  if(pts.length<2)return"";
- const W=300,Hh=88,pl=14,pr=14,pt=16,pb=22,ks=pts.map(p=>p.kg),mn=Math.min(...ks),mx=Math.max(...ks),rg=mx-mn||1,L=pts.length-1;
+ const W=300,Hh=88,pl=14,pr=14,pt=16,pb=22,ks=pts.map(e1),mn=Math.min(...ks),mx=Math.max(...ks),rg=mx-mn||1,L=pts.length-1;
  const x=i=>pl+(W-pl-pr)*i/L,y=k=>pt+(Hh-pt-pb)*(1-(k-mn)/rg);
- const d=pts.map((p,i)=>(i?"L":"M")+x(i).toFixed(1)+" "+y(p.kg).toFixed(1)).join(" ");
- const dots=pts.map((p,i)=>`<circle cx="${x(i).toFixed(1)}" cy="${y(p.kg).toFixed(1)}" r="3.5" style="fill:var(--acc)"/>`).join("");
- const tv=(i,a)=>`<text x="${x(i).toFixed(1)}" y="${(y(pts[i].kg)-7).toFixed(1)}" text-anchor="${a}" style="fill:var(--ink);font-size:11px;font-weight:600">${fmt(pts[i].kg)}</text>`;
+ const d=pts.map((p,i)=>(i?"L":"M")+x(i).toFixed(1)+" "+y(ks[i]).toFixed(1)).join(" ");
+ const dots=pts.map((p,i)=>`<circle cx="${x(i).toFixed(1)}" cy="${y(ks[i]).toFixed(1)}" r="3.5" style="fill:var(--acc)"/>`).join("");
+ const lb=p=>p.kg>0?fmt(p.kg)+(p.reps?"×"+p.reps:""):(p.reps||0)+" reps";
+ const tv=(i,a)=>`<text x="${x(i).toFixed(1)}" y="${(y(ks[i])-7).toFixed(1)}" text-anchor="${a}" style="fill:var(--ink);font-size:11px;font-weight:600">${lb(pts[i])}</text>`;
  const td=(i,a)=>`<text x="${x(i).toFixed(1)}" y="${Hh-6}" text-anchor="${a}" style="fill:var(--mut);font-size:10px">${dfmt(pts[i].d)}</text>`;
- return`<svg viewBox="0 0 ${W} ${Hh}" width="100%" role="img" aria-label="Évolution de la charge"><line x1="${pl}" y1="${Hh-pb}" x2="${W-pr}" y2="${Hh-pb}" style="stroke:var(--rule)"/><path d="${d}" style="fill:none;stroke:var(--acc);stroke-width:3;stroke-linecap:round;stroke-linejoin:round"/>${dots}${tv(0,"start")}${tv(L,"end")}${td(0,"start")}${td(L,"end")}</svg>`}
+ const pc=ks[0]>0?Math.round((ks[L]-ks[0])/ks[0]*100):0;
+ return`<svg viewBox="0 0 ${W} ${Hh}" width="100%" role="img" aria-label="Évolution de la force estimée, de ${lb(pts[0])} le ${dfmt(pts[0].d)} à ${lb(pts[L])} le ${dfmt(pts[L].d)}"><line x1="${pl}" y1="${Hh-pb}" x2="${W-pr}" y2="${Hh-pb}" style="stroke:var(--rule)"/><path d="${d}" style="fill:none;stroke:var(--acc);stroke-width:3;stroke-linecap:round;stroke-linejoin:round"/>${dots}${tv(0,"start")}${tv(L,"end")}${td(0,"start")}${td(L,"end")}</svg><p class="fe">Courbe : force estimée (charge et reps combinées)${pc?`, <b class="${pc>0?"up":""}">${pc>0?"+":""}${pc} %</b> depuis le début`:""}.</p>`}
 const dfmt=d=>{const a=String(d).split("-");return a[2]+"/"+a[1]};
 const pd=s=>{const a=String(s).split("-");return new Date(+a[0],+a[1]-1,+a[2])},dkey=d=>d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(),nf=n=>Math.round(n).toLocaleString("fr-FR"),ucf=t=>t.charAt(0).toUpperCase()+t.slice(1);
 const mon=d=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-((x.getDay()+6)%7));return x};
@@ -704,6 +710,15 @@ function upd(){if(!document.getElementById("pb"))return;
  if(!skip){clearTimeout(tv);pend=all?2:(d?1:0);if(pend)tv=setTimeout(flush,pend==2?1500:2500)}}
 let pend=0;
 function flush(){clearTimeout(tv);const p=pend;pend=0;if(p&&MODE=="s"&&document.getElementById("pb"))save(true,p==1)}
+function recap(js){const up=[],fl=[],dn=[],pr=[];let vt=0,vp=0,vk=0;
+ js.forEach(j=>{const r=H[cur+"."+j];if(!r)return;const e=S[cur][3][+j],nm=esc(e?nmOf(e):"Exercice"),hs=H["h."+cur+"."+j]||[],t=hs[hs.length-1];
+  if(t&&t.d==today()){vt+=t.vol||0;const q=hs[hs.length-2];if(q&&q.vol){vp+=q.vol;vk+=t.vol||0}}
+  const b=prOf(cur,+j,today());if(b&&r.kg!=null&&(r.kg>b.kg||(r.kg==b.kg&&(r.reps||0)>(b.reps||0))))pr.push(`${nm} (${fmt(r.kg)} kg${r.reps?" × "+r.reps:""})`);
+  const o=r.p;if(!o||o.kg==null){fl.push(nm);return}const a=e1({kg:r.kg,reps:r.reps}),z=e1({kg:o.kg,reps:o.reps});
+  (a>z*1.005?up:a<z*.995?dn:fl).push(nm)});
+ const li=(t,a,c)=>a.length?`<li class="${c}"><b>${t} (${a.length}) :</b> ${a.join(", ")}</li>`:"";
+ let v="";if(vt){v=`Volume : ${nf(vt)} kg`;if(vp){const d=Math.round((vk-vp)/vp*100);v+=`, ${d>0?"+":""}${d} % par rapport à la dernière fois sur les mêmes exercices`}v=`<li>${v}.</li>`}
+ return`<ul class="rcp">${pr.length?`<li class="pr"><b>Record${pr.length>1?"s":""} du jour :</b> ${pr.join(", ")}</li>`:""}${li("En progrès",up,"up")}${li("Stables",fl,"")}${li("En baisse",dn,"dn")}${v}</ul>`}
 function save(auto,part){clearTimeout(tv);pend=0;
  const rows={};
  app.querySelectorAll(".row").forEach(r=>{const j=r.dataset.j;const k=r.querySelector(".kg"),s2=side2(r);let rp=rpn(r.querySelector(".rp").value),kg=num(k.value);if(kg===null&&(rp!==null||(s2&&s2.reps!==null)))kg=k.dataset.ph?+k.dataset.ph:0;
@@ -717,7 +732,7 @@ function save(auto,part){clearTimeout(tv);pend=0;
  if(n){if(!part)H["v."+cur]=today();const nn=H["n."+cur]||[];if(nn[nn.length-1]!==today())nn.push(today());H["n."+cur]=nn}store();
  const nt=app.querySelector(".note");if(stErr){if(nt)nt.textContent="Enregistrement impossible : le stockage du téléphone est plein ou bloqué.";return}
  if(part)return;
- if(nt)nt.textContent=n?`Séance validée : ${n} exercices enregistrés.`:"Rien à enregistrer. Remplis au moins une série de travail.";
+ if(nt){if(n)nt.innerHTML=`<b>Séance validée : ${n} exercices enregistrés.</b>`+recap(Object.keys(rows));else nt.textContent="Rien à enregistrer. Remplis au moins une série de travail."}
  const sv=document.getElementById("sv");if(n&&sv)sv.textContent="Séance validée (mettre à jour)";
  const ch=app.querySelector(".chips .on");if(n&&ch&&!/\(fait\)/.test(ch.textContent))ch.textContent+=" (fait)";
  skip=true;upd();skip=false;if(!auto)window.scrollTo(0,0)}

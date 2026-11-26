@@ -379,6 +379,11 @@ function prog(rows,st,lad,prev){
    if(pv){const nk=dnStep(r.kg,st,lad);if(nk>0&&nk<r.kg)return{k:nk,r:Math.round((lo+hi)/2),w:"down"}}
    return{k:r.kg,r:lo,w:"lo"}}
   return{k:r.kg,r:r.reps+1,w:"same"}})(),{rg:r.rg}))}
+function nextSet(x,P,Pr,nrg,st,lad,pyr){const R=rng(x.rg),N=rng(nrg);if(!R||!N||x.kg==null||x.kg<=0||x.reps==null)return null;const lo=R[0],hi=R[1],k=x.kg,r=x.reps,p=P==null?k:P,f=fmt;
+ if(r<lo){const nk=dnStep(Math.min(p,k),st,lad);if(nk>0&&nk<p)return[nk,N[0],`Pour cette série : ${f(nk)} kg, vise ${N[0]} reps (la série d’avant était sous la fourchette, allège)`];return null}
+ if(r>hi){let nk=Math.round((Math.max(p,k)+(p>k?0:inc(k,st,lad)))*100)/100;if(pyr)nk=Math.min(k,Math.round((p+inc(p,st,lad))*100)/100);if(nk>p)return[nk,N[0],`Pour cette série : ${f(nk)} kg, vise ${N[0]} reps (la série d’avant était trop facile, ${r} reps)`];return null}
+ if(!pyr&&p>k&&r<hi)return[k,N[0],`Pour cette série : reste à ${f(k)} kg, vise ${N[0]} reps (pas assez de marge pour monter à ${f(p)} kg)`];
+ return null}
 function ptx(t){const f=fmt;switch(t.w){
  case"up":return`monte à ${f(t.k)} kg, vise ${t.r} reps`;
  case"hold":return Math.abs(t.bk-t.k)<.01?`garde ${f(t.k)} kg, vise ${t.r} reps : monte quand toutes tes séries à ${f(t.k)} kg auront atteint ${t.blo} reps`:`garde ${f(t.k)} kg, vise ${t.r} reps : monte quand ta série à ${f(t.bk)} kg aura atteint ${t.blo} reps`;
@@ -652,7 +657,7 @@ function autoRest(row){if(!AUTO||!row||row.dataset.rt||row.querySelector(".wu").
 function qfill(b){const row=b.closest(".row"),two=b.dataset.sd=="2",k=row.querySelector(two?".kg2":".kg"),p=row.querySelector(two?".rp2":".rp"),c=rpn(p.value),wu=row.querySelector(".wu").checked;
  if(b.dataset.q=="m"){if(c!==null)p.value=c>1?c-1:"";upd();return}
  if(c!==null){p.value=Math.min(999,c+1);upd();return}
- let pk=row.dataset[two?"pk2":"pk"]||"",pr=row.dataset[two?"pr2":"pr"]||"";
+ let pk=row.dataset.ik!==undefined?row.dataset.ik:(row.dataset[two?"pk2":"pk"]||""),pr=row.dataset.ir!==undefined?row.dataset.ir:(row.dataset[two?"pr2":"pr"]||"");
  if(wu){const sec=row.closest("section.c"),fw=[...sec.querySelectorAll(".row")].find(r=>!r.querySelector(".wu").checked),fk=fw&&fw.querySelector(".kg"),base=fk?(fk.value!==""?num(fk.value):(fw.dataset.pk!==""?+fw.dataset.pk:(fk.dataset.ph!==""?+fk.dataset.ph:null))):null;pk="";pr="10";if(base){const st=+sec.dataset.st||0,q=st||(base<20?.5:1);pk=String(Math.max(q,Math.round(base*.5/q)*q))}}
  if(k.value===""&&pk!==""&&+pk>0)k.value=fmt(+pk);
  if(pr!=="")p.value=pr;
@@ -683,6 +688,10 @@ function upd(){if(!document.getElementById("pb"))return;
    if(kg!==null&&rp!==null){tx="Prochaine fois : "+ptx(LC[n-1]);cl="nx on";if(s2&&LL&&LR){const a=ptx(LL[n-1]),b2=ptx(LR[n-1]);if(a!==b2)tx="Gauche : "+a+"\nDroite : "+b2}}
    else if(r.dataset.px){tx=/^Gauche/.test(r.dataset.px)?"Objectif\n"+r.dataset.px:"Objectif : "+r.dataset.px}
    nx.textContent=tx;nx.className=cl}else{const nx=r.nextElementSibling;let tx="";if(base&&r.querySelector(".kg").value===""&&r.querySelector(".rp").value===""){const q=st||(base<20?.5:1),rd=f=>Math.max(q,Math.round(base*f/q)*q);tx="Échauffement conseillé : environ "+fmt(rd(.5))+" kg × "+(ci==0?"12 reps, puis 3 à 5 reps à "+fmt(rd(.75))+" kg":"8 à 10 reps")}nx.textContent=tx;nx.className="nx"}});
+  {const wr=[...c.querySelectorAll(".row")].filter(r=>!r.querySelector(".wu").checked);wr.forEach(r=>{delete r.dataset.ik;delete r.dataset.ir});
+   for(let i=0;i<wr.length-1;i++){const x=live[i]&&live[i].c,nr=wr[i+1],typed=nr.querySelector(".kg").value!==""||nr.querySelector(".rp").value!==""||(nr.querySelector(".kg2")&&(nr.querySelector(".kg2").value!==""||nr.querySelector(".rp2").value!==""));
+    if(!x||x.reps==null||typed)continue;const P=nr.dataset.pk!==""?+nr.dataset.pk:null,g=nextSet(x,P,nr.dataset.pr,nr.dataset.rg||rg,st,lad,pyrC);
+    if(g){nr.dataset.ik=g[0];nr.dataset.ir=g[1];const nx=nr.nextElementSibling;nx.textContent=g[2];nx.className="nx on"}}}
   if(ok)d++;else all=false;
   const adv=c.querySelector(".adv");
   if(top){const a=advise(c,top,topT),pr=prOf(cur,+c.dataset.j,today()),isPr=pr&&(top.kg>pr.kg||(top.kg==pr.kg&&top.reps>(pr.reps||0)));adv.textContent=(isPr?"Nouveau record personnel. ":"")+a[1];adv.className="adv "+a[0]+(isPr?" pr":"");tally[a[0]]++}else{adv.textContent="";adv.className="adv"}});

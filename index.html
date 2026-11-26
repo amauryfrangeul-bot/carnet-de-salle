@@ -285,6 +285,8 @@ section.c>.ct{flex-wrap:wrap;row-gap:8px}section.c>.ct>h2{flex:1 1 9ch;overflow-
 
 .fe{margin:4px 0 0;font-size:14px;color:var(--mut)}.fe b.up{color:var(--ok,#15803D)}
 .rcp{list-style:none;margin:8px 0 0;padding:0;text-align:left;font-size:15px;line-height:1.45;font-weight:400}.rcp li,.rcp li.up{margin:4px 0;color:var(--ink)}.rcp b{color:var(--ink)}
+
+.msl{list-style:none;margin:8px 0 0;padding:0}.msl li{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) 34px 46px;gap:8px;align-items:center;padding:5px 0;font-size:15px;border-bottom:1px solid var(--rule)}.msl .bg{height:8px;border-radius:4px;background:var(--rule);overflow:hidden}.msl .bg i{display:block;height:100%;background:var(--mut)}.msl .ok .bg i{background:var(--ok)}.msl .lo .bg i{background:var(--acc)}.msl .nb{text-align:right;font-weight:600}.msl .tg{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}.msl .ok .tg{color:var(--ok)}.msl .lo .tg{color:var(--ink)}.msl .mi .tg{color:var(--mut)}
 </style></head><body>
 
 <main><div id="app"></div><footer class="ft"><a href="confidentialite.html">Confidentialité</a><a href="cgu.html">CGU et mentions légales</a></footer></main>
@@ -609,12 +611,38 @@ function weightHtml(){const a=wList(),l=a[a.length-1],td=l&&l.d==today(),f=n=>fm
   if(a.length>1){const dl=(a7!==null?a7:l.kg)-a[0].kg;t+=`<br><span class="${dl<0?"up":""}">Depuis le début : ${dl>0?"+":""}${f(dl)} kg</span>`}
   if(a7!==null&&p7!==null){const d=a7-p7;t+="<br>"+(d<-1?"Tu perds vite : au-delà d’un kilo par semaine, tu risques de perdre aussi du muscle. Mange un peu plus.":d<=-.2?"Bon rythme : continue comme ça.":d<.2?"Poids stable : si ça dure deux semaines, réduis un peu les portions ou ajoute des pas.":"En hausse : regarde les écarts et les boissons sucrées de la semaine.")}}
  return`<section class="hx"><h2>Poids</h2><div class="wg"><input class="wi" inputmode="decimal" autocomplete="off" placeholder="${td?fmt(l.kg):"kg"}" aria-label="Poids du jour en kilos"><button class="r" data-wg="1">${td?"Modifier le poids du jour":"Noter le poids du jour"}</button></div><p class="ee" id="wge" role="alert"></p><p>${t}</p>${chart(a.slice(-60))}<p class="cr">Pèse-toi le matin à jeun, 3 ou 4 fois par semaine. C’est la moyenne qui compte, pas le chiffre du jour.</p>${a.length?`<p><button class="lk" data-wd="1">Supprimer la dernière pesée</button></p>`:""}</section>`}
+const MG=[["Pectoraux haut",["pecH"],4],["Pectoraux milieu",["pecM","pec"],6],["Pectoraux bas",["pecB"],3],["Épaules avant",["dA"],3],["Épaules côté",["dL"],8],["Épaules arrière",["dP"],6],["Dos largeur",["lat"],8],["Dos épaisseur",["rho","trM"],6],["Trapèzes haut",["tra"],3],["Trapèzes bas",["trI"],2],["Coiffe",["cof"],2],["Biceps",["biL","biC","bi"],6],["Brachial",["bra"],3],["Triceps",["tri","triL","triLM"],6],["Quadriceps",["quad"],8],["Ischio-jambiers",["ham"],6],["Fessiers",["glu"],4],["Mollets",["calf","calfG"],4],["Abdos",["abs"],4],["Lombaires",["lb"],3]];
+function setsHtml(){const now=new Date(),t0=new Date(now.getFullYear(),now.getMonth(),now.getDate()-13),cnt=MG.map(()=>0);let any=false;
+ Object.keys(H).forEach(k=>{const m=k.match(/^(\d+)\.(\d+)$/);if(!m)return;const r=H[k];if(!r||!r.d||pd(r.d)<t0)return;const e=S[+m[1]]&&S[+m[1]][3][+m[2]];if(!e)return;
+  const l=nmOf(e).toLowerCase(),i=INFO.findIndex(x=>x[0].test(l));if(i<0)return;const n=Array.isArray(r.sets)?r.sets.length:1;any=true;
+  MG.forEach((g,gi)=>{if(MUS[i][0].some(x=>g[1].includes(x)))cnt[gi]+=n})});
+ if(!any)return`<section class="hx"><h2>Séries par muscle</h2><p>Valide quelques séances pour voir combien de séries chaque muscle reçoit par semaine.</p></section>`;
+ const rows=MG.map((g,gi)=>{const v=cnt[gi]/2,mn=g[2],st=v<mn*.5?["lo","Peu"]:v<mn?["mi","Juste"]:["ok","Bien"],w=Math.min(100,v/(mn*2)*100);
+  return`<li class="${st[0]}"><span class="mn">${g[0]}</span><span class="bg" aria-hidden="true"><i style="width:${w.toFixed(0)}%"></i></span><span class="nb">${fmt(Math.round(v*10)/10)}</span><span class="tg">${st[1]}</span></li>`}).join("");
+ return`<section class="hx"><h2>Séries par muscle</h2><p>Moyenne par semaine sur tes 14 derniers jours (un cycle complet). Seul le muscle principal de chaque exercice compte. Repères indicatifs.</p><ul class="msl">${rows}</ul></section>`}
+function monthHtml(){const now=new Date(),t0=new Date(now.getFullYear(),now.getMonth(),now.getDate()-27),p0=new Date(t0);p0.setDate(p0.getDate()-28);
+ const inR=(d,a,b)=>{const x=pd(d);return x>=a&&x<b},end=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1),pl=(n,a)=>n+" "+a+(n>1?"s":"");
+ let ses=0;Object.keys(H).forEach(k=>{if(/^n\.\d+$/.test(k)&&Array.isArray(H[k]))H[k].forEach(d=>{if(inR(d,t0,end))ses++})});
+ const up=new Set(),fl=new Set(),dn=new Set();let v=0,vp=0;
+ hKeys().forEach(k=>{const a=H[k].filter(e=>e&&e.d),w=a.filter(e=>inR(e.d,t0,end)),b=a.filter(e=>inR(e.d,p0,t0));w.forEach(e=>v+=e.vol||0);b.forEach(e=>vp+=e.vol||0);
+  if(!w.length)return;const pr=a.filter(e=>pd(e.d)<t0),f=w.length>1?w[0]:pr[pr.length-1],l=w[w.length-1];if(!f||f===l)return;
+  const m=k.match(/^h\.(\d+)\.(\d+)$/),e=S[+m[1]]&&S[+m[1]][3][+m[2]],nm=e?nmOf(e):null;if(!nm)return;const x=e1(l),y=e1(f);(x>y*1.005?up:x<y*.995?dn:fl).add(nm)});
+ [...up].forEach(n=>{fl.delete(n);dn.delete(n)});[...fl].forEach(n=>dn.delete(n));
+ const reg=Math.round(ses/20*100),wl=wList(),a7=wAvg(wl,0,6),o7=wAvg(wl,21,27),f=n=>fmt(Math.round(n*10)/10),cap=(st,n=4)=>{const a=[...st];return esc(a.slice(0,n).join(", "))+(a.length>n?` et ${a.length-n} autre${a.length-n>1?"s":""}`:"")};
+ let li="";
+ li+=ses?`<li><b>Régularité :</b> ${pl(ses,"séance")} sur 20 prévues (${reg} %).${reg>=80?" Très régulier.":reg>=60?" Correct, essaie de ne pas sauter de séance.":" Trop de séances manquées pour bien progresser."}</li>`:`<li><b>Régularité :</b> aucune séance validée sur les 4 dernières semaines.</li>`;
+ if(up.size+fl.size+dn.size){li+=`<li><b>Exercices :</b> ${up.size} en progrès, ${fl.size} stable${fl.size>1?"s":""}, ${dn.size} en baisse.</li>`;if(fl.size)li+=`<li><b>Stagnent :</b> ${cap(fl)}.</li>`;if(dn.size)li+=`<li><b>En baisse :</b> ${cap(dn)}.</li>`}
+ else li+=`<li>Pas encore assez de séances pour comparer tes exercices sur le mois.</li>`;
+ if(a7!==null&&o7!==null){const d=a7-o7;li+=`<li><b>Poids :</b> ${d>0?"+":""}${f(d)} kg en 4 semaines (moyenne de cette semaine comparée à celle d’il y a 4 semaines).${d<-4?" C’est rapide : mange un peu plus pour garder ton muscle.":d<=-.8?" Bon rythme de sèche.":d<.3?" Stable : réduis un peu les portions si tu veux continuer à sécher.":" En hausse."}</li>`}
+ else li+=`<li><b>Poids :</b> pèse-toi au moins une fois par semaine pour voir l’évolution sur le mois.</li>`;
+ if(v&&vp){const d=Math.round((v-vp)/vp*100);li+=`<li><b>Volume :</b> ${nf(v)} kg soulevés, ${d>0?"+":""}${d} % par rapport aux 4 semaines d’avant.</li>`}
+ return`<section class="hx"><h2>4 dernières semaines</h2><div class="st3"><div><b>${ses}<small> / 20</small></b><span>séances</span></div><div><b>${up.size}</b><span>en progression</span></div><div><b>${v?nf(v):"–"}</b><span>kg soulevés</span></div></div><ul class="rcp">${li}</ul></section>`}
 function bilanHtml(){const now=new Date(),w0=mon(now),we=new Date(w0);we.setDate(we.getDate()+6);const pw=new Date(w0);pw.setDate(pw.getDate()-7);const s=weekStats(w0),p=weekStats(pw),pl=(n,a)=>n+" "+a+(n>1?"s":"");
  let h=`<div class="hero"><h1>Bilan</h1><p class="sub">Semaine du ${w0.getDate()}${w0.getMonth()!=we.getMonth()?" "+w0.toLocaleDateString("fr-FR",{month:"long"}):""} au ${we.toLocaleDateString("fr-FR",{day:"numeric",month:"long"})}</p></div>`;
  let line=s.ses?(s.pr?`${pl(s.pr,"record")} battu${s.pr>1?"s":""}. `:"")+`${pl(s.fl,"exercice")} stable${s.fl>1?"s":""}, ${s.dn} en baisse.`:"Aucune séance validée cette semaine pour l’instant.";
  if(s.ses&&s.vol==null)line+=" Le volume s’affichera à partir de ta prochaine séance validée.";
  if(p.ses)line+=` Semaine dernière : ${pl(p.ses,"séance")}`+(p.vol!=null?`, ${nf(p.vol)} kg soulevés.`:".");
- h+=`<section class="hx"><h2>Cette semaine</h2><div class="st3"><div><b>${s.ses}<small> / 5</small></b><span>séances</span></div><div><b>${s.up}</b><span>en progression</span></div><div><b>${s.vol==null?"–":nf(s.vol)}</b><span>kg soulevés</span></div></div><p>${line}</p></section>`+weightHtml();
+ h+=`<section class="hx"><h2>Cette semaine</h2><div class="st3"><div><b>${s.ses}<small> / 5</small></b><span>séances</span></div><div><b>${s.up}</b><span>en progression</span></div><div><b>${s.vol==null?"–":nf(s.vol)}</b><span>kg soulevés</span></div></div><p>${line}</p></section>`+monthHtml()+setsHtml()+weightHtml();
  const first=new Date(now.getFullYear(),now.getMonth()+CM,1),sd=sessDates(),days=new Date(first.getFullYear(),first.getMonth()+1,0).getDate(),off=(first.getDay()+6)%7;let c="",n=0;
  for(let i=0;i<off;i++)c+="<i></i>";
  for(let d=1;d<=days;d++){const k=first.getFullYear()+"-"+(first.getMonth()+1)+"-"+d,on=sd[k],td=k==today();if(on)n++;c+=`<i class="${on?"on":""}${td?" td":""}"${on?` title="${esc(on.map(i=>S[i]?S[i][0]+" · "+S[i][1]:"").join(", "))}"`:""}>${d}</i>`}

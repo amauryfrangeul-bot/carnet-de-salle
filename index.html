@@ -289,6 +289,8 @@ section.c>.ct{flex-wrap:wrap;row-gap:8px}section.c>.ct>h2{flex:1 1 9ch;overflow-
 .msl{list-style:none;margin:8px 0 0;padding:0}.msl li{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) 34px 46px;gap:8px;align-items:center;padding:5px 0;font-size:15px;border-bottom:1px solid var(--rule)}.msl .bg{height:8px;border-radius:4px;background:var(--rule);overflow:hidden}.msl .bg i{display:block;height:100%;background:var(--mut)}.msl .ok .bg i{background:var(--ok)}.msl .lo .bg i{background:var(--acc)}.msl .nb{text-align:right;font-weight:600}.msl .tg{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}.msl .ok .tg{color:var(--ok)}.msl .lo .tg{color:var(--ink)}.msl .mi .tg{color:var(--mut)}
 
 .fl{display:grid;grid-template-columns:auto repeat(3,minmax(0,1fr));gap:6px;align-items:center;margin:10px 0 4px}.fl span{font-size:14px;font-weight:600;color:var(--mut);padding-right:4px}.fl button{min-height:44px;border:1px solid var(--rule);border-radius:8px;background:transparent;color:var(--ink);font:inherit;font-size:15px;font-weight:600}.fl button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+.ekh{margin:-2px 0 8px;font-size:13px;color:var(--mut);line-height:1.35}
 </style></head><body>
 
 <main><div id="app"></div><footer class="ft"><a href="confidentialite.html">Confidentialité</a><a href="cgu.html">CGU et mentions légales</a></footer></main>
@@ -324,6 +326,7 @@ function clean(h){const o={},isO=x=>x&&typeof x=="object"&&!Array.isArray(x),isD
   else if(/^t\.\d+\.\d+$/.test(k)){if(typeof v=="string"&&v)o[k]=v.slice(0,140)}
   else if(/^z\.\d+\.\d+$/.test(k)){if(isO(v)){const z={};Object.keys(v).slice(0,30).forEach(n=>{const e=v[n];if(isO(e)){const c=clean({"0.0":e.r,"h.0.0":e.h,"t.0.0":e.t});z[txt(n,120)]={r:c["0.0"]||null,h:c["h.0.0"]||null,t:c["t.0.0"]||null}}});if(Object.keys(z).length)o[k]=z}}
   else if(/^m\.[a-z0-9]+$/.test(k)){if(v)o[k]=1}
+  else if(/^k\.\d+\.\d+$/.test(k)){if(Array.isArray(v)){const a=[...new Set(v.filter(x=>typeof x=="number"&&isFinite(x)&&x>0&&x<=500))].sort((x,y)=>x-y).slice(0,80);if(a.length>=2)o[k]=a}}
   else if(/^f\.\d+\.\d+$/.test(k)){if(isO(v)&&isD(v.d)&&/^[ecd]$/.test(v.v))o[k]={d:v.d,v:v.v}}
   else if(k=="w"){if(Array.isArray(v))o.w=v.filter(e=>isO(e)&&isD(e.d)&&typeof e.kg=="number"&&e.kg>=30&&e.kg<=250).map(e=>({d:e.d,kg:e.kg}))}});
  return o}
@@ -367,11 +370,22 @@ function rec(i,j){const k=i+"."+j;if(H[k])return H[k];{const o=S0[i][j];if(!o||!
 const DB=/haltère|curl marteau(?! poulie)|curl incliné|élévations latérales/i;
 function stepOf(e){const p=e.split("|"),v=parseFloat(p[5]);return v>0?v:(DB.test(nmOf(e))?2:0)}
 const inc0=kg=>kg<15?1:2.5;
-function inc(kg,st,lad){if(st)return st;const d=inc0(kg);if(lad&&lad.length>1){const up=lad.filter(v=>v>kg+.01);if(up.length&&up[0]-kg<=Math.max(10,3*d))return Math.round((up[0]-kg)*10)/10;const g=lad.bar&&lad.tg?lad.tg:lad;let m=99;for(let i=1;i<g.length;i++){const x=g[i]-g[i-1];if(x>=.4&&x<m)m=x}if(m<=10)return Math.round(m*10)/10}return d}
-function ladder(i,j){const s=new Set(),add=v=>{if(typeof v=="number"&&v>0)s.add(v)},rc=r=>{if(!r)return;add(r.kg);(r.sets||[]).forEach(add);[r.L,r.R].forEach(a=>(a||[]).forEach(x=>x&&add(x[0])));if(r.p)rc(r.p)};rc(rec(i,j));(H["h."+i+"."+j]||[]).forEach(e=>e&&add(e.kg));const o=[...s].sort((a,b)=>a-b),t=new Set();(H["h."+i+"."+j]||[]).forEach(e=>{if(e&&typeof e.kg=="number"&&e.kg>0)t.add(e.kg)});for(let r=rec(i,j);r;r=r.p)if(typeof r.kg=="number"&&r.kg>0)t.add(r.kg);o.tg=[...t].sort((a,b)=>a-b);{const e=S[i]&&S[i][3]&&S[i][3][j];o.bar=!!e&&/\bez\b|barre|smith/i.test(nmOf(e))}return o}
+function inc(kg,st,lad){if(lad&&lad.exact){const u=lad.find(v=>v>kg+.01);return u?Math.round((u-kg)*100)/100:0}if(st)return st;const d=inc0(kg);if(lad&&lad.length>1){const up=lad.filter(v=>v>kg+.01);if(up.length&&up[0]-kg<=Math.max(10,3*d))return Math.round((up[0]-kg)*10)/10;const g=lad.bar&&lad.tg?lad.tg:lad;let m=99;for(let i=1;i<g.length;i++){const x=g[i]-g[i-1];if(x>=.4&&x<m)m=x}if(m<=10)return Math.round(m*10)/10}return d}
+const MDEF={};
+function machOf(i,j){const a=H["k."+i+"."+j];if(Array.isArray(a)&&a.length>1)return a;const e=S[i]&&S[i][3]&&S[i][3][j];const d=e&&MDEF[nmOf(e)];return d&&d.length>1?d:null}
+function parseM(t){t=String(t||"").toLowerCase().replace(/kg/g,"").replace(/(\d),(\d)/g,"$1.$2").trim();if(!t)return[];let v=[],ex=[];
+ for(const p of t.split(/[;,\n]+/).map(x=>x.trim()).filter(Boolean)){let m;
+  if((m=p.match(/^(?:de\s*)?(\d+(?:\.\d+)?)\s*(?:à|a|-)\s*(\d+(?:\.\d+)?)\s*(?:par|\/|pas de)\s*(\d+(?:\.\d+)?)$/))){const a=+m[1],b=+m[2],c=+m[3];if(!(c>0)||b<a||(b-a)/c>100)return null;for(let x=a;x<=b+1e-6;x+=c)v.push(Math.round(x*100)/100)}
+  else if((m=p.match(/^\+\s*(\d+(?:\.\d+)?)$/)))ex.push(+m[1]);
+  else if(/^[\d.\s]+$/.test(p))p.split(/\s+/).forEach(x=>{if(x!=="")v.push(+x)});
+  else return null}
+ ex.forEach(e=>v.slice().forEach(x=>v.push(Math.round((x+e)*100)/100)));
+ v=[...new Set(v.filter(x=>isFinite(x)&&x>0&&x<=500))].sort((a,b)=>a-b);return v.length>80?null:v}
+function machTxt(a){if(!a||a.length<2)return"";const d=a.map((x,i)=>i?Math.round((x-a[i-1])*100)/100:null).slice(1);if(d.every(x=>x===d[0]))return`${fmt(a[0])} à ${fmt(a[a.length-1])} par ${fmt(d[0])}`;return a.map(fmt).join(", ")}
+function ladder(i,j){const M=machOf(i,j);if(M){const o=M.slice();o.exact=true;return o}const s=new Set(),add=v=>{if(typeof v=="number"&&v>0)s.add(v)},rc=r=>{if(!r)return;add(r.kg);(r.sets||[]).forEach(add);[r.L,r.R].forEach(a=>(a||[]).forEach(x=>x&&add(x[0])));if(r.p)rc(r.p)};rc(rec(i,j));(H["h."+i+"."+j]||[]).forEach(e=>e&&add(e.kg));const o=[...s].sort((a,b)=>a-b),t=new Set();(H["h."+i+"."+j]||[]).forEach(e=>{if(e&&typeof e.kg=="number"&&e.kg>0)t.add(e.kg)});for(let r=rec(i,j);r;r=r.p)if(typeof r.kg=="number"&&r.kg>0)t.add(r.kg);o.tg=[...t].sort((a,b)=>a-b);{const e=S[i]&&S[i][3]&&S[i][3][j];o.bar=!!e&&/\bez\b|barre|smith/i.test(nmOf(e))}return o}
 let LADS={};
 function rng(rg){const m=String(rg).match(/^(\d+)(?:-(\d+))?$/);return m?[+m[1],+(m[2]||m[1])]:null}
-function dnStep(kg,st,lad){if(st)return Math.max(0,Math.round((kg-st)*100)/100);if(lad&&lad.length){const lw=lad.filter(v=>v<kg-.01);if(lw.length){const v=lw[lw.length-1];if(kg-v<=Math.max(10,3*inc0(kg)))return v}}return Math.max(0,Math.round((kg-inc0(kg))*100)/100)}
+function dnStep(kg,st,lad){if(lad&&lad.exact){const l=lad.filter(v=>v<kg-.01);return l.length?l[l.length-1]:kg}if(st)return Math.max(0,Math.round((kg-st)*100)/100);if(lad&&lad.length){const lw=lad.filter(v=>v<kg-.01);if(lw.length){const v=lw[lw.length-1];if(kg-v<=Math.max(10,3*inc0(kg)))return v}}return Math.max(0,Math.round((kg-inc0(kg))*100)/100)}
 function prog(rows,st,lad,prev,feel){
  return rows.map((r,q)=>Object.assign((()=>{const R=rng(r.rg),sec=/s$/.test(String(r.rg).trim());
   if(r.kg==null)return{k:null,r:R?R[0]:(sec?parseInt(r.rg):null),w:"none"};
@@ -379,6 +393,7 @@ function prog(rows,st,lad,prev,feel){
   if(r.kg===0||!R)return{k:r.kg,r:sec?r.reps+5:r.reps+1,w:sec?"sec":"bw"};
   const lo=R[0],hi=R[1],d=inc(r.kg,st,lad),big=r.kg>0&&d/r.kg>.2,thr=hi+(big&&feel!=="e"?2:0);
   if(r.reps>=hi&&feel==="d")return{k:r.kg,r:r.reps,w:"hard"};
+  if(d<=0&&r.reps>=hi)return{k:r.kg,r:r.reps+1,w:"max"};
   if(r.reps>=thr){const nk=Math.round((r.kg+d)*100)/100;
    const b=rows.find((o,k)=>{if(k===q||o.kg==null||o.reps==null||o.kg<r.kg-.01||o.kg>nk+.01)return false;const O=rng(o.rg);return O&&o.reps<O[0]});
    if(b)return{k:r.kg,r:r.reps,w:"hold",bk:b.kg,blo:rng(b.rg)[0]};
@@ -390,13 +405,14 @@ function prog(rows,st,lad,prev,feel){
   return{k:r.kg,r:r.reps+1,w:"same"}})(),{rg:r.rg}))}
 function nextSet(x,P,Pr,nrg,st,lad,pyr){const R=rng(x.rg),N=rng(nrg);if(!R||!N||x.kg==null||x.kg<=0||x.reps==null)return null;const lo=R[0],hi=R[1],k=x.kg,r=x.reps,p=P==null?k:P,f=fmt;
  if(r<lo){const nk=dnStep(Math.min(p,k),st,lad);if(nk>0&&nk<p)return[nk,N[0],`Pour cette série : ${f(nk)} kg, vise ${N[0]} reps (la série d’avant était sous la fourchette, allège)`];return null}
- if(r>hi){let nk=Math.round((Math.max(p,k)+(p>k?0:inc(k,st,lad)))*100)/100;if(pyr)nk=Math.min(k,Math.round((p+inc(p,st,lad))*100)/100);if(nk>p)return[nk,N[0],`Pour cette série : ${f(nk)} kg, vise ${N[0]} reps (la série d’avant était trop facile, ${r} reps)`];return null}
+ if(r>hi){let nk=Math.round((Math.max(p,k)+(p>k?0:inc(k,st,lad)))*100)/100;if(lad&&lad.exact&&!lad.some(v=>Math.abs(v-nk)<.01))return null;if(pyr)nk=Math.min(k,Math.round((p+inc(p,st,lad))*100)/100);if(nk>p)return[nk,N[0],`Pour cette série : ${f(nk)} kg, vise ${N[0]} reps (la série d’avant était trop facile, ${r} reps)`];return null}
  if(!pyr&&p>k&&r<hi)return[k,N[0],`Pour cette série : reste à ${f(k)} kg, vise ${N[0]} reps (pas assez de marge pour monter à ${f(p)} kg)`];
  return null}
 function ptx(t){const f=fmt;switch(t.w){
  case"up":return`monte à ${f(t.k)} kg, vise ${t.r} reps`;
  case"hold":return Math.abs(t.bk-t.k)<.01?`garde ${f(t.k)} kg, vise ${t.r} reps : monte quand toutes tes séries à ${f(t.k)} kg auront atteint ${t.blo} reps`:`garde ${f(t.k)} kg, vise ${t.r} reps : monte quand ta série à ${f(t.bk)} kg aura atteint ${t.blo} reps`;
  case"big":return`même charge (${f(t.k)} kg), vise ${t.r} reps (cran suivant +${f(t.d)} kg : monte à ${t.thr} reps)`;
+ case"max":return`${f(t.k)} kg est le maximum de la machine : vise ${t.r} reps ou ralentis la descente`;
  case"hard":return`garde ${f(t.k)} kg, vise ${t.r} reps (tu as noté « dur » : consolide avant de monter)`;
  case"down":return`baisse à ${f(t.k)} kg, vise ${t.r} reps (2 séances sous la fourchette)`;
  case"sec":return t.k===0?"poids du corps, vise +5 secondes":"même charge, vise +5 secondes";
@@ -417,7 +433,7 @@ function sug(r,reps,st,lad,pyr){
  const rows=rowsOf(r,reps,pyr),T=prog(rows,st,lad,rowsOf(r.p,reps,pyr),r.f),i=topI(rows),t=T[i];
  if(!t)return[last,"Note tes reps pour débloquer l’objectif"];
  if(t.k===0)return[last,`Objectif : ${t.r} reps au poids du corps`];
- const why={hard:" (tu consolides)",up:" (tu montes)",down:" (tu redescends d’un cran pour repartir)",hold:" (tu gardes la charge)"}[t.w]||"";
+ const why={max:" (maximum de la machine)",hard:" (tu consolides)",up:" (tu montes)",down:" (tu redescends d’un cran pour repartir)",hold:" (tu gardes la charge)"}[t.w]||"";
  return[last,`Objectif : ${fmt(t.k)} kg × ${t.r} reps`+why]}
 const INFO=[
 [/pullover|bras tendu/,"Grand dorsal","Triceps (longue portion), grand rond, pectoraux","Coudes à peine fléchis et fixes. Tire avec le dos, pas avec les bras, et garde le buste immobile."],
@@ -462,7 +478,7 @@ function info(nm,mk){const l=nm.toLowerCase(),i=INFO.findIndex(x=>x[0].test(l));
 const MKS=[["","Automatique"],["tri","Triceps"],["triL","Triceps, longue portion"],["triLM","Triceps, chefs latéral et médial"],["bi","Biceps"],["biL","Biceps, longue portion"],["biC","Biceps, courte portion"],["bra","Brachial (curl marteau)"],["delA","Épaule, avant"],["delL","Épaule, côté"],["delP","Épaule, arrière"],["pec","Pectoraux"],["pecH","Pectoraux, haut"],["pecM","Pectoraux, milieu"],["pecB","Pectoraux, bas"],["abs","Abdominaux"],["rho","Rhomboïdes"],["tra","Trapèze supérieur"],["traM","Trapèze moyen"],["traI","Trapèze inférieur"],["coif","Coiffe (infra-épineux)"],["lat","Grand dorsal"],["lb","Lombaires"],["glu","Fessiers"],["quad","Quadriceps"],["ham","Ischio-jambiers"],["calf","Mollets"]],RST=["0 s","30 s","45 s","60 s","75 s","90 s","2 min","2 min 30","3 min"];
 const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function editHtml(j){const nw=j<0,e=nw?"|3|10-12|60 s":S[cur][3][j],p=e.split("|"),nm=nw?"":nmOf(e),w=Math.min(+p[1],3),names=[...new Set(S0.flat().map(nmOf))].sort((a,b)=>a.localeCompare(b,"fr")),rs=RST.includes(p[3])?RST:[p[3]].concat(RST),own=!nw&&j>=S0[cur].length;
- return`<div class="edf" data-j="${j}"><label><span>Exercice</span><input class="en" list="exl" value="${esc(nm)}" placeholder="Nom" autocomplete="off" enterkeyhint="done" aria-label="Nom de l’exercice"></label><datalist id="exl">${names.map(n=>`<option value="${esc(n)}">`).join("")}</datalist><div class="e2"><label><span>Séries</span><select class="es">${[1,2,3].map(n=>`<option${n==w?" selected":""}>${n}</option>`).join("")}</select></label><label><span>Reps</span><input class="er" value="${esc(p[2])}" autocomplete="off"></label><label><span>Repos</span><select class="et">${rs.map(x=>`<option${x==p[3]?" selected":""}>${x}</option>`).join("")}</select></label></div><label><span>Image du muscle</span><select class="em">${MKS.map(x=>`<option value="${x[0]}"${x[0]==(p[4]||"")?" selected":""}>${x[1]}</option>`).join("")}</select></label><label><span>Palier de charge</span><select class="ep">${[["","Automatique"],["0.5","0,5 kg"],["1","1 kg"],["2","2 kg (haltères)"],["2.5","2,5 kg"],["5","5 kg"]].map(x=>`<option value="${x[0]}"${x[0]==(p[5]||"")?" selected":""}>${x[1]}</option>`).join("")}</select></label><label class="eu"><span>Unilatéral (gauche et droite)</span><input type="checkbox" class="ex"${/unilat|bûcheron/i.test(nm)?" checked":""}></label><p class="ee" role="alert"></p><div class="eb"><button class="r" data-es="${j}">${nw?"Ajouter":"Enregistrer"}</button><button class="r z" data-ec="1">Annuler</button>${!nw&&!own&&H["x."+cur+"."+j]?`<button class="r z" data-eo="${j}">Revenir à l’exercice d’origine</button>`:""}${nw?"":`<button class="r z rmv" data-ed="${j}">Retirer de la séance</button>`}</div></div>`}
+ return`<div class="edf" data-j="${j}"><label><span>Exercice</span><input class="en" list="exl" value="${esc(nm)}" placeholder="Nom" autocomplete="off" enterkeyhint="done" aria-label="Nom de l’exercice"></label><datalist id="exl">${names.map(n=>`<option value="${esc(n)}">`).join("")}</datalist><div class="e2"><label><span>Séries</span><select class="es">${[1,2,3].map(n=>`<option${n==w?" selected":""}>${n}</option>`).join("")}</select></label><label><span>Reps</span><input class="er" value="${esc(p[2])}" autocomplete="off"></label><label><span>Repos</span><select class="et">${rs.map(x=>`<option${x==p[3]?" selected":""}>${x}</option>`).join("")}</select></label></div><label><span>Image du muscle</span><select class="em">${MKS.map(x=>`<option value="${x[0]}"${x[0]==(p[4]||"")?" selected":""}>${x[1]}</option>`).join("")}</select></label><label><span>Palier de charge</span><select class="ep">${[["","Automatique"],["0.5","0,5 kg"],["1","1 kg"],["2","2 kg (haltères)"],["2.5","2,5 kg"],["5","5 kg"]].map(x=>`<option value="${x[0]}"${x[0]==(p[5]||"")?" selected":""}>${x[1]}</option>`).join("")}</select></label><label><span>Poids de la machine (kg)</span><input class="ek" value="${esc(machTxt(H["k."+cur+"."+j]||null))}" placeholder="ex. 5 à 100 par 5, +2,5" autocomplete="off" inputmode="text" aria-describedby="ekh"></label><p class="ekh" id="ekh">Laisse vide pour une barre ou des haltères. Indique les valeurs écrites sur la pile de poids : une plage (5 à 100 par 5), une liste (7, 14, 21…) et, si la machine a un petit poids d’appoint, +2,5.${MDEF[nm]&&!H["k."+cur+"."+j]?` Déjà connu : ${machTxt(MDEF[nm])}.`:""}</p><label class="eu"><span>Unilatéral (gauche et droite)</span><input type="checkbox" class="ex"${/unilat|bûcheron/i.test(nm)?" checked":""}></label><p class="ee" role="alert"></p><div class="eb"><button class="r" data-es="${j}">${nw?"Ajouter":"Enregistrer"}</button><button class="r z" data-ec="1">Annuler</button>${!nw&&!own&&H["x."+cur+"."+j]?`<button class="r z" data-eo="${j}">Revenir à l’exercice d’origine</button>`:""}${nw?"":`<button class="r z rmv" data-ed="${j}">Retirer de la séance</button>`}</div></div>`}
 const closeEd=()=>app.querySelectorAll(".newx,.edf").forEach(x=>x.remove());
 function keepRows(){const keep={};app.querySelectorAll(".row").forEach(r=>{(keep[r.dataset.j]=keep[r.dataset.j]||[]).push([r.querySelector(".wu").checked].concat([...r.querySelectorAll("input:not(.wu)")].map(i=>i.value)))});return keep}
 function reRender(keep,msg,j){clearTimeout(tv);pend=0;store();D[cur]=null;render(msg);
@@ -470,7 +486,7 @@ function reRender(keep,msg,j){clearTimeout(tv);pend=0;store();D[cur]=null;render
  upd();const c=j!=null&&app.querySelector('section.c[data-j="'+j+'"]');if(c)c.scrollIntoView({block:"nearest"})}
 function editSave(j,reset){
  const nw=j<0,n0=S0[cur].length;if(nw)j=S[cur][3].length;
- const k=cur+"."+j,old=nw?null:S[cur][3][j],o0=j<n0?S0[cur][j]:null,tag=o0?(o0.match(/^(A[12]) /)||[])[1]:"",po=(old||"|3").split("|");let ne=o0;
+ const k=cur+"."+j,old=nw?null:S[cur][3][j],o0=j<n0?S0[cur][j]:null,tag=o0?(o0.match(/^(A[12]) /)||[])[1]:"",po=(old||"|3").split("|");let ne=o0,mch=false;
  if(!reset){const f=app.querySelector(".edf"),er=f.querySelector(".ee");
   let nm=f.querySelector(".en").value.replace(/[|<>"&]/g," ").slice(0,80).replace(/\s+/g," ").trim().replace(/^A[12] /,""),rp=f.querySelector(".er").value.trim().toLowerCase().replace(/\s+/g,"").replace(/[–—à]/g,"-");
   if(!nm){er.textContent="Donne un nom à l’exercice.";return}
@@ -479,9 +495,11 @@ function editSave(j,reset){
   const u=f.querySelector(".ex").checked;
   if(u&&!/unilat|bûcheron/i.test(nm))nm+=" unilatéral";if(!u)nm=nm.replace(/\s*unilatérale?s?/i,"").trim()||nm;
   let sv=f.querySelector(".es").value;if(+sv==Math.min(+po[1],3))sv=po[1];
+  const ekv=f.querySelector(".ek")?f.querySelector(".ek").value.trim():"",ml=parseM(ekv);if(ml===null||(ekv&&ml.length<2)){er.textContent="Poids de la machine : écris par exemple 5 à 100 par 5, ou 7, 14, 21, 28.";return}
+  const mkey="k."+k,mold=JSON.stringify(H[mkey]||null);if(ml.length>1)H[mkey]=ml;else delete H[mkey];mch=mold!==JSON.stringify(H[mkey]||null);
   const mk=f.querySelector(".em").value,sp=f.querySelector(".ep").value;
   ne=(tag?tag+" ":"")+nm+"|"+sv+"|"+rp+"|"+f.querySelector(".et").value+(mk||sp?"|"+mk:"")+(sp?"|"+sp:"")}
- if(!ne||ne===old){closeEd();return}
+ if(!ne||ne===old){if(mch){reRender(keepRows(),"Poids de la machine enregistrés.",j);return}closeEd();return}
  const keep=keepRows(),on=old?nmOf(old):null,nn=nmOf(ne);
  if(old&&on!==nn){const z=H["z."+k]||{};if(H[k]||H["h."+k]||H["t."+k])z[on]={r:H[k]||null,h:H["h."+k]||null,t:H["t."+k]||null};delete H[k];delete H["h."+k];delete H["t."+k];if(z[nn]){if(z[nn].r)H[k]=z[nn].r;if(z[nn].h)H["h."+k]=z[nn].h;if(z[nn].t)H["t."+k]=z[nn].t;delete z[nn]}if(Object.keys(z).length)H["z."+k]=z;else delete H["z."+k];delete keep[j]}
  if(j<n0){if(ne===o0)delete H["x."+k];else H["x."+k]=ne}else{const a=Array.isArray(H["a."+cur])?H["a."+cur]:[];a[j-n0]=ne;H["a."+cur]=a}

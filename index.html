@@ -291,6 +291,8 @@ section.c>.ct{flex-wrap:wrap;row-gap:8px}section.c>.ct>h2{flex:1 1 9ch;overflow-
 .fl{display:grid;grid-template-columns:auto repeat(3,minmax(0,1fr));gap:6px;align-items:center;margin:10px 0 4px}.fl span{font-size:14px;font-weight:600;color:var(--mut);padding-right:4px}.fl button{min-height:44px;border:1px solid var(--rule);border-radius:8px;background:transparent;color:var(--ink);font:inherit;font-size:15px;font-weight:600}.fl button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 
 .ekh{margin:-2px 0 8px;font-size:13px;color:var(--mut);line-height:1.35}
+
+.lgd{border-top:1px solid var(--rule)}.lgd summary{min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:600;cursor:pointer;list-style:none}.lgd summary::-webkit-details-marker{display:none}.lgd summary::after{content:"›";color:var(--mut);font-size:20px;transition:transform .2s}.lgd[open] summary::after{transform:rotate(90deg)}.lgd summary small{margin-left:auto;font-weight:400;color:var(--mut);font-size:14px}.lgd ul{list-style:none;margin:0 0 10px;padding:0}.lgd li{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:8px;padding:6px 0;font-size:15px;border-bottom:1px dashed var(--rule)}.lgd li b{font-weight:600}.lgd li i{color:var(--mut);font-style:normal}.lgd .nw{white-space:nowrap}
 </style></head><body>
 
 <main><div id="app"></div><footer class="ft"><a href="confidentialite.html">Confidentialité</a><a href="cgu.html">CGU et mentions légales</a></footer></main>
@@ -326,6 +328,7 @@ function clean(h){const o={},isO=x=>x&&typeof x=="object"&&!Array.isArray(x),isD
   else if(/^t\.\d+\.\d+$/.test(k)){if(typeof v=="string"&&v)o[k]=v.slice(0,140)}
   else if(/^z\.\d+\.\d+$/.test(k)){if(isO(v)){const z={};Object.keys(v).slice(0,30).forEach(n=>{const e=v[n];if(isO(e)){const c=clean({"0.0":e.r,"h.0.0":e.h,"t.0.0":e.t});z[txt(n,120)]={r:c["0.0"]||null,h:c["h.0.0"]||null,t:c["t.0.0"]||null}}});if(Object.keys(z).length)o[k]=z}}
   else if(/^m\.[a-z0-9]+$/.test(k)){if(v)o[k]=1}
+  else if(/^l\.\d+$/.test(k)){if(Array.isArray(v)){const pr=a=>Array.isArray(a)?a.slice(0,12).map(x=>Array.isArray(x)?[okN(x[0])?x[0]:null,okN(x[1])?x[1]:null]:[null,null]):null;const a=v.filter(x=>isO(x)&&isD(x.d)&&Array.isArray(x.e)).slice(-40).map(x=>({d:x.d,e:x.e.filter(isO).slice(0,30).map(y=>{const q={n:txt(y.n||"",90),s:pr(y.s)||[]};const L=pr(y.L),R=pr(y.R);if(L&&R){q.L=L;q.R=R}if(/^[ecd]$/.test(y.f))q.f=y.f;return q})}));if(a.length)o[k]=a}}
   else if(/^k\.\d+\.\d+$/.test(k)){if(Array.isArray(v)){const a=[...new Set(v.filter(x=>typeof x=="number"&&isFinite(x)&&x>0&&x<=500))].sort((x,y)=>x-y).slice(0,80);if(a.length>=2)o[k]=a}}
   else if(/^f\.\d+\.\d+$/.test(k)){if(isO(v)&&isD(v.d)&&/^[ecd]$/.test(v.v))o[k]={d:v.d,v:v.v}}
   else if(k=="w"){if(Array.isArray(v))o.w=v.filter(e=>isO(e)&&isD(e.d)&&typeof e.kg=="number"&&e.kg>=30&&e.kg<=250).map(e=>({d:e.d,kg:e.kg}))}});
@@ -675,10 +678,20 @@ function bilanHtml(){const now=new Date(),w0=mon(now),we=new Date(w0);we.setDate
  else if(d.n<4)b="Pas encore assez de données. L’appli te préviendra quand plusieurs exercices stagneront, à partir de 3 séances enregistrées par exercice.";
  else b=`Pas nécessaire pour l’instant : ${d.n-d.st-d.dn} exercices sur ${d.n} progressent encore.`+(d.streak?` ${pl(d.streak,"semaine")} d’affilée avec au moins 3 séances.`:"");
  return h+`<section class="hx${cl}"><h2>${t}</h2><p>${b}</p></section><p class="sec">Détail par séance</p>`}
+function logHtml(i){const lg=Array.isArray(H["l."+i])?H["l."+i]:[],by={};lg.forEach(x=>by[x.d]=x);
+ (H["n."+i]||[]).forEach(d=>{if(by[d])return;const e=[];S[i][3].forEach((x,j)=>{const hs=(H["h."+i+"."+j]||[]).find(h=>h.d==d),r=H[i+"."+j];const hh=H["h."+i+"."+j]||[],rr=r&&r.d==d?r:(r&&r.p&&hh.length>1&&hh[hh.length-1].d==r.d&&hh[hh.length-2].d==d?r.p:null);if(rr&&Array.isArray(rr.sets)){const q={n:nmOf(x),s:rr.sets.map((kg,k)=>[kg,repsOf(rr,k)])};if(rr.L&&rr.R){q.L=rr.L;q.R=rr.R}if(rr.f)q.f=rr.f;e.push(q)}else if(hs)e.push({n:nmOf(x),s:[[hs.kg,hs.reps]],top:1})});if(e.length)by[d]={d:d,e:e}});
+ const ds=Object.keys(by).sort((a,b)=>pd(b)-pd(a));if(!ds.length)return"";
+ const st=(kg,r)=>`<span class="nw">${kg==null?"–":(kg>0?fmt(kg)+(r!=null?" × "+r:" kg"):(r!=null?r+" reps":"–"))}</span>`;
+ const FE={e:"facile",c:"correct",d:"dur"};
+ const it=ds.map((d,k)=>{const x=by[d],dt=pd(d).toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
+  const li=x.e.map(e=>{let v;if(e.L&&e.R){const a=e.L.map(z=>st(z[0],z[1])).join(", "),b=e.R.map(z=>st(z[0],z[1])).join(", ");v=a==b?a+" (par côté)":"G : "+a+"<br>D : "+b}else v=e.s.map(z=>st(z[0],z[1])).join(", ");
+   return`<li><b>${esc(e.n)}</b><span>${v}${e.top?" <i>(série la plus lourde)</i>":""}${e.f?` <i>· ${FE[e.f]}</i>`:""}</span></li>`}).join("");
+  return`<details class="lgd"${k==0?" open":""}><summary>${ucf(dt)}<small>${x.e.length} exercice${x.e.length>1?"s":""}</small></summary><ul>${li}</ul></details>`}).join("");
+ return`<section class="hx"><h2>Toutes tes séances</h2><p>Touche une date pour voir le détail, série par série (en kg × reps).</p>${it}</section>`}
 function histHtml(){
  const n=(H["n."+HS]||[]).length;
  let h=bilanHtml()+`<div class="chips">${S.map((x,i)=>`<button data-hs="${i}" class="${i==HS?"on":""}">${i<5?"S1":"S2"} ${x[1]}</button>`).join("")}</div>`;
- h+=`<div class="hero h2"><h1>${S[HS][0]}</h1><p class="sub">${S[HS][1]}</p><p class="pc">${n} séance${n>1?"s":""} enregistrée${n>1?"s":""}</p></div>`;
+ h+=`<div class="hero h2"><h1>${S[HS][0]}</h1><p class="sub">${S[HS][1]}</p><p class="pc">${n} séance${n>1?"s":""} enregistrée${n>1?"s":""}</p></div>`+logHtml(HS);
  S[HS][3].forEach((e,j)=>{if(hid(HS,j))return;
   const nm=e.split("|")[0].replace(/^A[12] /,""),hs=H["h."+HS+"."+j]||[],l=hs[hs.length-1],pr=prOf(HS,j),nt=H["t."+HS+"."+j];
   let line;
@@ -780,6 +793,8 @@ function save(auto,part){clearTimeout(tv);pend=0;
  Object.keys(rows).forEach(j=>{let best=null;
   rows[j].forEach(r=>{if(!r.w&&r.kg!==null&&(!best||r.kg>best.kg||(r.kg==best.kg&&(r.reps||0)>(best.reps||0))))best=r});
   if(best){const old=rec(cur,+j),ws=rows[j].filter(r=>!r.w&&r.kg!==null);H[cur+"."+j]={kg:best.kg,reps:best.reps,sets:ws.map(r=>r.kg),r:ws.map(r=>r.reps),d:today(),...((x=>x&&x.d==today()?{f:x.v}:{})(H["f."+cur+"."+j])),p:old?(old.d==today()?(old.p||null):{kg:old.kg,reps:old.reps,sets:old.sets,r:old.r,L:old.L,R:old.R}):null};if(ws[0].L){H[cur+"."+j].L=ws.map(r=>r.L);H[cur+"."+j].R=ws.map(r=>r.R)}{const hk="h."+cur+"."+j,ar=H[hk]||[],en={d:today(),kg:best.kg,reps:best.reps,vol:Math.round(ws.reduce((a,r)=>a+(r.L?((r.L[0]||0)*(r.L[1]||0)+(r.R[0]||0)*(r.R[1]||0)):(r.kg||0)*(r.reps||0)),0))};if(ar.length&&ar[ar.length-1].d==today())ar[ar.length-1]=en;else ar.push(en);H[hk]=ar}n++}});
+ if(n){const lg=Array.isArray(H["l."+cur])?H["l."+cur]:[],en={d:today(),e:[]};Object.keys(rows).sort((a,b)=>a-b).forEach(j=>{const ws=rows[j].filter(r=>!r.w&&r.kg!==null);if(!ws.length)return;const e=S[cur][3][+j],q={n:e?nmOf(e):"Exercice",s:ws.map(r=>[r.kg,r.reps])};if(ws[0].L){q.L=ws.map(r=>r.L);q.R=ws.map(r=>r.R)}const fe=H["f."+cur+"."+j];if(fe&&fe.d==today())q.f=fe.v;en.e.push(q)});
+  if(lg.length&&lg[lg.length-1].d==today())lg[lg.length-1]=en;else lg.push(en);H["l."+cur]=lg.slice(-40)}
  if(n){if(!part)H["v."+cur]=today();const nn=H["n."+cur]||[];if(nn[nn.length-1]!==today())nn.push(today());H["n."+cur]=nn}store();
  const nt=app.querySelector(".note");if(stErr){if(nt)nt.textContent="Enregistrement impossible : le stockage du téléphone est plein ou bloqué.";return}
  if(part)return;

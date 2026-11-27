@@ -1,4 +1,4 @@
-const C="carnet-v33",A=["./","index.html"];
+const C="carnet-v34",A=["./","index.html"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(A.map(u=>new Request(u,{cache:"reload"})))).then(()=>self.skipWaiting()))});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
 self.addEventListener("fetch",e=>{const q=e.request;if(q.method!=="GET")return;
